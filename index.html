@@ -1137,10 +1137,158 @@
       body.loading { overflow: auto; }
       .season-particles { display: none; }
     }
+
+    /* =========================
+       Transición suave entre páginas
+       No reemplaza el sitio: solo crea un velo floral rápido.
+    ========================= */
+    .page-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 42%, var(--theme-soft), transparent 28%),
+        var(--theme-gradient);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .48s ease, visibility .48s ease;
+    }
+
+    .page-transition.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
+    }
+
+    .page-transition-inner {
+      width: min(88vw, 520px);
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+      transform: translateY(14px) scale(.98);
+      opacity: 0;
+      transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .45s ease;
+    }
+
+    .page-transition.is-active .page-transition-inner {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .transition-bloom {
+      width: 116px;
+      height: 116px;
+      position: relative;
+      margin-bottom: 18px;
+      animation: transitionBloomFloat 1.6s ease-in-out infinite;
+    }
+
+    .transition-bloom span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 34px;
+      height: 56px;
+      border-radius: 80% 20% 80% 20%;
+      background: linear-gradient(145deg, var(--theme-accent), rgba(255,255,255,.62));
+      transform-origin: 0 0;
+      opacity: .9;
+      box-shadow: 0 12px 30px color-mix(in srgb, var(--theme-accent) 20%, transparent);
+    }
+
+    .transition-bloom span:nth-child(1) { transform: rotate(0deg) translate(-50%, -92%); }
+    .transition-bloom span:nth-child(2) { transform: rotate(60deg) translate(-50%, -92%); }
+    .transition-bloom span:nth-child(3) { transform: rotate(120deg) translate(-50%, -92%); }
+    .transition-bloom span:nth-child(4) { transform: rotate(180deg) translate(-50%, -92%); }
+    .transition-bloom span:nth-child(5) { transform: rotate(240deg) translate(-50%, -92%); }
+    .transition-bloom span:nth-child(6) { transform: rotate(300deg) translate(-50%, -92%); }
+
+    .transition-bloom::after {
+      content: "";
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff7d9 0%, var(--theme-accent-2) 58%, #9c7b44 100%);
+      box-shadow: 0 10px 24px rgba(23,19,22,.12);
+    }
+
+    .transition-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-size: .78rem;
+      font-weight: 850;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      opacity: .78;
+    }
+
+    .transition-text::before,
+    .transition-text::after {
+      content: "";
+      width: 30px;
+      height: 1px;
+      background: color-mix(in srgb, var(--theme-accent) 55%, transparent);
+    }
+
+    .page-transition-petal {
+      position: absolute;
+      width: 16px;
+      height: 25px;
+      border-radius: 80% 20% 80% 20%;
+      background: linear-gradient(145deg, var(--theme-particle), rgba(255,255,255,.7));
+      opacity: .52;
+      animation: transitionPetalDrift 1.45s ease-in-out infinite;
+    }
+
+    .page-transition-petal:nth-child(1) { left: 12%; top: 24%; animation-delay: 0s; }
+    .page-transition-petal:nth-child(2) { right: 16%; top: 18%; animation-delay: .16s; }
+    .page-transition-petal:nth-child(3) { left: 22%; bottom: 18%; animation-delay: .28s; }
+    .page-transition-petal:nth-child(4) { right: 22%; bottom: 24%; animation-delay: .38s; }
+
+    @keyframes transitionBloomFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    @keyframes transitionPetalDrift {
+      0%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: .35; }
+      50% { transform: translate3d(12px,18px,0) rotate(42deg); opacity: .72; }
+    }
+
+    body.is-transitioning {
+      overflow: hidden;
+    }
+
   </style>
 </head>
 
 <body class="loading theme-spring">
+  <div class="page-transition" id="pageTransition" aria-hidden="true">
+    <div class="page-transition-inner">
+      <span class="page-transition-petal"></span>
+      <span class="page-transition-petal"></span>
+      <span class="page-transition-petal"></span>
+      <span class="page-transition-petal"></span>
+      <div>
+        <div class="transition-bloom" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="transition-text">Preparando flores</div>
+      </div>
+    </div>
+  </div>
+
   <div class="season-particles" id="seasonParticles" aria-hidden="true"></div>
 
   <!-- Intro artística -->
@@ -1713,13 +1861,86 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Intro loader
+
+    // Transición suave entre páginas internas
+    const pageTransition = document.getElementById('pageTransition');
+
+    function showPageTransition() {
+      if (!pageTransition) return;
+      document.body.classList.add('is-transitioning');
+      pageTransition.classList.add('is-active');
+    }
+
+    function hidePageTransition(delay = 420) {
+      if (!pageTransition) return;
+      setTimeout(() => {
+        pageTransition.classList.remove('is-active');
+        document.body.classList.remove('is-transitioning');
+      }, delay);
+    }
+
+    window.addEventListener('pageshow', () => {
+      hidePageTransition(360);
+    });
+
+    document.querySelectorAll('a[href]').forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      const target = link.getAttribute('target');
+
+      const shouldSkip =
+        target === '_blank' ||
+        href.startsWith('#') ||
+        href.startsWith('mailto:') ||
+        href.startsWith('tel:') ||
+        href.startsWith('https://wa.me') ||
+        href.startsWith('http://wa.me') ||
+        href.startsWith('javascript:');
+
+      if (shouldSkip) return;
+
+      const isInternalHtml =
+        href.includes('index.html') ||
+        href.includes('catalogo.html') ||
+        href.endsWith('.html') ||
+        href.startsWith('./');
+
+      if (!isInternalHtml) return;
+
+      link.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        showPageTransition();
+        setTimeout(() => {
+          window.location.href = href;
+        }, 520);
+      });
+    });
+
+    hidePageTransition(520);
+
+    // Intro rápida solo la primera vez de la sesión.
+    // Después, la navegación usa una transición floral suave entre páginas.
     window.addEventListener('load', () => {
       const loader = document.getElementById('introLoader');
+      if (!loader) {
+        document.body.classList.remove('loading');
+        return;
+      }
+
+      const introAlreadySeen = sessionStorage.getItem('floralIntroSeen') === 'true';
+
+      if (introAlreadySeen) {
+        loader.classList.add('hide');
+        document.body.classList.remove('loading');
+        return;
+      }
+
+      sessionStorage.setItem('floralIntroSeen', 'true');
+
       setTimeout(() => {
         loader.classList.add('hide');
         document.body.classList.remove('loading');
-      }, 2850);
+      }, 1050);
     });
 
     // Navbar blur/shadow on scroll
