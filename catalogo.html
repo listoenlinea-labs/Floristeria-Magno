@@ -2092,6 +2092,236 @@
       margin-top: 8px;
       }
       }
+
+      /* =========================================================
+           APP MOBILE MODE CATÁLOGO - SOLO CELULAR
+        ========================================================= */
+
+        .mobile-app-nav {
+          display: none;
+        }
+
+        @media (max-width: 575px) {
+
+          body {
+            padding-bottom: 96px;
+            background: #13070d;
+          }
+
+          .custom-toggler,
+          .nav-menu {
+            display: none !important;
+          }
+
+          .navbar-custom {
+            padding: 18px 0;
+            background: rgba(19,7,13,.96);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+          }
+
+          .navbar-custom .container {
+            padding-left: 18px;
+            padding-right: 18px;
+            justify-content: center !important;
+          }
+
+          .brand-logo {
+            font-size: 1.65rem !important;
+            gap: 11px;
+          }
+
+          .brand-logo .logo-mark {
+            width: 58px !important;
+            height: 58px !important;
+          }
+
+          .catalog-hero {
+            min-height: auto;
+            padding-top: 132px;
+            padding-bottom: 54px;
+            text-align: center;
+            align-items: flex-start;
+          }
+
+          .catalog-hero-home-style .catalog-hero-content {
+            padding: 42px 18px 28px;
+          }
+
+          .catalog-hero-badge {
+            font-size: .68rem;
+            letter-spacing: .12em;
+            padding: 10px 15px;
+            max-width: 92%;
+            justify-content: center;
+          }
+
+          .catalog-hero-title {
+            font-size: clamp(3.35rem, 16vw, 4.9rem) !important;
+            line-height: .78 !important;
+            margin: 30px auto 22px;
+          }
+
+          .catalog-hero-description {
+            font-size: .96rem;
+            line-height: 1.65;
+            max-width: 92%;
+          }
+
+          .catalog-hero-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 24px;
+          }
+
+          .catalog-hero-actions .btn {
+            width: 100%;
+            border-radius: 22px;
+            padding: 15px 20px;
+          }
+
+          .catalog-stat-strip {
+            display: none;
+          }
+
+          .catalog-scroll-indicator {
+            display: none;
+          }
+
+          .season-preview-panel {
+            position: relative;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: auto !important;
+            width: calc(100% - 28px);
+            margin: 16px auto 0;
+            overflow-x: auto;
+            justify-content: flex-start;
+            border-radius: 26px;
+            z-index: 20;
+          }
+
+          .season-preview-panel::-webkit-scrollbar {
+            display: none;
+          }
+
+          .season-btn {
+            flex: 0 0 auto;
+            padding: 10px 15px;
+          }
+
+          .mobile-app-nav {
+              position: fixed;
+              left: 14px;
+              right: 14px;
+              bottom: 14px;
+              z-index: 3000;
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 6px;
+              padding: 10px;
+              border-radius: 28px;
+              background: rgba(19,7,13,.94);
+              border: 1px solid rgba(255,255,255,.12);
+              backdrop-filter: blur(20px);
+              box-shadow: 0 24px 70px rgba(0,0,0,.38);
+            }
+
+            .mobile-app-nav a,
+            .mobile-app-nav button {
+              border: 0 !important;
+              outline: none !important;
+              appearance: none;
+              -webkit-appearance: none;
+              background: transparent !important;
+              min-height: 54px;
+              border-radius: 20px;
+              color: rgba(255,248,239,.72);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: 4px;
+              font-size: .66rem;
+              font-weight: 750;
+              padding: 0;
+              font-family: inherit;
+            }
+
+            .mobile-app-nav i {
+              font-size: 1.25rem;
+            }
+
+            .mobile-app-nav a.active,
+            .mobile-app-nav a:hover,
+            .mobile-app-nav button:hover {
+              color: #1a0b10;
+              background: linear-gradient(135deg, #fff3cf, var(--flor-gold, #d6af65)) !important;
+            }
+
+          .cart-float,
+          .whatsapp-float {
+            display: none !important;
+          }
+
+          .section-padding {
+            padding: 72px 0;
+          }
+
+          .catalog-toolbar {
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            border-radius: 26px;
+            padding: 10px;
+          }
+
+          .catalog-toolbar::-webkit-scrollbar {
+            display: none;
+          }
+
+          .filter-chip {
+            flex: 0 0 auto;
+          }
+
+          #productGrid {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 16px;
+            padding-bottom: 18px;
+            scroll-snap-type: x mandatory;
+          }
+
+          #productGrid::-webkit-scrollbar {
+            display: none;
+          }
+
+          #productGrid > [class*="col-"] {
+            flex: 0 0 82%;
+            max-width: 82%;
+            scroll-snap-align: start;
+          }
+
+          .product-card {
+            border-radius: 30px;
+          }
+
+          .product-img-wrap {
+            height: 260px;
+          }
+
+          .modal-dialog {
+            margin: 16px;
+          }
+
+          .modal-content {
+            border-radius: 30px;
+          }
+        }
+
     </style>
   </head>
   <body class="theme-spring catalog-dark">
@@ -2132,6 +2362,29 @@
         </div>
       </div>
     </nav>
+
+    <nav class="mobile-app-nav" aria-label="Navegación móvil">
+      <a href="index.html#inicio">
+        <i class="bi bi-house-heart"></i>
+        <span>Inicio</span>
+      </a>
+
+      <a href="#productos" class="active">
+        <i class="bi bi-bag-heart"></i>
+        <span>Arreglos</span>
+      </a>
+
+      <button type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <i class="bi bi-basket"></i>
+        <span>Carrito</span>
+      </button>
+
+      <a href="index.html#ideas">
+        <i class="bi bi-stars"></i>
+        <span>Ideas</span>
+      </a>
+    </nav>
+
     <header class="catalog-hero catalog-hero-home-style" id="catalogo">
       <div class="catalog-mouse-light" id="catalogMouseLight"></div>
       <div class="catalog-ink-layer">

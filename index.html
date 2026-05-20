@@ -1409,6 +1409,331 @@
       bottom: 32px;
       }
       }
+
+      /* =========================================================
+         APP MOBILE MODE - SOLO CELULAR
+      ========================================================= */
+
+      .mobile-app-nav {
+        display: none;
+      }
+
+      @media (max-width: 575px) {
+
+        .custom-toggler {
+          display: none !important;
+        }
+
+        .nav-mobile-menu {
+          display: none !important;
+        }
+
+        body {
+          padding-bottom: 92px;
+          background:
+            radial-gradient(circle at 50% 0%, rgba(217,140,164,.16), transparent 32%),
+            #13070d;
+        }
+
+        .navbar-custom {
+          padding: 18px 0;
+          background: rgba(19,7,13,.94);
+          backdrop-filter: blur(18px);
+          border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .navbar-custom .container {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .brand-logo {
+          font-size: 1.6rem;
+          gap: 10px;
+        }
+
+        .brand-logo .logo-mark {
+          width: 56px;
+          height: 56px;
+        }
+
+        .custom-toggler {
+          width: 54px;
+          height: 54px;
+          background: rgba(255,255,255,.12);
+        }
+
+        .hero.home-hero {
+          min-height: auto;
+          padding-top: 116px;
+          padding-bottom: 46px;
+          align-items: flex-start;
+        }
+
+        .home-hero .hero-content {
+          padding: 34px 18px 30px;
+          text-align: center;
+        }
+
+        .home-hero .row {
+          gap: 18px;
+        }
+
+        .hero-badge.home-badge {
+          font-size: .66rem;
+          letter-spacing: .11em;
+          padding: 10px 14px;
+          max-width: 92%;
+          justify-content: center;
+        }
+
+        .hero-title.home-title {
+          font-size: clamp(3.4rem, 16vw, 4.8rem);
+          line-height: .82;
+          max-width: 360px;
+          margin: 26px auto 18px;
+        }
+
+        .hero-description.home-description {
+          font-size: .96rem;
+          line-height: 1.65;
+          max-width: 340px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .hero-actions.home-actions {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin-top: 24px;
+        }
+
+        .hero-actions.home-actions .btn-main,
+        .hero-actions.home-actions .btn-secondary-hero {
+          width: 100%;
+          padding: 15px 20px;
+          border-radius: 22px;
+          font-size: .96rem;
+        }
+
+        .home-hero-visual {
+          min-height: auto !important;
+          margin-top: 22px;
+          padding: 0 0 120px;
+        }
+
+        .home-card-main {
+          position: relative !important;
+          width: 100% !important;
+          height: 380px !important;
+          right: auto !important;
+          top: auto !important;
+          margin: 0 auto;
+          border-radius: 36px;
+        }
+
+        .home-hero-carousel,
+        .home-hero-carousel .carousel-inner,
+        .home-hero-carousel .carousel-item {
+          height: 380px !important;
+        }
+
+        .home-card-small {
+          width: 138px !important;
+          height: 178px !important;
+          left: 8px !important;
+          bottom: 74px !important;
+          border-width: 7px;
+          border-radius: 28px;
+        }
+
+        .home-card-label {
+          width: 76% !important;
+          left: 20% !important;
+          right: auto !important;
+          bottom: 78px !important;
+          padding: 17px;
+          border-radius: 24px;
+        }
+
+        .home-card-label .eyebrow {
+          font-size: .62rem;
+          letter-spacing: .18em;
+        }
+
+        .home-card-label h3 {
+          font-size: 1.55rem !important;
+        }
+
+        .home-card-label p {
+          font-size: .85rem;
+          line-height: 1.42;
+        }
+
+        .home-orb {
+          width: 118px;
+          height: 118px;
+          left: 5%;
+          top: 28px;
+        }
+
+        .scroll-indicator {
+          display: none;
+        }
+
+        .season-preview-panel {
+          position: relative;
+          left: auto;
+          right: auto;
+          top: auto;
+          bottom: auto;
+          margin: 18px auto 0;
+          width: 100%;
+          overflow-x: auto;
+          justify-content: flex-start;
+          border-radius: 26px;
+          z-index: 20;
+        }
+
+        .season-preview-panel::-webkit-scrollbar {
+          display: none;
+        }
+
+        .season-btn {
+          flex: 0 0 auto;
+          padding: 10px 15px;
+        }
+
+        .mobile-app-nav {
+          position: fixed;
+          left: 14px;
+          right: 14px;
+          bottom: 14px;
+          z-index: 3000;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 6px;
+          padding: 10px;
+          border-radius: 28px;
+          background: rgba(19,7,13,.94);
+          border: 1px solid rgba(255,255,255,.12);
+          backdrop-filter: blur(20px);
+          box-shadow: 0 24px 70px rgba(0,0,0,.38);
+        }
+
+        .mobile-app-nav a,
+        .mobile-app-nav button {
+          border: 0 !important;
+          outline: none !important;
+          appearance: none;
+          -webkit-appearance: none;
+          background: transparent !important;
+          min-height: 54px;
+          border-radius: 20px;
+          color: rgba(255,248,239,.72);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          font-size: .66rem;
+          font-weight: 750;
+          padding: 0;
+          font-family: inherit;
+        }
+
+        .mobile-app-nav i {
+          font-size: 1.25rem;
+        }
+
+        .mobile-app-nav a.active,
+        .mobile-app-nav a:hover,
+        .mobile-app-nav button:hover {
+          color: #1a0b10;
+          background: linear-gradient(135deg, #fff3cf, var(--flor-gold, #d6af65)) !important;
+        }
+
+        .cart-float,
+        .whatsapp-float {
+          display: none;
+        }
+
+        .section-padding {
+          padding: 72px 0;
+        }
+
+        .section-title {
+          font-size: clamp(2.45rem, 12vw, 3.8rem);
+          line-height: .92;
+        }
+
+        #momentos .row.g-4,
+        #servicios .row.g-4,
+        #destacados .row.g-4 {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          gap: 16px;
+          padding-bottom: 16px;
+          scroll-snap-type: x mandatory;
+        }
+
+        #momentos .row.g-4::-webkit-scrollbar,
+        #servicios .row.g-4::-webkit-scrollbar,
+        #destacados .row.g-4::-webkit-scrollbar {
+          display: none;
+        }
+
+        #momentos .row.g-4 > [class*="col-"],
+        #servicios .row.g-4 > [class*="col-"],
+        #destacados .row.g-4 > [class*="col-"] {
+          flex: 0 0 82%;
+          max-width: 82%;
+          scroll-snap-align: start;
+        }
+
+        .mood-card {
+          height: 360px;
+          border-radius: 32px;
+        }
+
+        .service-card,
+        .product-card,
+        .meaning-card {
+          border-radius: 30px;
+        }
+
+        .product-img-wrap {
+          height: 260px;
+        }
+
+        #colecciones .row {
+          flex-direction: column-reverse;
+        }
+
+        .hero-art-carousel,
+        .hero-art-carousel .carousel-inner,
+        .hero-art-carousel .carousel-item {
+          height: 390px;
+        }
+
+        .flower-story-layout {
+          display: block;
+        }
+
+        .flower-photo-card {
+          min-height: 390px;
+          margin-bottom: 22px;
+        }
+
+        .flower-story-carousel,
+        .flower-story-carousel .carousel-inner,
+        .flower-story-carousel .carousel-item {
+          min-height: 390px;
+        }
+      }
+
     </style>
   </head>
   <body class="theme-spring">
@@ -1452,6 +1777,29 @@
         </div>
       </div>
     </nav>
+
+    <nav class="mobile-app-nav" aria-label="Navegación móvil">
+      <a href="index.html#inicio" class="active">
+        <i class="bi bi-house-heart"></i>
+        <span>Inicio</span>
+      </a>
+
+      <a href="catalogo.html#productos">
+        <i class="bi bi-bag-heart"></i>
+        <span>Arreglos</span>
+      </a>
+
+      <button type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <i class="bi bi-basket"></i>
+        <span>Carrito</span>
+      </button>
+
+      <a href="index.html#ideas">
+        <i class="bi bi-stars"></i>
+        <span>Ideas</span>
+      </a>
+    </nav>
+    
     <!-- HERO EDITORIAL PARA INICIO -->
     <header class="hero home-hero" id="inicio">
       <div class="mouse-light" id="mouseLight"></div>
