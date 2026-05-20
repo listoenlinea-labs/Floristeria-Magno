@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito | Juan H Magno</title>
+
+  <link rel="icon" href="assets/img/icon/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --flor-dark: #13070d;
+      --flor-wine: #2d0d17;
+      --flor-rose: #d98ca4;
+      --flor-gold: #d6af65;
+      --flor-cream: #fff8ef;
+      --flor-muted: rgba(255, 248, 239, .72);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: var(--flor-cream);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(217,140,164,.18), transparent 32%),
+        radial-gradient(circle at 78% 30%, rgba(214,175,101,.12), transparent 30%),
+        linear-gradient(135deg, #14070d 0%, #2d0d17 48%, #090507 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(19,7,13,.55), rgba(19,7,13,.82)),
+        url('https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1800&q=85');
+      background-size: cover;
+      background-position: center;
+      opacity: .34;
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 0%, rgba(19,7,13,.15) 42%, rgba(19,7,13,.92) 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    a { text-decoration: none; }
+
+    h1, h2, h3, h4, .serif {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      letter-spacing: -.045em;
+    }
+
+    .navbar-custom {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 20px 0;
+      background: rgba(19,7,13,.88);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      color: var(--flor-cream);
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      line-height: 1;
+      text-shadow: 0 2px 18px rgba(0,0,0,.22);
+    }
+
+    .brand-logo .logo-mark {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      display: grid;
+      place-items: center;
+      padding: 6px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .brand-logo span:not(.logo-mark) {
+      color: transparent;
+      background: linear-gradient(135deg, #fff0c8, var(--flor-gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .nav-link-custom {
+      color: rgba(255,248,239,.82);
+      font-size: .92rem;
+      font-weight: 700;
+      margin-left: 22px;
+    }
+
+    .nav-link-custom:hover { color: var(--flor-rose); }
+
+    .cart-page {
+      padding: 68px 0 110px;
+    }
+
+    .eyebrow {
+      color: var(--flor-gold);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-size: .78rem;
+      font-weight: 850;
+    }
+
+    .page-title {
+      font-size: clamp(3.4rem, 8vw, 7.2rem);
+      line-height: .82;
+      margin: 16px 0 18px;
+      max-width: 860px;
+    }
+
+    .page-copy {
+      max-width: 620px;
+      color: var(--flor-muted);
+      line-height: 1.8;
+      font-size: 1.06rem;
+    }
+
+    .glass-card {
+      border-radius: 34px;
+      background: rgba(255,248,239,.08);
+      border: 1px solid rgba(255,255,255,.13);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.28);
+    }
+
+    .cart-list-card {
+      padding: 24px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 118px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border-radius: 26px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      margin-bottom: 16px;
+      transition: .25s ease;
+    }
+
+    .cart-item:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,.10);
+    }
+
+    .cart-item img {
+      width: 118px;
+      height: 118px;
+      object-fit: cover;
+      border-radius: 24px;
+      box-shadow: 0 18px 38px rgba(0,0,0,.24);
+    }
+
+    .item-meta h3 {
+      font-size: 1.7rem;
+      margin: 0 0 6px;
+    }
+
+    .item-meta p {
+      margin: 0;
+      color: var(--flor-muted);
+      line-height: 1.55;
+      font-size: .94rem;
+    }
+
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,248,239,.78);
+      font-size: .74rem;
+      font-weight: 750;
+    }
+
+    .item-side {
+      text-align: right;
+    }
+
+    .item-price {
+      color: var(--flor-gold);
+      font-size: 1.35rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .qty-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(19,7,13,.55);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .qty-control button {
+      width: 30px;
+      height: 30px;
+      border: 0;
+      border-radius: 50%;
+      color: #1a0b10;
+      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
+      font-weight: 900;
+    }
+
+    .qty-control strong {
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .remove-btn {
+      margin-top: 10px;
+      border: 0;
+      background: transparent;
+      color: rgba(255,248,239,.55);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .payment-card {
+      padding: 26px;
+      position: sticky;
+      top: 112px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,248,239,.78);
+    }
+
+    .summary-row strong {
+      color: var(--flor-cream);
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin: 22px 0;
+    }
+
+    .summary-total span {
+      color: rgba(255,248,239,.70);
+      font-weight: 700;
+    }
+
+    .summary-total strong {
+      font-size: 2.2rem;
+      color: var(--flor-gold);
+      line-height: 1;
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(255,255,255,.08);
+      color: var(--flor-cream);
+      border-radius: 18px;
+      padding: 13px 15px;
+    }
+
+    .form-control::placeholder { color: rgba(255,248,239,.42); }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: rgba(214,175,101,.58);
+      box-shadow: 0 0 0 4px rgba(214,175,101,.14);
+      background: rgba(255,255,255,.10);
+      color: var(--flor-cream);
+    }
+
+    .form-select option { color: #171316; }
+
+    .form-label {
+      color: rgba(255,248,239,.75);
+      font-size: .86rem;
+      font-weight: 750;
+      margin-bottom: 8px;
+    }
+
+    .pay-option-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0 22px;
+    }
+
+    .pay-option {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: rgba(255,248,239,.78);
+      border-radius: 20px;
+      padding: 13px 8px;
+      text-align: center;
+      font-weight: 800;
+      transition: .25s ease;
+    }
+
+    .pay-option i {
+      display: block;
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .pay-option.active,
+    .pay-option:hover {
+      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
+      color: #1a0b10;
+      transform: translateY(-2px);
+    }
+
+    .btn-pay {
+      width: 100%;
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 22px;
+      color: #1a0b10;
+      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
+      box-shadow: 0 18px 45px rgba(214,175,101,.25);
+      font-weight: 900;
+      transition: .25s ease;
+    }
+
+    .btn-pay:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 60px rgba(214,175,101,.34);
+    }
+
+    .whatsapp-confirm {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      color: rgba(255,248,239,.72);
+      font-weight: 750;
+    }
+
+    .delivery-card {
+      padding: 22px;
+      margin-top: 18px;
+    }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .slot-option {
+      border: 1px solid rgba(255,255,255,.11);
+      background: rgba(255,255,255,.07);
+      color: rgba(255,248,239,.78);
+      border-radius: 18px;
+      padding: 13px 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 800;
+    }
+
+    .slot-option.active,
+    .slot-option:hover {
+      background: rgba(217,140,164,.22);
+      color: var(--flor-cream);
+      border-color: rgba(217,140,164,.30);
+    }
+
+    .mini-note {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(37,211,102,.10);
+      border: 1px solid rgba(37,211,102,.18);
+      color: rgba(255,248,239,.78);
+      margin-top: 18px;
+      line-height: 1.5;
+      font-size: .9rem;
+    }
+
+    .mini-note i {
+      color: #25D366;
+      font-size: 1.35rem;
+    }
+
+    .mobile-app-nav { display: none; }
+
+    @media (max-width: 991px) {
+      .payment-card { position: relative; top: auto; }
+      .cart-page { padding-top: 42px; }
+    }
+
+    @media (max-width: 575px) {
+      body { padding-bottom: 96px; }
+
+      .navbar-custom {
+        padding: 18px 0;
+        background: rgba(19,7,13,.96);
+      }
+
+      .navbar-custom .container {
+        justify-content: center !important;
+      }
+
+      .brand-logo {
+        font-size: 1.65rem;
+        gap: 11px;
+      }
+
+      .brand-logo .logo-mark {
+        width: 58px;
+        height: 58px;
+      }
+
+      .nav-links-desktop { display: none !important; }
+
+      .cart-page {
+        padding: 34px 0 90px;
+      }
+
+      .page-title {
+        font-size: clamp(3rem, 14vw, 4.4rem);
+        text-align: center;
+      }
+
+      .eyebrow,
+      .page-copy {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cart-list-card,
+      .payment-card,
+      .delivery-card {
+        border-radius: 30px;
+      }
+
+      .cart-item {
+        grid-template-columns: 92px 1fr;
+        gap: 14px;
+        padding: 14px;
+      }
+
+      .cart-item img {
+        width: 92px;
+        height: 92px;
+        border-radius: 20px;
+      }
+
+      .item-side {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+      }
+
+      .item-meta h3 {
+        font-size: 1.35rem;
+      }
+
+      .item-meta p {
+        font-size: .84rem;
+      }
+
+      .pay-option-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-app-nav {
+        position: fixed;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        z-index: 3000;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
+        border-radius: 28px;
+        background: rgba(19,7,13,.94);
+        border: 1px solid rgba(255,255,255,.12);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 24px 70px rgba(0,0,0,.38);
+      }
+
+      .mobile-app-nav a,
+      .mobile-app-nav button {
+        border: 0 !important;
+        outline: none !important;
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent !important;
+        min-height: 54px;
+        border-radius: 20px;
+        color: rgba(255,248,239,.72);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-size: .66rem;
+        font-weight: 750;
+        padding: 0;
+        font-family: inherit;
+      }
+
+      .mobile-app-nav i {
+        font-size: 1.25rem;
+      }
+
+      .mobile-app-nav a.active,
+      .mobile-app-nav a:hover,
+      .mobile-app-nav button.active,
+      .mobile-app-nav button:hover {
+        color: #1a0b10;
+        background: linear-gradient(135deg, #fff3cf, var(--flor-gold)) !important;
+      }
+    }
+
+
+    .empty-cart-message {
+      display: none;
+      text-align: center;
+      padding: 48px 18px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      margin-top: 18px;
+    }
+
+    .empty-cart-message.show { display: block; }
+
+    .empty-cart-message i {
+      font-size: 3rem;
+      color: var(--flor-gold);
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+
+    .empty-cart-message p {
+      color: var(--flor-muted);
+      margin-bottom: 18px;
+    }
+
+    .cart-item.is-removing {
+      opacity: 0;
+      transform: translateX(18px) scale(.98);
+      pointer-events: none;
+    }
+
+    .qty-control button,
+    .remove-btn,
+    .pay-option,
+    .slot-option {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar-custom">
+    <div class="container d-flex align-items-center justify-content-between">
+      <a href="index.html#inicio" class="brand-logo">
+        <span class="logo-mark">
+          <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
+        </span>
+        Juan H <span>Magno</span>
+      </a>
+
+      <div class="nav-links-desktop d-flex align-items-center">
+        <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
+        <a href="catalogo.html#productos" class="nav-link-custom">Arreglos</a>
+        <a href="index.html#ideas" class="nav-link-custom">Ideas</a>
+        <a href="#checkout" class="nav-link-custom">Pago</a>
+      </div>
+    </div>
+  </nav>
+
+  <nav class="mobile-app-nav" aria-label="Navegación móvil">
+    <a href="index.html#inicio">
+      <i class="bi bi-house-heart"></i>
+      <span>Inicio</span>
+    </a>
+
+    <a href="catalogo.html#productos">
+      <i class="bi bi-bag-heart"></i>
+      <span>Arreglos</span>
+    </a>
+
+    <button type="button" class="active">
+      <i class="bi bi-basket"></i>
+      <span>Carrito</span>
+    </button>
+
+    <a href="index.html#ideas">
+      <i class="bi bi-stars"></i>
+      <span>Ideas</span>
+    </a>
+  </nav>
+
+  <main class="cart-page">
+    <div class="container">
+      <div class="mb-5">
+        <div class="eyebrow">Pedido floral</div>
+        <h1 class="page-title">Tu carrito está casi listo.</h1>
+        <p class="page-copy">Revisa tus arreglos, elige entrega y confirma el pago. Después podrás enviar el resumen por WhatsApp para finalizar tu pedido.</p>
+      </div>
+
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-7">
+          <section class="glass-card cart-list-card">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+              <div>
+                <div class="eyebrow">Tus arreglos</div>
+                <h2 class="serif mb-0" id="cartProductsTitle" style="font-size:2.4rem;">0 productos</h2>
+              </div>
+              <a href="catalogo.html#productos" class="btn btn-sm btn-outline-light rounded-pill px-3">Agregar más</a>
+            </div>
+
+            <div id="cartItemsContainer"></div>
+
+            <div class="empty-cart-message" id="emptyCartMessage">
+              <i class="bi bi-bag-x"></i>
+              <h3 class="serif">Tu carrito está vacío.</h3>
+              <p>Agrega un arreglo floral para continuar con tu pedido.</p>
+              <a href="catalogo.html#productos" class="btn btn-outline-light rounded-pill px-4">Ver arreglos</a>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-lg-5" id="checkout">
+          <aside class="glass-card payment-card">
+            <div class="eyebrow">Resumen y pago</div>
+            <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
+
+            <div class="summary-row"><span>Subtotal</span><strong id="summarySubtotal">$0</strong></div>
+            <div class="summary-row"><span>Entrega estimada</span><strong id="summaryDelivery">$0</strong></div>
+            <div class="summary-row"><span>Tarjeta personalizada</span><strong>Incluida</strong></div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <strong id="summaryTotal">$0</strong>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Nombre de quien recibe</label>
+              <input class="form-control" placeholder="Ej. Andrea Martínez">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Dirección de entrega</label>
+              <input class="form-control" placeholder="Calle, número, colonia">
+            </div>
+
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Fecha</label>
+                <input class="form-control" type="date">
+              </div>
+              <div class="col-6">
+                <label class="form-label">Horario</label>
+                <select class="form-select">
+                  <option>11:00 am – 1:00 pm</option>
+                  <option>1:00 pm – 3:00 pm</option>
+                  <option>3:00 pm – 7:00 pm</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label class="form-label">Método de pago</label>
+              <div class="pay-option-grid">
+                <button class="pay-option active"><i class="bi bi-credit-card"></i>Tarjeta</button>
+                <button class="pay-option"><i class="bi bi-bank"></i>Transfer</button>
+                <button class="pay-option"><i class="bi bi-cash-coin"></i>Efectivo</button>
+              </div>
+            </div>
+
+            <button class="btn-pay">
+              <i class="bi bi-lock-fill me-2"></i>
+              Continuar al pago
+            </button>
+
+            <a class="whatsapp-confirm" id="whatsappConfirm" href="https://wa.me/5210000000000" target="_blank" rel="noopener">
+              O confirmar pedido por WhatsApp
+            </a>
+
+            <div class="mini-note">
+              <i class="bi bi-whatsapp"></i>
+              <span>Este demo puede conectarse después con WhatsApp, Stripe/Mercado Pago o un backend para pedidos reales.</span>
+            </div>
+          </aside>
+
+          <div class="glass-card delivery-card">
+            <div class="eyebrow">Entrega rápida</div>
+            <h3 class="serif mb-3" style="font-size:2rem;">Horarios disponibles</h3>
+            <div class="slot-grid">
+              <button class="slot-option active"><span>Primera entrega</span><strong>11–1</strong></button>
+              <button class="slot-option"><span>Segunda entrega</span><strong>1–3</strong></button>
+              <button class="slot-option"><span>Tercera entrega</span><strong>3–7</strong></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const CART_KEY = 'jhmagno_cart';
+    const DELIVERY_COST = 120;
+
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const emptyCartMessage = document.getElementById('emptyCartMessage');
+    const cartProductsTitle = document.getElementById('cartProductsTitle');
+    const summarySubtotal = document.getElementById('summarySubtotal');
+    const summaryDelivery = document.getElementById('summaryDelivery');
+    const summaryTotal = document.getElementById('summaryTotal');
+    const whatsappConfirm = document.getElementById('whatsappConfirm');
+
+    function money(value) {
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function readCart() {
+      try {
+        return JSON.parse(localStorage.getItem(CART_KEY)) || {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function getCartItems() {
+      return Object.values(readCart()).filter(item => Number(item.qty || 0) > 0);
+    }
+
+    function updateWhatsapp(items, subtotal, delivery, total) {
+      const detail = items.length
+        ? items.map(item => `- ${item.name} x${item.qty}: ${money(Number(item.price || 0) * Number(item.qty || 0))}`).join('\\n')
+        : 'Sin productos todavía';
+
+      const message = `Hola, quiero confirmar mi pedido floral.\\n\\n${detail}\\n\\nSubtotal: ${money(subtotal)}\\nEntrega estimada: ${money(delivery)}\\nTotal: ${money(total)}`;
+      whatsappConfirm.href = `https://wa.me/5210000000000?text=${encodeURIComponent(message)}`;
+    }
+
+    function renderCart() {
+      const items = getCartItems();
+
+      const subtotal = items.reduce((sum, item) => {
+        return sum + Number(item.price || 0) * Number(item.qty || 0);
+      }, 0);
+
+      const delivery = items.length ? DELIVERY_COST : 0;
+      const total = subtotal + delivery;
+      const count = items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+
+      cartProductsTitle.textContent = count === 1 ? '1 producto' : `${count} productos`;
+      summarySubtotal.textContent = money(subtotal);
+      summaryDelivery.textContent = money(delivery);
+      summaryTotal.textContent = money(total);
+
+      updateWhatsapp(items, subtotal, delivery, total);
+
+      if (!items.length) {
+        cartItemsContainer.innerHTML = '';
+        emptyCartMessage.style.display = 'block';
+        return;
+      }
+
+      emptyCartMessage.style.display = 'none';
+
+      cartItemsContainer.innerHTML = items.map(item => {
+        const lineTotal = Number(item.price || 0) * Number(item.qty || 0);
+        const tags = Array.isArray(item.tags) && item.tags.length
+          ? item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+          : '<span class="tag">Arreglo floral</span>';
+
+        return `
+          <article class="cart-item" data-id="${item.id}">
+            <img src="${item.image || 'https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=500&q=85'}" alt="${item.name}">
+            <div class="item-meta">
+              <h3>${item.name}</h3>
+              <p>${item.description || 'Arreglo floral personalizado.'}</p>
+              <div class="item-tags">${tags}</div>
+            </div>
+            <div class="item-side">
+              <div>
+                <div class="item-price">${money(lineTotal)}</div>
+                <div class="qty-control">
+                  <button class="qty-minus" type="button" aria-label="Restar producto">-</button>
+                  <strong class="qty-value">${item.qty}</strong>
+                  <button class="qty-plus" type="button" aria-label="Sumar producto">+</button>
+                </div>
+              </div>
+              <button class="remove-btn" type="button">Quitar</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    cartItemsContainer.addEventListener('click', (event) => {
+      const plusButton = event.target.closest('.qty-plus');
+      const minusButton = event.target.closest('.qty-minus');
+      const removeButton = event.target.closest('.remove-btn');
+      const targetButton = plusButton || minusButton || removeButton;
+
+      if (!targetButton) return;
+
+      const cartItem = targetButton.closest('.cart-item');
+      const id = cartItem?.dataset.id;
+      if (!id) return;
+
+      const cart = readCart();
+
+      if (!cart[id]) return;
+
+      if (plusButton) {
+        cart[id].qty = Number(cart[id].qty || 0) + 1;
+      }
+
+      if (minusButton) {
+        cart[id].qty = Number(cart[id].qty || 0) - 1;
+        if (cart[id].qty <= 0) delete cart[id];
+      }
+
+      if (removeButton) {
+        delete cart[id];
+      }
+
+      saveCart(cart);
+      renderCart();
+    });
+
+    document.addEventListener('click', (event) => {
+      const payOption = event.target.closest('.pay-option');
+      const slotOption = event.target.closest('.slot-option');
+
+      if (payOption) {
+        document.querySelectorAll('.pay-option').forEach(button => button.classList.remove('active'));
+        payOption.classList.add('active');
+      }
+
+      if (slotOption) {
+        document.querySelectorAll('.slot-option').forEach(button => button.classList.remove('active'));
+        slotOption.classList.add('active');
+      }
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>

@@ -2356,9 +2356,7 @@
           <a href="catalogo.html" class="nav-link-custom active">Catálogo</a>
           <a href="index.html#historias" class="nav-link-custom">Historias</a>
           <a href="index.html#temporadas" class="nav-link-custom">Temporada</a>
-          <button class="btn-reservar" type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
-          Ver carrito
-          </button>
+          <a href="carrito.html" class="nav-link-custom">Ver Carrito</a>
         </div>
       </div>
     </nav>
@@ -2374,10 +2372,10 @@
         <span>Arreglos</span>
       </a>
 
-      <button type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
+      <a href="carrito.html">
         <i class="bi bi-basket"></i>
         <span>Carrito</span>
-      </button>
+      </a>
 
       <a href="index.html#ideas">
         <i class="bi bi-stars"></i>
@@ -2425,9 +2423,7 @@
             <a href="#productos" class="btn btn-luxury">
             Explorar catálogo
             </a>
-            <button class="btn btn-soft" data-bs-toggle="modal" data-bs-target="#cartModal">
-            Ver carrito
-            </button>
+            <a href="carrito.html" class="btn btn-soft">Ver carrito</a>
           </div>
           <div class="catalog-stat-strip">
             <div class="catalog-stat-item">
@@ -2607,10 +2603,10 @@
         </div>
       </section>
     </main>
-    <button class="cart-float" type="button" data-bs-toggle="modal" data-bs-target="#cartModal" aria-label="Abrir carrito">
+    <a href="carrito.html" class="cart-float" aria-label="Abrir carrito">
     <i class="bi bi-bag-heart"></i>
     <span id="cartCount">0</span>
-    </button>
+    </a>
     <a href="https://wa.me/5210000000000?text=Hola%2C%20quiero%20cotizar%20un%20arreglo%20floral" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Cotizar por WhatsApp">
     <i class="bi bi-whatsapp"></i>
     </a>
@@ -2738,75 +2734,69 @@
         });
       });
       
-      const cart = {};
-      let selectedDate = null;
-      let selectedSlot = '11:00 am – 1:00 pm';
-      const cartCount = document.getElementById('cartCount');
-      const cartItems = document.getElementById('cartItems');
-      const cartTotal = document.getElementById('cartTotal');
-      const checkoutWhatsapp = document.getElementById('checkoutWhatsapp');
-      function money(value) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(value); }
-      function addProductToCart(card) {
-        const id = card.dataset.productId, name = card.dataset.productName, price = Number(card.dataset.productPrice || 0);
-        if (!cart[id]) cart[id] = { id, name, price, qty: 0 };
-        cart[id].qty += 1; renderCart();
-      }
-      document.querySelectorAll('.add-to-cart').forEach(btn => btn.addEventListener('click', () => {
-        addProductToCart(btn.closest('.product-card'));
-        btn.textContent = 'Agregado ✓'; setTimeout(() => btn.textContent = 'Agregar', 900);
-      }));
-      function renderCart() {
-        const items = Object.values(cart).filter(item => item.qty > 0);
-        const count = items.reduce((sum, item) => sum + item.qty, 0);
-        const total = items.reduce((sum, item) => sum + item.qty * item.price, 0);
-        cartCount.textContent = count;
-        cartTotal.textContent = money(total);
-        cartItems.innerHTML = items.length ? items.map(item => `
-          <div class="cart-line">
-            <div><strong>${item.name}</strong><br><small class="text-muted-custom">${money(item.price)} c/u</small></div>
-            <div class="d-flex align-items-center gap-2">
-              <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
-              <strong>${item.qty}</strong>
-              <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
-            </div>
-          </div>`).join('') : '<p class="text-muted-custom mb-0">Tu carrito está vacío.</p>';
-        updateWhatsapp();
-      }
-      window.changeQty = function(id, delta) { if (!cart[id]) return; cart[id].qty = Math.max(0, cart[id].qty + delta); renderCart(); };
-      function renderCalendar() {
-        const container = document.getElementById('calendarPreview');
-        const today = new Date();
-        container.innerHTML = '';
-        for (let i = 0; i < 14; i++) {
-          const date = new Date(today); date.setDate(today.getDate() + i);
-          const btn = document.createElement('button');
-          btn.type = 'button'; btn.className = 'calendar-day';
-          btn.textContent = date.getDate();
-          const label = date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
-          btn.title = label;
-          btn.dataset.date = label;
-          if (i === 0) { btn.classList.add('active'); selectedDate = label; }
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('active'));
-            btn.classList.add('active'); selectedDate = btn.dataset.date; updateWhatsapp();
-          });
-          container.appendChild(btn);
+      const CART_KEY = 'jhmagno_cart';
+
+      function readCart() {
+        try {
+          return JSON.parse(localStorage.getItem(CART_KEY)) || {};
+        } catch (error) {
+          return {};
         }
       }
-      document.querySelectorAll('.delivery-slot').forEach(slot => {
-        slot.addEventListener('click', () => {
-          document.querySelectorAll('.delivery-slot').forEach(s => s.classList.remove('active'));
-          slot.classList.add('active'); selectedSlot = slot.dataset.slot; updateWhatsapp();
+
+      function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        updateCartBadge();
+      }
+
+      function updateCartBadge() {
+        const cart = readCart();
+        const count = Object.values(cart).reduce((sum, item) => sum + Number(item.qty || 0), 0);
+        document.querySelectorAll('#cartCount, .cart-count').forEach((el) => {
+          el.textContent = count;
+        });
+      }
+
+      function getProductFromCard(card) {
+        const id = card.dataset.productId;
+        const name = card.dataset.productName || card.querySelector('h3')?.textContent?.trim() || 'Arreglo floral';
+        const price = Number(card.dataset.productPrice || 0);
+        const image = card.querySelector('img')?.getAttribute('src') || '';
+        const description = card.querySelector('p')?.textContent?.trim() || '';
+        const badge = card.querySelector('.product-badge')?.textContent?.trim();
+        const category = card.closest('[data-category]')?.dataset.category;
+        const tags = [badge, category].filter(Boolean);
+
+        return { id, name, price, image, description, tags, qty: 1 };
+      }
+
+      document.querySelectorAll('.add-to-cart').forEach((btn) => {
+        btn.setAttribute('type', 'button');
+
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.product-card');
+          if (!card) return;
+
+          const product = getProductFromCard(card);
+          const cart = readCart();
+
+          if (!cart[product.id]) {
+            cart[product.id] = product;
+          } else {
+            cart[product.id].qty = Number(cart[product.id].qty || 0) + 1;
+          }
+
+          saveCart(cart);
+
+          const originalText = btn.textContent;
+          btn.textContent = 'Agregado ✓';
+          setTimeout(() => {
+            btn.textContent = originalText || 'Agregar';
+          }, 900);
         });
       });
-      function updateWhatsapp() {
-        const items = Object.values(cart).filter(item => item.qty > 0);
-        const total = items.reduce((sum, item) => sum + item.qty * item.price, 0);
-        const detail = items.length ? items.map(item => `${item.qty} x ${item.name}`).join(', ') : 'sin productos todavía';
-        const message = `Hola, quiero confirmar mi pedido floral. Productos: ${detail}. Fecha de entrega: ${selectedDate || 'por definir'}. Horario: ${selectedSlot}. Total estimado: ${money(total)}.`;
-        checkoutWhatsapp.href = `https://wa.me/5210000000000?text=${encodeURIComponent(message)}`;
-      }
-      renderCalendar(); renderCart();
+
+      updateCartBadge();
     </script>
   </body>
 </html>
