@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,868 +11,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --flor-dark: #13070d;
-      --flor-wine: #2d0d17;
-      --flor-rose: #d98ca4;
-      --flor-gold: #d6af65;
-      --flor-cream: #fff8ef;
-      --flor-muted: rgba(255, 248, 239, .72);
-    }
-
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: auto; overflow-anchor: none; }
-
-    body {
-      margin: 0;
-      overflow-anchor: none;
-      font-family: 'Inter', sans-serif;
-      color: var(--flor-cream);
-      background:
-        radial-gradient(circle at 18% 12%, rgba(217,140,164,.18), transparent 32%),
-        radial-gradient(circle at 78% 30%, rgba(214,175,101,.12), transparent 30%),
-        linear-gradient(135deg, #14070d 0%, #2d0d17 48%, #090507 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        linear-gradient(rgba(19,7,13,.55), rgba(19,7,13,.82)),
-        url('https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1800&q=85');
-      background-size: cover;
-      background-position: center;
-      opacity: .34;
-      z-index: -2;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, transparent 0%, rgba(19,7,13,.15) 42%, rgba(19,7,13,.92) 100%);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    a { text-decoration: none; }
-
-    h1, h2, h3, h4, .serif {
-      font-family: 'Playfair Display', serif;
-      font-weight: 800;
-      letter-spacing: -.045em;
-    }
-
-    .navbar-custom {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 20px 0;
-      background: rgba(19,7,13,.88);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(18px);
-    }
-
-    .brand-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: .03em;
-      color: var(--flor-cream);
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
-      line-height: 1;
-      text-shadow: 0 2px 18px rgba(0,0,0,.22);
-    }
-
-    .brand-logo .logo-mark {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
-      display: grid;
-      place-items: center;
-      padding: 6px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-    }
-
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .brand-logo span:not(.logo-mark) {
-      color: transparent;
-      background: linear-gradient(135deg, #fff0c8, var(--flor-gold));
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
-    .nav-link-custom {
-      color: rgba(255,248,239,.82);
-      font-size: .92rem;
-      font-weight: 700;
-      margin-left: 22px;
-    }
-
-    .nav-link-custom:hover { color: var(--flor-rose); }
-
-    .cart-page {
-      padding: 68px 0 110px;
-    }
-
-    .eyebrow {
-      color: var(--flor-gold);
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-size: .78rem;
-      font-weight: 850;
-    }
-
-    .page-title {
-      font-size: clamp(3.4rem, 8vw, 7.2rem);
-      line-height: .82;
-      margin: 16px 0 18px;
-      max-width: 860px;
-    }
-
-    .page-copy {
-      max-width: 620px;
-      color: var(--flor-muted);
-      line-height: 1.8;
-      font-size: 1.06rem;
-    }
-
-    .glass-card {
-      border-radius: 34px;
-      background: rgba(255,248,239,.08);
-      border: 1px solid rgba(255,255,255,.13);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 30px 90px rgba(0,0,0,.28);
-    }
-
-    .cart-list-card {
-      padding: 24px;
-    }
-
-    .cart-item {
-      display: grid;
-      grid-template-columns: 118px 1fr auto;
-      gap: 18px;
-      align-items: center;
-      padding: 18px;
-      border-radius: 26px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-      margin-bottom: 16px;
-      transition: .25s ease;
-    }
-
-    .cart-item:hover {
-      transform: translateY(-3px);
-      background: rgba(255,255,255,.10);
-    }
-
-    .cart-item img {
-      width: 118px;
-      height: 118px;
-      object-fit: cover;
-      border-radius: 24px;
-      box-shadow: 0 18px 38px rgba(0,0,0,.24);
-    }
-
-    .item-meta h3 {
-      font-size: 1.7rem;
-      margin: 0 0 6px;
-    }
-
-    .item-meta p {
-      margin: 0;
-      color: var(--flor-muted);
-      line-height: 1.55;
-      font-size: .94rem;
-    }
-
-    .item-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .tag {
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: rgba(255,248,239,.78);
-      font-size: .74rem;
-      font-weight: 750;
-    }
-
-    .item-side {
-      text-align: right;
-    }
-
-    .item-price {
-      color: var(--flor-gold);
-      font-size: 1.35rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .qty-control {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px;
-      border-radius: 999px;
-      background: rgba(19,7,13,.55);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .qty-control button {
-      width: 30px;
-      height: 30px;
-      border: 0;
-      border-radius: 50%;
-      color: #1a0b10;
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-      font-weight: 900;
-    }
-
-    .qty-control strong {
-      min-width: 18px;
-      text-align: center;
-    }
-
-    .remove-btn {
-      margin-top: 10px;
-      border: 0;
-      background: transparent;
-      color: rgba(255,248,239,.55);
-      font-size: .82rem;
-      font-weight: 700;
-    }
-
-    .mp-header {
-      margin-bottom: 24px;
-      padding: 18px;
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at 12% 15%, rgba(0, 166, 255, .30), transparent 34%),
-        linear-gradient(135deg, rgba(0, 158, 227, .22), rgba(255,255,255,.08));
-      border: 1px solid rgba(0, 166, 255, .32);
-      box-shadow: 0 22px 55px rgba(0, 166, 255, .13);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .mp-header::after {
-      content: '';
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      right: -62px;
-      top: -72px;
-      background: rgba(255,255,255,.10);
-      pointer-events: none;
-    }
-
-    .mp-brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .mp-logo-mark {
-      width: 56px;
-      height: 56px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      background: #00a6ff;
-      color: #fff;
-      font-size: 1.75rem;
-      box-shadow: 0 18px 42px rgba(0,166,255,.34);
-      flex: 0 0 auto;
-    }
-
-    .mp-brand strong {
-      display: block;
-      color: #ffffff;
-      font-size: 1.05rem;
-      font-weight: 900;
-      line-height: 1.2;
-    }
-
-    .mp-brand span {
-      display: block;
-      color: rgba(255,248,239,.72);
-      font-size: .88rem;
-      margin-top: 4px;
-      line-height: 1.45;
-    }
-
-    .mp-secure-pill {
-      margin-top: 15px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 8px 12px;
-      background: rgba(0, 166, 255, .16);
-      color: #c9efff;
-      border: 1px solid rgba(0,166,255,.28);
-      font-size: .82rem;
-      font-weight: 850;
-      position: relative;
-      z-index: 2;
-    }
-
-    .mp-payment-methods {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      align-items: center;
-      margin: 18px 0 20px;
-      padding: 12px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
-    }
-
-    .mp-payment-methods img {
-      height: 30px;
-      width: auto;
-      object-fit: contain;
-      opacity: .95;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.18));
-    }
-
-    .mp-trust-box {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 22px;
-      padding: 14px;
-      border-radius: 20px;
-      background: rgba(0,166,255,.09);
-      border: 1px solid rgba(0,166,255,.20);
-    }
-
-    .mp-trust-box i {
-      font-size: 1.7rem;
-      color: #00a6ff;
-    }
-
-    .mp-trust-box strong {
-      display: block;
-      color: #fff;
-      line-height: 1.2;
-    }
-
-    .mp-trust-box small {
-      display: block;
-      color: rgba(255,255,255,.68);
-      line-height: 1.45;
-      margin-top: 2px;
-    }
-
-    #wallet_container {
-      margin-top: 16px;
-    }
-
-    .mp-config-note {
-      margin-top: 14px;
-      padding: 13px 14px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.06);
-      border: 1px dashed rgba(0,166,255,.28);
-      color: rgba(255,248,239,.68);
-      font-size: .82rem;
-      line-height: 1.5;
-    }
-
-    .mp-config-note strong {
-      color: #c9efff;
-    }
-
-    .payment-card {
-      padding: 26px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 13px 0;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      color: rgba(255,248,239,.78);
-    }
-
-    .summary-row strong {
-      color: var(--flor-cream);
-    }
-
-    .summary-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 20px;
-      margin: 22px 0;
-    }
-
-    .summary-total span {
-      color: rgba(255,248,239,.70);
-      font-weight: 700;
-    }
-
-    .summary-total strong {
-      font-size: 2.2rem;
-      color: var(--flor-gold);
-      line-height: 1;
-    }
-
-    .form-control,
-    .form-select {
-      border: 1px solid rgba(255,255,255,.13);
-      background: rgba(255,255,255,.08);
-      color: var(--flor-cream);
-      border-radius: 18px;
-      padding: 13px 15px;
-    }
-
-    .form-control::placeholder { color: rgba(255,248,239,.42); }
-
-    .form-control:focus,
-    .form-select:focus {
-      border-color: rgba(214,175,101,.58);
-      box-shadow: 0 0 0 4px rgba(214,175,101,.14);
-      background: rgba(255,255,255,.10);
-      color: var(--flor-cream);
-    }
-
-    .form-select option { color: #171316; }
-
-    .form-label {
-      color: rgba(255,248,239,.75);
-      font-size: .86rem;
-      font-weight: 750;
-      margin-bottom: 8px;
-    }
-
-    .pay-option-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: 16px 0 22px;
-    }
-
-    .pay-option {
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.07);
-      color: rgba(255,248,239,.78);
-      border-radius: 20px;
-      padding: 13px 8px;
-      text-align: center;
-      font-weight: 800;
-      transition: .25s ease;
-    }
-
-    .pay-option i {
-      display: block;
-      font-size: 1.35rem;
-      margin-bottom: 6px;
-    }
-
-    .pay-option.active,
-    .pay-option:hover {
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-      color: #1a0b10;
-      transform: translateY(-2px);
-    }
-
-    .btn-pay {
-      width: 100%;
-      border: 0;
-      border-radius: 999px;
-      padding: 16px 22px;
-      color: #1a0b10;
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-      box-shadow: 0 18px 45px rgba(214,175,101,.25);
-      font-weight: 900;
-      transition: .25s ease;
-    }
-
-    .btn-pay:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 26px 60px rgba(214,175,101,.34);
-    }
-
-    .whatsapp-confirm {
-      display: block;
-      text-align: center;
-      margin-top: 12px;
-      color: rgba(255,248,239,.72);
-      font-weight: 750;
-    }
-
-    .delivery-card {
-      padding: 22px;
-      margin-top: 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .slot-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .slot-option {
-      border: 1px solid rgba(255,255,255,.11);
-      background: rgba(255,255,255,.07);
-      color: rgba(255,248,239,.78);
-      border-radius: 18px;
-      padding: 13px 15px;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      font-weight: 800;
-    }
-
-    .slot-option.active,
-    .slot-option:hover {
-      background: rgba(217,140,164,.22);
-      color: var(--flor-cream);
-      border-color: rgba(217,140,164,.30);
-    }
-
-    .mini-note {
-      display: flex;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 20px;
-      background: rgba(37,211,102,.10);
-      border: 1px solid rgba(37,211,102,.18);
-      color: rgba(255,248,239,.78);
-      margin-top: 18px;
-      line-height: 1.5;
-      font-size: .9rem;
-    }
-
-    .mini-note i {
-      color: #25D366;
-      font-size: 1.35rem;
-    }
-
-    .mobile-app-nav { display: none; }
-
-    @media (max-width: 991px) {
-      .payment-card { position: relative; top: auto; }
-      .cart-page { padding-top: 42px; }
-    }
-
-    @media (max-width: 575px) {
-      body { padding-bottom: 96px; }
-
-      .navbar-custom {
-        padding: 18px 0;
-        background: rgba(19,7,13,.96);
-      }
-
-      .navbar-custom .container {
-        justify-content: center !important;
-      }
-
-      .brand-logo {
-        font-size: 1.65rem;
-        gap: 11px;
-      }
-
-      .brand-logo .logo-mark {
-        width: 58px;
-        height: 58px;
-      }
-
-      .nav-links-desktop { display: none !important; }
-
-      .cart-page {
-        padding: 34px 0 90px;
-      }
-
-      .page-title {
-        font-size: clamp(3rem, 14vw, 4.4rem);
-        text-align: center;
-      }
-
-      .eyebrow,
-      .page-copy {
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .cart-list-card,
-      .payment-card,
-      .delivery-card {
-        border-radius: 30px;
-      }
-
-      .cart-item {
-        grid-template-columns: 92px 1fr;
-        gap: 14px;
-        padding: 14px;
-      }
-
-      .cart-item img {
-        width: 92px;
-        height: 92px;
-        border-radius: 20px;
-      }
-
-      .item-side {
-        grid-column: 1 / -1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: left;
-      }
-
-      .item-meta h3 {
-        font-size: 1.35rem;
-      }
-
-      .item-meta p {
-        font-size: .84rem;
-      }
-
-      .pay-option-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .mobile-app-nav {
-        position: fixed;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
-        z-index: 3000;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        padding: 10px;
-        border-radius: 28px;
-        background: rgba(19,7,13,.94);
-        border: 1px solid rgba(255,255,255,.12);
-        backdrop-filter: blur(20px);
-        box-shadow: 0 24px 70px rgba(0,0,0,.38);
-      }
-
-      .mobile-app-nav a,
-      .mobile-app-nav button {
-        border: 0 !important;
-        outline: none !important;
-        appearance: none;
-        -webkit-appearance: none;
-        background: transparent !important;
-        min-height: 54px;
-        border-radius: 20px;
-        color: rgba(255,248,239,.72);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        font-size: .66rem;
-        font-weight: 750;
-        padding: 0;
-        font-family: inherit;
-      }
-
-      .mobile-app-nav i {
-        font-size: 1.25rem;
-      }
-
-      .mobile-app-nav a.active,
-      .mobile-app-nav a:hover,
-      .mobile-app-nav button.active,
-      .mobile-app-nav button:hover {
-        color: #1a0b10;
-        background: linear-gradient(135deg, #fff3cf, var(--flor-gold)) !important;
-      }
-    }
-
-
-    .empty-cart-message {
-      display: none;
-      text-align: center;
-      padding: 48px 18px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      margin-top: 18px;
-    }
-
-    .empty-cart-message.show { display: block; }
-
-    .empty-cart-message i {
-      font-size: 3rem;
-      color: var(--flor-gold);
-      margin-bottom: 14px;
-      display: inline-block;
-    }
-
-    .empty-cart-message p {
-      color: var(--flor-muted);
-      margin-bottom: 18px;
-    }
-
-    .cart-item.is-removing {
-      opacity: 0;
-      transform: translateX(18px) scale(.98);
-      pointer-events: none;
-    }
-
-    .qty-control button,
-    .remove-btn,
-    .pay-option,
-    .slot-option {
-      cursor: pointer;
-    }
-
-    
-      /* =========================================================
-         FIX NAVBAR DESKTOP / LAPTOP NORMAL
-      ========================================================= */
-
-      .navbar-custom .container {
-         max-width: 1440px;
-         padding-left: 32px;
-         padding-right: 32px;
-      }
-
-      .nav-mobile-menu {
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-      }
-
-      .nav-link-custom {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        font-size: clamp(0.78rem, 0.86vw, 0.92rem);
-        white-space: nowrap;
-      }
-
-      .btn-reservar {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        padding: 10px 18px;
-        white-space: nowrap;
-      }
-
-      .brand-logo {
-        flex-shrink: 0;
-      }
-
-      @media (max-width: 1280px) {
-        .brand-logo {
-          font-size: 1.35rem;
-          gap: 10px;
-        }
-
-        .brand-logo .logo-mark {
-          width: 48px;
-          height: 48px;
-        }
-
-        .nav-link-custom {
-          margin-left: 12px;
-          font-size: 0.78rem;
-        }
-
-        .btn-reservar {
-          margin-left: 12px;
-          padding: 9px 15px;
-          font-size: 0.78rem;
-        }
-      }
-
-      /* En laptops pequeñas/tablets ya mejor usar menú hamburguesa */
-      @media (max-width: 1100px) {
-        .custom-toggler {
-          display: inline-flex;
-        }
-
-        .nav-mobile-menu {
-          position: absolute;
-          top: calc(100% + 12px);
-          left: 14px;
-          right: 14px;
-          padding: 20px;
-          border-radius: 30px;
-          background: rgba(19,7,13,.96);
-          backdrop-filter: blur(18px);
-          border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 24px 70px rgba(0,0,0,.35);
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .nav-mobile-menu .nav-link-custom {
-          margin: 0;
-          padding: 12px 14px;
-          border-radius: 16px;
-          font-size: 0.92rem;
-        }
-
-        .nav-mobile-menu .btn-reservar {
-          width: 100%;
-          margin: 10px 0 0;
-          text-align: center;
-          font-size: 0.92rem;
-        }
-      }
-
-      html,
-      body {
-        overscroll-behavior-y: none;
-      }
-
-      body {
-        overflow-anchor: none;
-      }
-
-      @supports (height: 100dvh) {
-        .hero {
-          min-height: 100dvh;
-        }
-
-        @media (max-width: 575px) {
-          .hero.home-hero {
-            min-height: 100dvh;
-          }
-        }
-      }
-
-  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+
+<body class="page-carrito">
   <nav class="navbar-custom">
     <div class="container d-flex align-items-center justify-content-between">
       <a href="index.html#inicio" class="brand-logo">
@@ -884,7 +30,7 @@
       <div class="nav-links-desktop d-flex align-items-center">
         <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
         <a href="catalogo.html#productos" class="nav-link-custom">Arreglos</a>
-        <a href="#ideas.html" class="nav-link-custom">Ideas</a>
+        <a href="ideas.html" class="nav-link-custom">Ideas</a>
         <a href="index.html#ubicacion" class="nav-link-custom">Ubicación</a>
         <a href="#checkout" class="nav-link-custom">Pago</a>
       </div>
@@ -892,25 +38,10 @@
   </nav>
 
   <nav class="mobile-app-nav" aria-label="Navegación móvil">
-    <a href="index.html#inicio">
-      <i class="bi bi-house-heart"></i>
-      <span>Inicio</span>
-    </a>
-
-    <a href="catalogo.html#productos">
-      <i class="bi bi-bag-heart"></i>
-      <span>Arreglos</span>
-    </a>
-
-    <button type="button" class="active">
-      <i class="bi bi-basket"></i>
-      <span>Carrito</span>
-    </button>
-
-    <a href="ideas.html">
-      <i class="bi bi-stars"></i>
-      <span>Ideas</span>
-    </a>
+    <a href="index.html#inicio"><i class="bi bi-house-heart"></i><span>Inicio</span></a>
+    <a href="catalogo.html#productos"><i class="bi bi-bag-heart"></i><span>Arreglos</span></a>
+    <button type="button" class="active"><i class="bi bi-basket"></i><span>Carrito</span></button>
+    <a href="ideas.html"><i class="bi bi-stars"></i><span>Ideas</span></a>
   </nav>
 
   <main class="cart-page">
@@ -918,10 +49,13 @@
       <div class="mb-5">
         <div class="eyebrow">Pedido floral</div>
         <h1 class="page-title">Tu carrito está casi listo.</h1>
-        <p class="page-copy">Revisa tus arreglos, elige entrega y confirma el pago. Después podrás enviar el resumen por WhatsApp para finalizar tu pedido.</p>
+        <p class="page-copy">
+          Revisa tus arreglos, elige entrega y confirma el pago. Después podrás enviar el resumen por WhatsApp.
+        </p>
       </div>
 
       <div class="row g-4 align-items-start">
+
         <div class="col-lg-7">
           <section class="glass-card cart-list-card">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
@@ -944,7 +78,8 @@
         </div>
 
         <div class="col-lg-5" id="checkout">
-          <aside class="glass-card payment-card">
+
+          <aside class="glass-card payment-card mb-4">
             <div class="mp-header">
               <div class="mp-brand">
                 <div class="mp-logo-mark" aria-hidden="true">
@@ -955,11 +90,13 @@
                   <span>Pago seguro con tarjeta, transferencia o saldo disponible.</span>
                 </div>
               </div>
+
               <div class="mp-secure-pill">
                 <i class="bi bi-lock-fill"></i>
                 Tu dinero está protegido hasta confirmar el pago
               </div>
             </div>
+
             <div class="eyebrow">Resumen y pago</div>
             <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
 
@@ -970,39 +107,6 @@
             <div class="summary-total">
               <span>Total</span>
               <strong id="summaryTotal">$0</strong>
-            </div>
-
-            <div class="mp-trust-box">
-              <i class="bi bi-patch-check-fill"></i>
-              <div>
-                <strong>Compra protegida</strong>
-                <small>Mercado Pago procesa el pago de forma segura. Configura tu cuenta para activar el cobro real.</small>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Nombre de quien recibe</label>
-              <input class="form-control" id="receiverName" placeholder="Ej. Andrea Martínez">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Dirección de entrega</label>
-              <input class="form-control" id="deliveryAddress" placeholder="Calle, número, colonia">
-            </div>
-
-            <div class="row g-3">
-              <div class="col-6">
-                <label class="form-label">Fecha</label>
-                <input class="form-control" id="deliveryDate" type="date">
-              </div>
-              <div class="col-6">
-                <label class="form-label">Horario</label>
-                <select class="form-select" id="deliverySlot">
-                  <option>11:00 am – 1:00 pm</option>
-                  <option>1:00 pm – 3:00 pm</option>
-                  <option>3:00 pm – 7:00 pm</option>
-                </select>
-              </div>
             </div>
 
             <div class="mt-4">
@@ -1028,29 +132,62 @@
 
             <div id="wallet_container"></div>
 
-            <!--<div class="mp-config-note">
-              <strong>Listo para configurar:</strong> cambia la PUBLIC KEY y conecta el endpoint <code>/api/mercadopago/create-preference</code> en tu backend.
-            </div>-->
-
-            <a class="whatsapp-confirm" id="whatsappConfirm" href="https://wa.me/5210000000000" target="_blank" rel="noopener">
+            <a class="whatsapp-confirm" id="whatsappConfirm" href="https://wa.me/5210000000000" target="_blank"
+              rel="noopener">
               O confirmar pedido por WhatsApp
             </a>
-
-            <div class="mini-note">
-              <i class="bi bi-whatsapp"></i>
-              <span>Este carrito ya está preparado para integrarse con Mercado Pago mediante una preferencia creada desde tu backend.</span>
-            </div>
           </aside>
 
-          <div class="glass-card delivery-card">
+          <section class="glass-card delivery-card mb-4">
+            <div class="mp-trust-box mb-4">
+              <i class="bi bi-patch-check-fill"></i>
+              <div>
+                <strong>Compra protegida</strong>
+                <small>Mercado Pago procesa el pago de forma segura. Tus datos se usan únicamente para preparar y
+                  entregar tu pedido.</small>
+              </div>
+            </div>
+
+            <div class="eyebrow">Datos de entrega</div>
+            <h3 class="serif mb-3" style="font-size:2rem;">¿Quién recibe?</h3>
+
+            <div class="mb-3">
+              <label class="form-label">Nombre de quien recibe</label>
+              <input class="form-control" id="receiverName" placeholder="Ej. Andrea Martínez">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Dirección de entrega</label>
+              <input class="form-control" id="deliveryAddress" placeholder="Calle, número, colonia">
+            </div>
+
+            <div class="mb-0">
+              <label class="form-label">Fecha de entrega</label>
+              <input class="form-control" id="deliveryDate" type="date">
+            </div>
+          </section>
+
+          <section class="glass-card delivery-card">
             <div class="eyebrow">Entrega rápida</div>
             <h3 class="serif mb-3" style="font-size:2rem;">Horarios disponibles</h3>
+
             <div class="slot-grid">
-              <button class="slot-option active"><span>Primera entrega</span><strong>11–1</strong></button>
-              <button class="slot-option"><span>Segunda entrega</span><strong>1–3</strong></button>
-              <button class="slot-option"><span>Tercera entrega</span><strong>3–7</strong></button>
+              <button class="slot-option active" data-slot="11:00 am – 1:00 pm" type="button">
+                <span>Primera entrega</span><strong>11–1</strong>
+              </button>
+
+              <button class="slot-option" data-slot="1:00 pm – 3:00 pm" type="button">
+                <span>Segunda entrega</span><strong>1–3</strong>
+              </button>
+
+              <button class="slot-option" data-slot="3:00 pm – 7:00 pm" type="button">
+                <span>Tercera entrega</span><strong>3–7</strong>
+              </button>
             </div>
-          </div>
+
+            <input type="hidden" id="deliverySlot" value="11:00 am – 1:00 pm">
+          </section>
+
         </div>
       </div>
     </div>
@@ -1076,12 +213,6 @@
     const deliveryDate = document.getElementById('deliveryDate');
     const deliverySlot = document.getElementById('deliverySlot');
 
-    /* =========================================================
-       MERCADO PAGO - CONFIGURACIÓN
-       1) Reemplaza PUBLIC_KEY por tu Public Key de Mercado Pago.
-       2) Crea en tu backend el endpoint BACKEND_CREATE_PREFERENCE_URL.
-       3) Ese endpoint debe crear una preferencia y devolver { preferenceId: '...' }.
-       ========================================================= */
     const MERCADO_PAGO_PUBLIC_KEY = 'PON_AQUI_TU_PUBLIC_KEY';
     const BACKEND_CREATE_PREFERENCE_URL = '/api/mercadopago/create-preference';
 
@@ -1116,10 +247,26 @@
 
     function updateWhatsapp(items, subtotal, delivery, total) {
       const detail = items.length
-        ? items.map(item => `- ${item.name} x${item.qty}: ${money(Number(item.price || 0) * Number(item.qty || 0))}`).join('\\n')
+        ? items.map(item => `- ${item.name} x${item.qty}: ${money(Number(item.price || 0) * Number(item.qty || 0))}`).join('\n')
         : 'Sin productos todavía';
 
-      const message = `Hola, quiero confirmar mi pedido floral.\\n\\n${detail}\\n\\nSubtotal: ${money(subtotal)}\\nEntrega estimada: ${money(delivery)}\\nTotal: ${money(total)}`;
+      const receiver = receiverName.value.trim() || 'Pendiente';
+      const address = deliveryAddress.value.trim() || 'Pendiente';
+      const date = deliveryDate.value || 'Pendiente';
+      const slot = deliverySlot.value || 'Pendiente';
+
+      const message =
+        `Hola, quiero confirmar mi pedido floral.\n\n` +
+        `${detail}\n\n` +
+        `Subtotal: ${money(subtotal)}\n` +
+        `Entrega estimada: ${money(delivery)}\n` +
+        `Total: ${money(total)}\n\n` +
+        `Datos de entrega:\n` +
+        `Recibe: ${receiver}\n` +
+        `Dirección: ${address}\n` +
+        `Fecha: ${date}\n` +
+        `Horario: ${slot}`;
+
       whatsappConfirm.href = `https://wa.me/5210000000000?text=${encodeURIComponent(message)}`;
     }
 
@@ -1195,18 +342,14 @@
 
       if (!cart[id]) return;
 
-      if (plusButton) {
-        cart[id].qty = Number(cart[id].qty || 0) + 1;
-      }
+      if (plusButton) cart[id].qty = Number(cart[id].qty || 0) + 1;
 
       if (minusButton) {
         cart[id].qty = Number(cart[id].qty || 0) - 1;
         if (cart[id].qty <= 0) delete cart[id];
       }
 
-      if (removeButton) {
-        delete cart[id];
-      }
+      if (removeButton) delete cart[id];
 
       saveCart(cart);
       renderCart();
@@ -1224,7 +367,14 @@
       if (slotOption) {
         document.querySelectorAll('.slot-option').forEach(button => button.classList.remove('active'));
         slotOption.classList.add('active');
+        deliverySlot.value = slotOption.dataset.slot || '';
+        renderCart();
       }
+    });
+
+    [receiverName, deliveryAddress, deliveryDate].forEach(input => {
+      input.addEventListener('input', renderCart);
+      input.addEventListener('change', renderCart);
     });
 
     mercadoPagoBtn.addEventListener('click', () => {
@@ -1234,4 +384,5 @@
     renderCart();
   </script>
 </body>
+
 </html>

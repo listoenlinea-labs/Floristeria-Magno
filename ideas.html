@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ideas con IA para crear ramos personalizados según evento, colores favoritos y estilo." />
+  <meta name="description"
+    content="Ideas con IA para crear ramos personalizados según evento, colores favoritos y estilo." />
   <title>Ideas con IA | Juan H Magno</title>
 
   <link rel="icon" href="assets/img/icon/favicon.ico">
@@ -11,673 +13,16 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
 
-  <style>
-    :root {
-      --flor-dark: #13070d;
-      --flor-wine: #2d0d17;
-      --flor-rose: #d98ca4;
-      --flor-blush: #f8dbe4;
-      --flor-gold: #d6af65;
-      --flor-cream: #fff8ef;
-      --flor-muted: rgba(255, 248, 239, .72);
-      --flor-card: rgba(255, 248, 239, .08);
-    }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: auto; overflow-anchor: none; }
-
-    body {
-      margin: 0;
-      overflow-anchor: none;
-      font-family: 'Inter', sans-serif;
-      color: var(--flor-cream);
-      background:
-        radial-gradient(circle at 18% 12%, rgba(217,140,164,.18), transparent 32%),
-        radial-gradient(circle at 78% 30%, rgba(214,175,101,.12), transparent 30%),
-        linear-gradient(135deg, #14070d 0%, #2d0d17 48%, #090507 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        linear-gradient(rgba(19,7,13,.42), rgba(19,7,13,.86)),
-        url('https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1800&q=85');
-      background-size: cover;
-      background-position: center;
-      opacity: .38;
-      z-index: -2;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, transparent 0%, rgba(19,7,13,.16) 40%, rgba(19,7,13,.94) 100%);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    a { text-decoration: none; }
-
-    h1, h2, h3, h4, .serif {
-      font-family: 'Playfair Display', serif;
-      font-weight: 800;
-      letter-spacing: -.045em;
-    }
-
-    .navbar-custom {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 20px 0;
-      background: rgba(19,7,13,.88);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(18px);
-    }
-
-    .brand-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: .03em;
-      color: var(--flor-cream);
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
-      line-height: 1;
-      text-shadow: 0 2px 18px rgba(0,0,0,.22);
-    }
-
-    .brand-logo .logo-mark {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
-      display: grid;
-      place-items: center;
-      padding: 6px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-    }
-
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .brand-logo span:not(.logo-mark) {
-      color: transparent;
-      background: linear-gradient(135deg, #fff0c8, var(--flor-gold));
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
-    .nav-link-custom {
-      color: rgba(255,248,239,.82);
-      font-size: .92rem;
-      font-weight: 700;
-      margin-left: 22px;
-      transition: .25s ease;
-    }
-
-    .nav-link-custom:hover,
-    .nav-link-custom.active { color: var(--flor-blush); }
-
-    .ideas-page {
-      padding: 72px 0 110px;
-    }
-
-    .eyebrow {
-      color: var(--flor-gold);
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-size: .78rem;
-      font-weight: 850;
-    }
-
-    .hero-title {
-      font-size: clamp(3.6rem, 8vw, 7.7rem);
-      line-height: .82;
-      margin: 16px 0 20px;
-      max-width: 980px;
-    }
-
-    .hero-title span {
-      color: transparent;
-      background: linear-gradient(100deg, #fff6dc, var(--flor-gold), var(--flor-rose));
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
-    .hero-copy {
-      max-width: 760px;
-      color: var(--flor-muted);
-      line-height: 1.8;
-      font-size: 1.08rem;
-    }
-
-    .glass-card {
-      border-radius: 36px;
-      background: var(--flor-card);
-      border: 1px solid rgba(255,255,255,.13);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 30px 90px rgba(0,0,0,.28);
-    }
-
-    .builder-card {
-      padding: 28px;
-    }
-
-    .result-card {
-      padding: 28px;
-      position: sticky;
-      top: 112px;
-      overflow: hidden;
-    }
-
-    .form-label {
-      color: rgba(255,248,239,.78);
-      font-size: .88rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .form-control,
-    .form-select {
-      border: 1px solid rgba(255,255,255,.13);
-      background: rgba(255,255,255,.08);
-      color: var(--flor-cream);
-      border-radius: 20px;
-      padding: 14px 16px;
-    }
-
-    textarea.form-control {
-      resize: vertical;
-      min-height: 150px;
-      line-height: 1.7;
-    }
-
-    .form-control::placeholder { color: rgba(255,248,239,.42); }
-
-    .form-control:focus,
-    .form-select:focus {
-      border-color: rgba(214,175,101,.58);
-      box-shadow: 0 0 0 4px rgba(214,175,101,.14);
-      background: rgba(255,255,255,.10);
-      color: var(--flor-cream);
-    }
-
-    .form-select option { color: #171316; }
-
-    .color-palette {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-    }
-
-    .color-chip {
-      min-height: 76px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 24px;
-      background: rgba(255,255,255,.07);
-      color: rgba(255,248,239,.78);
-      font-size: .74rem;
-      font-weight: 800;
-      display: grid;
-      place-items: center;
-      gap: 6px;
-      transition: .25s ease;
-      padding: 10px 6px;
-    }
-
-    .color-dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.34), 0 10px 22px rgba(0,0,0,.20);
-    }
-
-    .color-chip.active,
-    .color-chip:hover {
-      transform: translateY(-3px);
-      border-color: rgba(214,175,101,.45);
-      background: rgba(255,248,239,.12);
-    }
-
-    .style-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-
-    .style-chip {
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 22px;
-      background: rgba(255,255,255,.07);
-      color: rgba(255,248,239,.78);
-      font-weight: 850;
-      padding: 14px 10px;
-      transition: .25s ease;
-    }
-
-    .style-chip.active,
-    .style-chip:hover {
-      color: #1a0b10;
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-      transform: translateY(-2px);
-    }
-
-    .btn-ai {
-      width: 100%;
-      border: 0;
-      border-radius: 999px;
-      padding: 17px 22px;
-      color: #1a0b10;
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-      box-shadow: 0 18px 45px rgba(214,175,101,.25);
-      font-weight: 900;
-      transition: .25s ease;
-    }
-
-    .btn-ai:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 26px 60px rgba(214,175,101,.34);
-    }
-
-    .result-image-wrap {
-      position: relative;
-      height: 380px;
-      border-radius: 32px;
-      overflow: hidden;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      margin-bottom: 22px;
-    }
-
-    .result-image-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transform: scale(1.03);
-    }
-
-    .result-badge {
-      position: absolute;
-      left: 18px;
-      top: 18px;
-      padding: 9px 13px;
-      border-radius: 999px;
-      background: rgba(19,7,13,.62);
-      color: var(--flor-cream);
-      backdrop-filter: blur(12px);
-      font-size: .75rem;
-      font-weight: 850;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .result-name {
-      font-size: 2.7rem;
-      line-height: .92;
-      margin-bottom: 10px;
-    }
-
-    .result-description {
-      color: var(--flor-muted);
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .result-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .tag {
-      padding: 8px 11px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: rgba(255,248,239,.80);
-      font-size: .74rem;
-      font-weight: 800;
-    }
-
-    .price-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 20px;
-      padding: 18px 0;
-      border-top: 1px solid rgba(255,255,255,.10);
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      margin-bottom: 18px;
-    }
-
-    .price-row span {
-      color: rgba(255,248,239,.70);
-      font-weight: 800;
-    }
-
-    .price-row strong {
-      color: var(--flor-gold);
-      font-size: 2.3rem;
-      line-height: 1;
-    }
-
-    .btn-cart {
-      width: 100%;
-      border: 0;
-      border-radius: 999px;
-      padding: 16px 22px;
-      color: var(--flor-cream);
-      background: rgba(217,140,164,.82);
-      box-shadow: 0 18px 45px rgba(217,140,164,.22);
-      font-weight: 900;
-      transition: .25s ease;
-    }
-
-    .btn-cart:hover {
-      transform: translateY(-3px);
-      background: var(--flor-rose);
-    }
-
-    .btn-cart.added {
-      color: #1a0b10;
-      background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
-    }
-
-    .ai-loading {
-      display: none;
-      padding: 22px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.11);
-      margin-top: 18px;
-    }
-
-    .ai-loading.show { display: block; }
-
-    .loading-line {
-      height: 12px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(255,255,255,.10), rgba(255,255,255,.25), rgba(255,255,255,.10));
-      background-size: 200% 100%;
-      animation: shimmer 1.15s ease-in-out infinite;
-      margin-bottom: 10px;
-    }
-
-    .loading-line:nth-child(2) { width: 78%; }
-    .loading-line:nth-child(3) { width: 58%; }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .micro-card {
-      padding: 18px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.11);
-      color: rgba(255,248,239,.74);
-      line-height: 1.6;
-    }
-
-    .micro-card i {
-      color: var(--flor-gold);
-      font-size: 1.35rem;
-    }
-
-    .toast-added {
-      position: fixed;
-      left: 50%;
-      bottom: 104px;
-      transform: translateX(-50%) translateY(20px);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 4000;
-      background: rgba(19,7,13,.94);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--flor-cream);
-      border-radius: 999px;
-      padding: 12px 18px;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 45px rgba(0,0,0,.34);
-      transition: .3s ease;
-      font-weight: 800;
-    }
-
-    .toast-added.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .mobile-app-nav { display: none; }
-
-    @media (max-width: 991px) {
-      .result-card { position: relative; top: auto; }
-      .color-palette { grid-template-columns: repeat(3, 1fr); }
-      .style-grid { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 575px) {
-      body { padding-bottom: 96px; }
-
-      .navbar-custom {
-        padding: 18px 0;
-        background: rgba(19,7,13,.96);
-      }
-
-      .navbar-custom .container {
-        justify-content: center !important;
-      }
-
-      .brand-logo {
-        font-size: 1.65rem;
-        gap: 11px;
-      }
-
-      .brand-logo .logo-mark {
-        width: 58px;
-        height: 58px;
-      }
-
-      .nav-links-desktop { display: none !important; }
-
-      .ideas-page { padding: 38px 0 92px; }
-
-      .hero-title {
-        text-align: center;
-        font-size: clamp(3.05rem, 14vw, 4.45rem);
-      }
-
-      .eyebrow,
-      .hero-copy { text-align: center; margin-left: auto; margin-right: auto; }
-
-      .builder-card,
-      .result-card { padding: 20px; border-radius: 30px; }
-
-      .color-palette { grid-template-columns: repeat(2, 1fr); }
-
-      .result-image-wrap { height: 320px; border-radius: 30px; }
-
-      .result-name { font-size: 2.25rem; }
-
-      .mobile-app-nav {
-        position: fixed;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
-        z-index: 3000;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        padding: 10px;
-        border-radius: 28px;
-        background: rgba(19,7,13,.94);
-        border: 1px solid rgba(255,255,255,.12);
-        backdrop-filter: blur(20px);
-        box-shadow: 0 24px 70px rgba(0,0,0,.38);
-      }
-
-      .mobile-app-nav a,
-      .mobile-app-nav button {
-        border: 0 !important;
-        outline: none !important;
-        appearance: none;
-        -webkit-appearance: none;
-        background: transparent !important;
-        min-height: 54px;
-        border-radius: 20px;
-        color: rgba(255,248,239,.72);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        font-size: .66rem;
-        font-weight: 750;
-        padding: 0;
-        font-family: inherit;
-      }
-
-      .mobile-app-nav i { font-size: 1.25rem; }
-
-      .mobile-app-nav a.active,
-      .mobile-app-nav a:hover,
-      .mobile-app-nav button:hover {
-        color: #1a0b10;
-        background: linear-gradient(135deg, #fff3cf, var(--flor-gold)) !important;
-      }
-    }
-
-    
-      /* =========================================================
-         FIX NAVBAR DESKTOP / LAPTOP NORMAL
-      ========================================================= */
-
-      .navbar-custom .container {
-         max-width: 1440px;
-         padding-left: 32px;
-         padding-right: 32px;
-      }
-
-      .nav-mobile-menu {
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-      }
-
-      .nav-link-custom {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        font-size: clamp(0.78rem, 0.86vw, 0.92rem);
-        white-space: nowrap;
-      }
-
-      .btn-reservar {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        padding: 10px 18px;
-        white-space: nowrap;
-      }
-
-      .brand-logo {
-        flex-shrink: 0;
-      }
-
-      @media (max-width: 1280px) {
-        .brand-logo {
-          font-size: 1.35rem;
-          gap: 10px;
-        }
-
-        .brand-logo .logo-mark {
-          width: 48px;
-          height: 48px;
-        }
-
-        .nav-link-custom {
-          margin-left: 12px;
-          font-size: 0.78rem;
-        }
-
-        .btn-reservar {
-          margin-left: 12px;
-          padding: 9px 15px;
-          font-size: 0.78rem;
-        }
-      }
-
-      /* En laptops pequeñas/tablets ya mejor usar menú hamburguesa */
-      @media (max-width: 1100px) {
-        .custom-toggler {
-          display: inline-flex;
-        }
-
-        .nav-mobile-menu {
-          position: absolute;
-          top: calc(100% + 12px);
-          left: 14px;
-          right: 14px;
-          padding: 20px;
-          border-radius: 30px;
-          background: rgba(19,7,13,.96);
-          backdrop-filter: blur(18px);
-          border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 24px 70px rgba(0,0,0,.35);
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .nav-mobile-menu .nav-link-custom {
-          margin: 0;
-          padding: 12px 14px;
-          border-radius: 16px;
-          font-size: 0.92rem;
-        }
-
-        .nav-mobile-menu .btn-reservar {
-          width: 100%;
-          margin: 10px 0 0;
-          text-align: center;
-          font-size: 0.92rem;
-        }
-      }
-
-      html,
-      body {
-        overscroll-behavior-y: none;
-      }
-
-      body {
-        overflow-anchor: none;
-      }
-
-      @supports (height: 100dvh) {
-        .hero {
-          min-height: 100dvh;
-        }
-
-        @media (max-width: 575px) {
-          .hero.home-hero {
-            min-height: 100dvh;
-          }
-        }
-      }
-
-  </style>
 </head>
-<body>
+
+<body class="page-ideas">
   <nav class="navbar-custom">
     <div class="container d-flex align-items-center justify-content-between">
       <a href="index.html#inicio" class="brand-logo">
@@ -712,7 +57,7 @@
       <i class="bi bi-basket"></i>
       <span>Carrito</span>
     </a>
-    
+
     <a href="ideas.html" class="active">
       <i class="bi bi-stars"></i>
       <span>Ideas</span>
@@ -724,7 +69,8 @@
       <section class="mb-5">
         <div class="eyebrow">Ideas con IA</div>
         <h1 class="hero-title">¿Tienes prisa? Arma tu ramo ideal con <span>inspiración inteligente.</span></h1>
-        <p class="hero-copy">Cuéntanos para qué evento lo necesitas, elige tus colores favoritos y simularemos una propuesta floral personalizada con nombre, estilo, precio estimado y opción para agregarla al carrito.</p>
+        <p class="hero-copy">Cuéntanos para qué evento lo necesitas, elige tus colores favoritos y simularemos una
+          propuesta floral personalizada con nombre, estilo, precio estimado y opción para agregarla al carrito.</p>
       </section>
 
       <div class="row g-4 align-items-start">
@@ -755,18 +101,30 @@
             <div class="mb-4">
               <label class="form-label">Selecciona varios colores favoritos</label>
               <div class="color-palette" id="colorPalette">
-                <button class="color-chip active" type="button" data-color="Rosa" data-hex="#f4a8bd"><span class="color-dot" style="background:#f4a8bd"></span>Rosa</button>
-                <button class="color-chip" type="button" data-color="Blanco" data-hex="#fff8ef"><span class="color-dot" style="background:#fff8ef"></span>Blanco</button>
-                <button class="color-chip" type="button" data-color="Rojo" data-hex="#b92f45"><span class="color-dot" style="background:#b92f45"></span>Rojo</button>
-                <button class="color-chip" type="button" data-color="Lavanda" data-hex="#b8a3d8"><span class="color-dot" style="background:#b8a3d8"></span>Lavanda</button>
-                <button class="color-chip" type="button" data-color="Amarillo" data-hex="#f3c95f"><span class="color-dot" style="background:#f3c95f"></span>Amarillo</button>
-                <button class="color-chip" type="button" data-color="Verde" data-hex="#7f9b6a"><span class="color-dot" style="background:#7f9b6a"></span>Verde</button>
-                <button class="color-chip" type="button" data-color="Naranja" data-hex="#e9905f"><span class="color-dot" style="background:#e9905f"></span>Naranja</button>
-                <button class="color-chip" type="button" data-color="Azul" data-hex="#86a9d8"><span class="color-dot" style="background:#86a9d8"></span>Azul</button>
-                <button class="color-chip" type="button" data-color="Dorado" data-hex="#d6af65"><span class="color-dot" style="background:#d6af65"></span>Dorado</button>
-                <button class="color-chip" type="button" data-color="Vino" data-hex="#6b1d35"><span class="color-dot" style="background:#6b1d35"></span>Vino</button>
-                <button class="color-chip" type="button" data-color="Durazno" data-hex="#f2b99d"><span class="color-dot" style="background:#f2b99d"></span>Durazno</button>
-                <button class="color-chip" type="button" data-color="Negro" data-hex="#171316"><span class="color-dot" style="background:#171316"></span>Negro</button>
+                <button class="color-chip active" type="button" data-color="Rosa" data-hex="#f4a8bd"><span
+                    class="color-dot" style="background:#f4a8bd"></span>Rosa</button>
+                <button class="color-chip" type="button" data-color="Blanco" data-hex="#fff8ef"><span class="color-dot"
+                    style="background:#fff8ef"></span>Blanco</button>
+                <button class="color-chip" type="button" data-color="Rojo" data-hex="#b92f45"><span class="color-dot"
+                    style="background:#b92f45"></span>Rojo</button>
+                <button class="color-chip" type="button" data-color="Lavanda" data-hex="#b8a3d8"><span class="color-dot"
+                    style="background:#b8a3d8"></span>Lavanda</button>
+                <button class="color-chip" type="button" data-color="Amarillo" data-hex="#f3c95f"><span
+                    class="color-dot" style="background:#f3c95f"></span>Amarillo</button>
+                <button class="color-chip" type="button" data-color="Verde" data-hex="#7f9b6a"><span class="color-dot"
+                    style="background:#7f9b6a"></span>Verde</button>
+                <button class="color-chip" type="button" data-color="Naranja" data-hex="#e9905f"><span class="color-dot"
+                    style="background:#e9905f"></span>Naranja</button>
+                <button class="color-chip" type="button" data-color="Azul" data-hex="#86a9d8"><span class="color-dot"
+                    style="background:#86a9d8"></span>Azul</button>
+                <button class="color-chip" type="button" data-color="Dorado" data-hex="#d6af65"><span class="color-dot"
+                    style="background:#d6af65"></span>Dorado</button>
+                <button class="color-chip" type="button" data-color="Vino" data-hex="#6b1d35"><span class="color-dot"
+                    style="background:#6b1d35"></span>Vino</button>
+                <button class="color-chip" type="button" data-color="Durazno" data-hex="#f2b99d"><span class="color-dot"
+                    style="background:#f2b99d"></span>Durazno</button>
+                <button class="color-chip" type="button" data-color="Negro" data-hex="#171316"><span class="color-dot"
+                    style="background:#171316"></span>Negro</button>
               </div>
             </div>
 
@@ -784,7 +142,8 @@
 
             <div class="mb-4">
               <label class="form-label">Cuéntanos sobre tu evento</label>
-              <textarea class="form-control" id="eventDescription" placeholder="Ej. Es para el cumpleaños de mi novia, le gustan los colores rosa y blanco, quiero algo romántico pero moderno, con una tarjeta especial..."></textarea>
+              <textarea class="form-control" id="eventDescription"
+                placeholder="Ej. Es para el cumpleaños de mi novia, le gustan los colores rosa y blanco, quiero algo romántico pero moderno, con una tarjeta especial..."></textarea>
             </div>
 
             <button class="btn-ai" type="button" id="generateIdeaBtn">
@@ -824,13 +183,16 @@
         <div class="col-lg-5">
           <aside class="glass-card result-card">
             <div class="result-image-wrap">
-              <img id="resultImage" src="https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=1000&q=85" alt="Ramo generado por IA">
+              <img id="resultImage"
+                src="https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=1000&q=85"
+                alt="Ramo generado por IA">
               <div class="result-badge">Propuesta IA</div>
             </div>
 
             <div class="eyebrow">Resultado simulado</div>
             <h2 class="result-name" id="resultName">Ramo Aurora Romántica</h2>
-            <p class="result-description" id="resultDescription">Un arreglo delicado en tonos rosa y crema, pensado para un detalle romántico, elegante y memorable.</p>
+            <p class="result-description" id="resultDescription">Un arreglo delicado en tonos rosa y crema, pensado para
+              un detalle romántico, elegante y memorable.</p>
 
             <div class="result-tags" id="resultTags">
               <span class="tag">Rosa</span>
@@ -1064,4 +426,5 @@
     renderGeneratedProduct();
   </script>
 </body>
+
 </html>

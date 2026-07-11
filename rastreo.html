@@ -1,1544 +1,526 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Rastrea tu pedido floral de Juan H Magno." />
-    <title>Rastrea tu pedido | Juan H Magno</title>
-    <link rel="icon" href="assets/img/icon/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-      :root {
-        --flor-dark: #13070d;
-        --flor-wine: #3b111d;
-        --flor-rose: #d98ca4;
-        --flor-blush: #f8dbe4;
-        --flor-gold: #d6af65;
-        --flor-cream: #fff8ef;
-        --flor-green: #637a55;
-        --season-accent: var(--flor-rose);
-        --season-accent-2: var(--flor-gold);
-        --season-soft: rgba(217, 140, 164, 0.18);
-        --season-soft-2: rgba(214, 175, 101, 0.12);
-        --season-particle: #d98ca4;
-        --season-bg-image: url('https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1800&q=85');
-        --season-gradient:
-          radial-gradient(circle at 25% 25%, var(--season-soft), transparent 32%),
-          radial-gradient(circle at 78% 38%, var(--season-soft-2), transparent 30%),
-          linear-gradient(135deg, #14070d 0%, #2d0d17 48%, #090507 100%);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rastrea tu pedido floral de Juan H Magno." />
+  <title>Rastrea tu pedido | Juan H Magno</title>
+  <link rel="icon" href="assets/img/icon/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
 
-      body.theme-spring {
-        --season-accent: #d98ca4;
-        --season-accent-2: #d6af65;
-        --season-soft: rgba(217, 140, 164, 0.18);
-        --season-soft-2: rgba(214, 175, 101, 0.12);
-        --season-particle: #d98ca4;
-        --season-bg-image: url('https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1800&q=85');
-      }
-      body.theme-summer {
-        --season-accent: #f0a765;
-        --season-accent-2: #ffd27a;
-        --season-soft: rgba(240, 167, 101, 0.18);
-        --season-soft-2: rgba(255, 210, 122, 0.14);
-        --season-particle: #f0a765;
-        --season-bg-image: url('https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=1800&q=85');
-      }
-      body.theme-autumn {
-        --season-accent: #c98268;
-        --season-accent-2: #b79a6c;
-        --season-soft: rgba(201, 130, 104, 0.18);
-        --season-soft-2: rgba(183, 154, 108, 0.14);
-        --season-particle: #c98268;
-        --season-bg-image: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1800&q=85');
-      }
-      body.theme-winter {
-        --season-accent: #86a9b8;
-        --season-accent-2: #d6c08a;
-        --season-soft: rgba(134, 169, 184, 0.20);
-        --season-soft-2: rgba(214, 192, 138, 0.12);
-        --season-particle: #b9d8e3;
-        --season-bg-image: url('https://images.unsplash.com/photo-1487530811176-3780de880c2d?auto=format&fit=crop&w=1800&q=85');
-      }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
 
-      * { box-sizing: border-box; }
-      html { scroll-behavior: auto; overflow-anchor: none; }
-      body {
-        margin: 0;
-        overflow-anchor: none;
-        font-family: 'Inter', sans-serif;
-        background: var(--flor-cream);
-        color: #27151b;
-        overflow-x: hidden;
-      }
-      a { text-decoration: none; }
-      h1, h2, h3, h4, .serif {
-        font-family: 'Playfair Display', serif;
-        font-weight: 800;
-        letter-spacing: -0.045em;
-      }
+<body class="theme-spring page-rastreo">
+  <div class="season-preview-panel" id="seasonPreviewPanel" aria-label="Previsualizar tema de temporada">
+    <button class="season-btn active" data-season="spring">Primavera</button>
+    <button class="season-btn" data-season="summer">Verano</button>
+    <button class="season-btn" data-season="autumn">Otoño</button>
+    <button class="season-btn" data-season="winter">Invierno</button>
+  </div>
 
-      .navbar-custom {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 80;
-        padding: 24px 0;
-        transition: 0.45s ease;
-        background: linear-gradient(to bottom, rgba(19, 7, 13, 0.84), rgba(19, 7, 13, 0.18));
-      }
-      .navbar-custom.scrolled {
-        padding: 15px 0;
-        background: rgba(19, 7, 13, 0.90);
-        backdrop-filter: blur(18px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      .brand-logo {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.7rem;
-        font-weight: 800;
-        letter-spacing: 0.03em;
-        color: var(--flor-cream);
-        display: inline-flex;
-        align-items: center;
-        gap: 14px;
-        line-height: 1;
-        text-shadow: 0 2px 18px rgba(0,0,0,.22);
-      }
-      .brand-logo:hover { color: var(--flor-cream); }
-      .brand-logo span:last-child {
-        background: linear-gradient(135deg, #fff0c8, var(--season-accent-2));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      .logo-mark {
-        width: 58px;
-        height: 58px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.14);
-        display: grid;
-        place-items: center;
-        padding: 6px;
-        box-shadow: 0 10px 30px rgba(0,0,0,.18);
-      }
-      .logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
-      .nav-link-custom {
-        color: rgba(255, 248, 239, 0.82);
-        font-size: 0.92rem;
-        margin-left: 22px;
-        transition: 0.3s ease;
-        font-weight: 700;
-      }
-      .nav-link-custom:hover, .nav-link-custom.active { color: var(--flor-blush); }
-      .btn-reservar {
-        border: 1px solid color-mix(in srgb, var(--season-accent-2) 58%, transparent);
-        color: var(--flor-cream);
-        border-radius: 999px;
-        padding: 10px 18px;
-        font-size: 0.88rem;
-        margin-left: 22px;
-        background: color-mix(in srgb, var(--season-accent-2) 10%, transparent);
-        transition: 0.35s ease;
-        font-weight: 800;
-      }
-      .btn-reservar:hover { background: var(--season-accent-2); color: #1a0b10; transform: translateY(-2px); }
-      .custom-toggler {
-        width: 52px;
-        height: 52px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(255,255,255,.10);
-        color: #fff8ef;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.9rem;
-        box-shadow: 0 12px 32px rgba(0,0,0,.24);
-      }
+  <nav class="navbar-custom" id="navbar">
+    <div class="container d-flex align-items-center justify-content-between">
+      <a href="index.html#inicio" class="brand-logo">
+        <span class="logo-mark">
+          <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
+        </span>
+        Juan H <span>Magno</span>
+      </a>
 
-      .season-preview-panel {
-        position: fixed;
-        right: 22px;
-        top: 92px;
-        z-index: 90;
-        display: flex;
-        gap: 8px;
-        padding: 8px;
-        border-radius: 999px;
-        background: rgba(19, 7, 13, .48);
-        backdrop-filter: blur(18px);
-        border: 1px solid rgba(255,255,255,.14);
-        box-shadow: 0 20px 60px rgba(0,0,0,.28);
-      }
-      .season-btn {
-        border: 1px solid rgba(255,255,255,.15);
-        border-radius: 999px;
-        padding: 8px 12px;
-        font-weight: 850;
-        background: rgba(255,255,255,.07);
-        color: rgba(255,248,239,.85);
-        transition: transform .25s ease, background .35s ease, color .35s ease, box-shadow .35s ease;
-        font-size: .78rem;
-      }
-      .season-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.13); }
-      .season-btn.active {
-        background: linear-gradient(135deg, var(--season-accent), var(--season-accent-2));
-        color: #1a0b10;
-        border-color: transparent;
-        box-shadow: 0 14px 36px color-mix(in srgb, var(--season-accent) 28%, transparent);
-      }
+      <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarMobile" aria-controls="navbarMobile" aria-expanded="false" aria-label="Abrir menú">
+        <i class="bi bi-list"></i>
+      </button>
 
-      .tracking-hero {
-        min-height: 100vh;
-        position: relative;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        background: var(--season-gradient);
-        color: var(--flor-cream);
-        padding: 150px 0 80px;
-      }
-      .tracking-hero::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(90deg, rgba(19,7,13,.88), rgba(19,7,13,.62), rgba(19,7,13,.48)),
-          var(--season-bg-image);
-        background-size: cover;
-        background-position: center;
-        opacity: .68;
-        transform: scale(1.03);
-      }
-      .tracking-hero::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-          radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--season-accent) 24%, transparent), transparent 30%),
-          radial-gradient(circle at 82% 76%, color-mix(in srgb, var(--season-accent-2) 20%, transparent), transparent 28%),
-          radial-gradient(circle at center, transparent 0%, rgba(19, 7, 13, 0.20) 38%, rgba(19, 7, 13, 0.92) 100%);
-        pointer-events: none;
-      }
-      .tracking-hero .container { position: relative; z-index: 3; }
-      .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 17px;
-        border-radius: 999px;
-        color: rgba(255, 248, 239, 0.88);
-        background: rgba(255, 255, 255, 0.09);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(16px);
-        font-size: 0.82rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-weight: 800;
-      }
-      .hero-badge i { color: var(--season-accent-2); }
-      .tracking-title {
-        font-size: clamp(3.8rem, 7vw, 7.2rem);
-        line-height: 1.05;
-        letter-spacing: -0.02em;
-        margin: 26px 0 28px;
-        max-width: 760px;
-      }
-      .tracking-title span {
-        display: inline-block;
-        color: transparent;
-        background: linear-gradient(100deg, #fff6dc, var(--season-accent-2), var(--season-accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-      }
-      .tracking-description {
-        max-width: 650px;
-        color: rgba(255,248,239,.78);
-        font-size: 1.08rem;
-        line-height: 1.85;
-        margin-bottom: 30px;
-      }
-      .btn-main, .btn-soft {
-        border-radius: 999px;
-        padding: 14px 24px;
-        transition: 0.35s ease;
-        font-weight: 850;
-        border: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
-      .btn-main {
-        color: #1a0b10;
-        background: linear-gradient(135deg, #fff3cf, var(--season-accent-2));
-        box-shadow: 0 18px 45px color-mix(in srgb, var(--season-accent-2) 22%, transparent);
-      }
-      .btn-main:hover { transform: translateY(-4px); color: #1a0b10; }
-      .btn-soft {
-        color: var(--flor-cream);
-        border: 1px solid rgba(255,255,255,.18);
-        background: rgba(255,255,255,.08);
-        backdrop-filter: blur(12px);
-      }
-      .btn-soft:hover { transform: translateY(-4px); color: var(--flor-cream); background: rgba(255,255,255,.15); }
-
-      .hero-actions-tracking {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 14px;
-        flex-wrap: nowrap;
-      }
-
-      .hero-actions-tracking a {
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-
-      .tracking-card {
-        border-radius: 38px;
-        padding: clamp(24px, 4vw, 36px);
-        background: rgba(255,250,245,.92);
-        color: #27151b;
-        box-shadow: 0 30px 90px rgba(0,0,0,.28);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,.35);
-        position: relative;
-        overflow: hidden;
-      }
-      .tracking-card::before {
-        content: '';
-        position: absolute;
-        width: 190px;
-        height: 190px;
-        border-radius: 50%;
-        right: -70px;
-        top: -70px;
-        background: radial-gradient(circle, color-mix(in srgb, var(--season-accent) 22%, transparent), transparent 70%);
-      }
-      .tracking-card h2 {
-        font-size: clamp(2.1rem, 3vw, 3rem);
-        color: #261017;
-        margin-bottom: 12px;
-      }
-      .tracking-card p { color: rgba(39,21,27,.70); line-height: 1.75; }
-      .tracking-form {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 12px;
-        margin: 24px 0 16px;
-      }
-      .tracking-input {
-        border: 1px solid rgba(59,17,29,.10);
-        border-radius: 999px;
-        padding: 15px 18px;
-        background: #fff;
-        outline: none;
-        color: #27151b;
-        font-weight: 700;
-      }
-      .tracking-input:focus { box-shadow: 0 0 0 4px color-mix(in srgb, var(--season-accent) 18%, transparent); border-color: var(--season-accent); }
-      .sample-code {
-        display: inline-flex;
-        gap: 8px;
-        align-items: center;
-        color: rgba(39,21,27,.56);
-        font-size: .9rem;
-        font-weight: 700;
-      }
-      .sample-code button {
-        border: 0;
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--season-accent) 13%, white 87%);
-        color: #27151b;
-        padding: 6px 10px;
-        font-weight: 850;
-      }
-
-      .section-padding { padding: 105px 0; }
-      .soft-section {
-        background:
-          radial-gradient(circle at 80% 15%, color-mix(in srgb, var(--season-accent) 14%, transparent), transparent 28%),
-          linear-gradient(180deg, #fff8ef 0%, #f8ecdf 100%);
-      }
-      .dark-section {
-        color: var(--flor-cream);
-        background:
-          radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--season-accent) 16%, transparent), transparent 30%),
-          linear-gradient(135deg, #17080f 0%, #2b0e17 55%, #0b0507 100%);
-      }
-      .eyebrow {
-        color: var(--season-accent-2);
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.78rem;
-        font-weight: 900;
-        margin-bottom: 14px;
-      }
-      .section-title {
-        font-size: clamp(2.35rem, 5vw, 5rem);
-        line-height: .98;
-        color: #261017;
-      }
-      .dark-section .section-title { color: var(--flor-cream); }
-      .text-muted-custom { color: rgba(39,21,27,.72); font-size: 1.05rem; line-height: 1.9; }
-      .dark-section .text-muted-custom { color: rgba(255,248,239,.72); }
-      .reveal { opacity: 0; transform: translateY(34px); transition: opacity .8s ease, transform .8s ease; }
-      .reveal.visible { opacity: 1; transform: translateY(0); }
-
-      .status-shell {
-        border-radius: 42px;
-        background: #fff;
-        box-shadow: 0 30px 90px rgba(59,17,29,.12);
-        border: 1px solid rgba(59,17,29,.06);
-        overflow: hidden;
-      }
-      .status-header {
-        padding: 28px;
-        background:
-          linear-gradient(135deg, color-mix(in srgb, var(--season-accent) 16%, white 84%), #fff);
-        border-bottom: 1px solid rgba(59,17,29,.06);
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .order-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 13px;
-        border-radius: 999px;
-        background: rgba(255,255,255,.75);
-        color: #27151b;
-        font-weight: 900;
-        border: 1px solid rgba(59,17,29,.08);
-      }
-      .status-body { padding: 32px; }
-      .progress-track {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 10px;
-        position: relative;
-        margin: 8px 0 34px;
-      }
-      .progress-step {
-        position: relative;
-        text-align: center;
-        z-index: 2;
-      }
-      .step-icon {
-        width: 56px;
-        height: 56px;
-        margin: 0 auto 12px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background: #f4eadf;
-        color: rgba(39,21,27,.42);
-        font-size: 1.2rem;
-        transition: .35s ease;
-        border: 1px solid rgba(59,17,29,.08);
-      }
-      .progress-step span { display: block; font-size: .82rem; font-weight: 850; color: rgba(39,21,27,.48); line-height: 1.25; }
-      .progress-step.done .step-icon,
-      .progress-step.active .step-icon {
-        background: linear-gradient(135deg, var(--season-accent), var(--season-accent-2));
-        color: #1a0b10;
-        box-shadow: 0 14px 36px color-mix(in srgb, var(--season-accent) 26%, transparent);
-      }
-      .progress-step.done span,
-      .progress-step.active span { color: #27151b; }
-      .progress-step.active .step-icon { transform: translateY(-4px) scale(1.05); }
-      .progress-line {
-        position: absolute;
-        top: 28px;
-        left: 10%;
-        right: 10%;
-        height: 2px;
-        background: #eadfd3;
-        z-index: 1;
-      }
-      .progress-line-fill {
-        height: 100%;
-        width: 40%;
-        background: linear-gradient(90deg, var(--season-accent), var(--season-accent-2));
-        transition: width .6s ease;
-      }
-      .status-message {
-        border-radius: 30px;
-        padding: 24px;
-        background: linear-gradient(135deg, #fff, color-mix(in srgb, var(--season-accent) 10%, white 90%));
-        border: 1px solid color-mix(in srgb, var(--season-accent) 18%, transparent);
-      }
-      .status-message h3 { font-size: 2rem; color: #261017; }
-      .status-meta {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin-top: 20px;
-      }
-      .meta-card {
-        border-radius: 22px;
-        padding: 16px;
-        background: rgba(255,255,255,.72);
-        border: 1px solid rgba(59,17,29,.07);
-      }
-      .meta-card small { display: block; color: rgba(39,21,27,.52); font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
-      .meta-card strong { color: #27151b; }
-
-      .info-card {
-        height: 100%;
-        border-radius: 32px;
-        padding: 30px;
-        background: rgba(255,255,255,.78);
-        backdrop-filter: blur(14px);
-        box-shadow: 0 30px 80px rgba(59,17,29,.10);
-        border: 1px solid rgba(59,17,29,.06);
-        transition: .35s ease;
-      }
-      .info-card:hover { transform: translateY(-7px); box-shadow: 0 38px 90px rgba(59,17,29,.16); }
-      .mini-icon {
-        width: 58px;
-        height: 58px;
-        display: grid;
-        place-items: center;
-        border-radius: 50%;
-        background: color-mix(in srgb, var(--season-accent-2) 18%, white 82%);
-        color: color-mix(in srgb, var(--season-accent-2) 75%, #3b111d 25%);
-        font-size: 1.55rem;
-        margin-bottom: 22px;
-      }
-      .info-card h3 { font-size: 1.8rem; color: #2b1119; }
-
-      .cta-card {
-        border-radius: 48px;
-        padding: clamp(32px, 6vw, 76px);
-        background:
-          linear-gradient(rgba(19,7,13,.72), rgba(19,7,13,.80)),
-          var(--season-bg-image);
-        background-size: cover;
-        background-position: center;
-        color: #fff;
-        overflow: hidden;
-        position: relative;
-        box-shadow: 0 30px 90px rgba(0,0,0,.22);
-      }
-      .cta-card h2 { color: #fff; }
-      .cta-card p { color: rgba(255,248,239,.76); }
-
-
-      /* ============================= */
-      /* MAPA DE RASTREO EN TIEMPO REAL */
-      /* ============================= */
-      .live-map-section {
-        background:
-          radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--season-accent) 14%, transparent), transparent 26%),
-          radial-gradient(circle at 88% 20%, color-mix(in srgb, var(--season-accent-2) 14%, transparent), transparent 28%),
-          linear-gradient(180deg, #fff8ef 0%, #f6eadf 100%);
-      }
-      .live-map-shell {
-        border-radius: 48px;
-        overflow: hidden;
-        background: rgba(255,255,255,.72);
-        backdrop-filter: blur(18px);
-        border: 1px solid rgba(59,17,29,.08);
-        box-shadow: 0 34px 100px rgba(59,17,29,.14);
-      }
-      .live-map-header {
-        padding: clamp(28px, 5vw, 48px);
-        display: grid;
-        grid-template-columns: minmax(0, .92fr) minmax(320px, .55fr);
-        gap: 28px;
-        align-items: end;
-        background:
-          linear-gradient(135deg, color-mix(in srgb, var(--season-accent) 13%, white 87%), rgba(255,255,255,.62));
-        border-bottom: 1px solid rgba(59,17,29,.07);
-      }
-      .live-map-header p { margin: 0; }
-      .live-map-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(255,255,255,.74);
-        color: #27151b;
-        border: 1px solid rgba(59,17,29,.08);
-        font-weight: 900;
-        box-shadow: 0 14px 36px rgba(59,17,29,.06);
-      }
-      .live-map-area {
-        position: relative;
-        min-height: 570px;
-        overflow: hidden;
-        background:
-          linear-gradient(135deg, rgba(255,248,239,.58), rgba(248,219,228,.34)),
-          radial-gradient(circle at 18% 76%, rgba(217,140,164,.18), transparent 28%),
-          radial-gradient(circle at 80% 26%, rgba(214,175,101,.18), transparent 30%),
-          #efe2d5;
-        isolation: isolate;
-      }
-      .live-map-area::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image:
-          linear-gradient(rgba(59,17,29,.045) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(59,17,29,.045) 1px, transparent 1px);
-        background-size: 54px 54px;
-        mask-image: radial-gradient(circle at center, #000 0%, #000 58%, transparent 100%);
-        opacity: .9;
-        z-index: 0;
-      }
-      .map-road {
-        position: absolute;
-        border-radius: 999px;
-        background: rgba(59,17,29,.08);
-        z-index: 1;
-      }
-      .map-road.road-1 { width: 108%; height: 18px; left: -4%; top: 42%; transform: rotate(-8deg); }
-      .map-road.road-2 { width: 96%; height: 16px; left: 5%; top: 65%; transform: rotate(11deg); }
-      .map-road.road-3 { width: 16px; height: 105%; left: 31%; top: -8%; transform: rotate(10deg); }
-      .map-road.road-4 { width: 14px; height: 90%; right: 22%; top: 2%; transform: rotate(-13deg); }
-      .map-pin {
-        position: absolute;
-        z-index: 5;
-        width: 74px;
-        height: 74px;
-        display: grid;
-        place-items: center;
-        border-radius: 24px;
-        background: rgba(255,255,255,.82);
-        border: 1px solid rgba(59,17,29,.08);
-        box-shadow: 0 22px 60px rgba(59,17,29,.16);
-        color: #27151b;
-      }
-      .map-pin i { font-size: 1.8rem; color: var(--season-accent); }
-      .map-pin small {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: rgba(19,7,13,.82);
-        color: var(--flor-cream);
-        font-size: .72rem;
-        font-weight: 850;
-        backdrop-filter: blur(12px);
-      }
-      .map-pin.origin { left: 9%; top: 18%; }
-      .map-pin.destination { right: 9%; bottom: 16%; }
-      .route-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 3;
-        pointer-events: none;
-      }
-      .route-shadow {
-        fill: none;
-        stroke: rgba(59,17,29,.12);
-        stroke-width: 18;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .route-line {
-        fill: none;
-        stroke: url(#routeGradient);
-        stroke-width: 8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 18 18;
-        animation: routeDash 1.15s linear infinite;
-      }
-      @keyframes routeDash { to { stroke-dashoffset: -36; } }
-      .delivery-cart {
-        position: absolute;
-        z-index: 8;
-        left: 0;
-        top: 0;
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        color: #1a0b10;
-        background: linear-gradient(135deg, #fff3cf, var(--season-accent-2));
-        box-shadow: 0 20px 56px color-mix(in srgb, var(--season-accent-2) 35%, transparent);
-        offset-path: path('M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370');
-        offset-rotate: auto;
-        animation: cartRoute 9s cubic-bezier(.45,0,.25,1) infinite;
-      }
-      .delivery-cart::before {
-        content: '';
-        position: absolute;
-        inset: -14px;
-        border-radius: 50%;
-        border: 1px solid color-mix(in srgb, var(--season-accent-2) 42%, transparent);
-        animation: cartPulse 1.8s ease-in-out infinite;
-      }
-      .delivery-cart i { font-size: 1.85rem; }
-      @keyframes cartRoute {
-        0% { offset-distance: 0%; transform: scale(.98); }
-        48% { transform: scale(1.05); }
-        100% { offset-distance: 100%; transform: scale(.98); }
-      }
-      @keyframes cartPulse {
-        0%, 100% { opacity: .3; transform: scale(.92); }
-        50% { opacity: 1; transform: scale(1.08); }
-      }
-      .map-status-card {
-        position: absolute;
-        z-index: 10;
-        left: clamp(18px, 4vw, 42px);
-        bottom: clamp(18px, 4vw, 42px);
-        width: min(430px, calc(100% - 36px));
-        border-radius: 32px;
-        padding: 24px;
-        background: rgba(255,255,255,.82);
-        border: 1px solid rgba(59,17,29,.08);
-        backdrop-filter: blur(20px);
-        box-shadow: 0 26px 80px rgba(59,17,29,.16);
-      }
-      .map-status-card h3 { color: #261017; font-size: 2rem; }
-      .map-status-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 18px;
-      }
-      .map-status-mini {
-        border-radius: 18px;
-        padding: 12px;
-        background: rgba(255,248,239,.78);
-        border: 1px solid rgba(59,17,29,.06);
-      }
-      .map-status-mini small {
-        display: block;
-        color: rgba(39,21,27,.52);
-        font-size: .64rem;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        font-weight: 900;
-      }
-      .map-status-mini strong { color: #27151b; font-size: .92rem; }
-      .map-note-card {
-        position: absolute;
-        z-index: 9;
-        right: clamp(18px, 4vw, 42px);
-        top: clamp(18px, 4vw, 42px);
-        width: min(360px, calc(100% - 36px));
-        border-radius: 28px;
-        padding: 20px;
-        background: rgba(19,7,13,.78);
-        color: var(--flor-cream);
-        backdrop-filter: blur(18px);
-        border: 1px solid rgba(255,255,255,.12);
-        box-shadow: 0 24px 70px rgba(0,0,0,.18);
-      }
-      .map-note-card p { color: rgba(255,248,239,.72); margin: 0; line-height: 1.65; }
-      .map-note-card strong { color: var(--flor-cream); }
-
-
-      .cart-float, .whatsapp-float {
-        position: fixed;
-        right: 22px;
-        z-index: 70;
-        border-radius: 999px;
-        color: #fff;
-        transition: .25s ease;
-      }
-      .cart-float {
-        bottom: 96px;
-        min-width: 62px;
-        height: 62px;
-        padding: 0 18px;
-        display: inline-flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        background: var(--season-accent);
-        border: 0;
-        font-size: 1.25rem;
-        font-weight: 900;
-        box-shadow: 0 18px 45px color-mix(in srgb, var(--season-accent) 35%, transparent);
-      }
-      .whatsapp-float {
-        bottom: 22px;
-        width: 62px;
-        height: 62px;
-        display: grid;
-        place-items: center;
-        background: #25D366;
-        font-size: 1.9rem;
-        box-shadow: 0 18px 45px rgba(37,211,102,.42);
-      }
-      .cart-float:hover, .whatsapp-float:hover { color: #fff; transform: translateY(-4px) scale(1.03); }
-
-      .mobile-app-nav { display: none; }
-      footer {
-        background: #13070d;
-        color: #fffaf5;
-        padding: 58px 0 28px;
-        border-top: 1px solid rgba(255,255,255,.08);
-      }
-      footer a { color: #fffaf5; }
-
-      @media (max-width: 991px) {
-        .custom-toggler { display: inline-flex; }
-        .nav-mobile-menu {
-          position: absolute;
-          top: calc(100% + 12px);
-          left: 14px;
-          right: 14px;
-          padding: 20px;
-          border-radius: 30px;
-          background: rgba(19,7,13,.96);
-          backdrop-filter: blur(18px);
-          border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 24px 70px rgba(0,0,0,.35);
-          flex-direction: column;
-          align-items: stretch;
-        }
-        .nav-mobile-menu .nav-link-custom { margin: 0; padding: 12px 14px; border-radius: 16px; }
-        .nav-mobile-menu .btn-reservar { width: 100%; margin-left: 0; margin-top: 10px; text-align: center; }
-        .tracking-hero { padding-top: 130px; }
-        .tracking-card { margin-top: 34px; }
-        .status-meta { grid-template-columns: 1fr; }
-      }
-
-      @media (max-width: 575px) {
-        .hero-actions-tracking {
-          flex-direction: column;
-          align-items: stretch;
-          gap: 12px;
-        }
-
-        .hero-actions-tracking a {
-          width: 100%;
-        }
-        body { padding-bottom: 92px; }
-        .navbar-custom {
-          padding: 18px 0;
-          background: rgba(19,7,13,.94);
-          backdrop-filter: blur(18px);
-          border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-        .brand-logo { font-size: 1.45rem; gap: 10px; }
-        .logo-mark { width: 54px; height: 54px; }
-        .custom-toggler, .nav-mobile-menu { display: none !important; }
-        .tracking-hero { min-height: auto; padding: 118px 0 48px; }
-        .tracking-title { font-size: clamp(3.5rem, 17vw, 4.8rem); max-width: 360px; }
-        .tracking-description { font-size: .98rem; }
-        .tracking-form { grid-template-columns: 1fr; }
-        .tracking-input, .tracking-form .btn-main { width: 100%; }
-        .season-preview-panel {
-          position: relative;
-          left: auto;
-          right: auto;
-          top: auto;
-          bottom: auto;
-          margin: 18px auto 0;
-          width: 100%;
-          overflow-x: auto;
-          justify-content: flex-start;
-          border-radius: 26px;
-          z-index: 20;
-        }
-        .season-preview-panel::-webkit-scrollbar { display: none; }
-        .season-btn { flex: 0 0 auto; padding: 10px 15px; }
-        .section-padding { padding: 72px 0; }
-        .progress-track { grid-template-columns: 1fr; gap: 18px; }
-        .progress-line { display: none; }
-        .progress-step { display: grid; grid-template-columns: 56px 1fr; text-align: left; align-items: center; gap: 12px; }
-        .progress-step .step-icon { margin: 0; }
-        .status-body, .status-header { padding: 24px; }
-        .status-message h3 { font-size: 1.65rem; }
-        .cart-float, .whatsapp-float { display: none; }
-        .mobile-app-nav {
-          position: fixed;
-          left: 14px;
-          right: 14px;
-          bottom: 14px;
-          z-index: 3000;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 6px;
-          padding: 10px;
-          border-radius: 28px;
-          background: rgba(19,7,13,.94);
-          border: 1px solid rgba(255,255,255,.12);
-          backdrop-filter: blur(20px);
-          box-shadow: 0 24px 70px rgba(0,0,0,.38);
-        }
-        .mobile-app-nav a {
-          min-height: 54px;
-          border-radius: 20px;
-          color: rgba(255,248,239,.72);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          font-size: .66rem;
-          font-weight: 750;
-          padding: 0;
-        }
-        .mobile-app-nav i { font-size: 1.25rem; }
-        .mobile-app-nav a.active, .mobile-app-nav a:hover {
-          color: #1a0b10;
-          background: linear-gradient(135deg, #fff3cf, var(--flor-gold, #d6af65));
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-          animation-duration: .001ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: .001ms !important;
-          scroll-behavior: auto !important;
-        }
-      }
-
-      @media (max-width: 991px) {
-        .live-map-header { grid-template-columns: 1fr; }
-        .live-map-area { min-height: 680px; }
-        .map-note-card { top: 18px; left: 18px; right: 18px; width: auto; }
-        .map-status-card { left: 18px; right: 18px; width: auto; }
-        .map-pin.origin { left: 8%; top: 28%; }
-        .map-pin.destination { right: 8%; bottom: 26%; }
-        .delivery-cart {
-          offset-path: path('M 70 230 C 180 185, 285 280, 370 310 S 570 305, 650 430 S 735 520, 820 470');
-        }
-      }
-      @media (max-width: 575px) {
-        .live-map-shell { border-radius: 34px; }
-        .live-map-header { padding: 28px; }
-        .live-map-area { min-height: 720px; }
-        .map-pin { width: 58px; height: 58px; border-radius: 20px; }
-        .map-pin i { font-size: 1.45rem; }
-        .delivery-cart { width: 58px; height: 58px; }
-        .delivery-cart i { font-size: 1.45rem; }
-        .map-status-grid { grid-template-columns: 1fr; }
-        .map-status-card h3 { font-size: 1.65rem; }
-      }
-
-      
-      /* =========================================================
-         FIX NAVBAR DESKTOP / LAPTOP NORMAL
-      ========================================================= */
-
-      .navbar-custom .container {
-         max-width: 1440px;
-         padding-left: 32px;
-         padding-right: 32px;
-      }
-
-      .nav-mobile-menu {
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-      }
-
-      .nav-link-custom {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        font-size: clamp(0.78rem, 0.86vw, 0.92rem);
-        white-space: nowrap;
-      }
-
-      .btn-reservar {
-        margin-left: clamp(10px, 1.15vw, 22px);
-        padding: 10px 18px;
-        white-space: nowrap;
-      }
-
-      .brand-logo {
-        flex-shrink: 0;
-      }
-
-      @media (max-width: 1280px) {
-        .brand-logo {
-          font-size: 1.35rem;
-          gap: 10px;
-        }
-
-        .brand-logo .logo-mark {
-          width: 48px;
-          height: 48px;
-        }
-
-        .nav-link-custom {
-          margin-left: 12px;
-          font-size: 0.78rem;
-        }
-
-        .btn-reservar {
-          margin-left: 12px;
-          padding: 9px 15px;
-          font-size: 0.78rem;
-        }
-      }
-
-      /* En laptops pequeñas/tablets ya mejor usar menú hamburguesa */
-      @media (max-width: 1100px) {
-        .custom-toggler {
-          display: inline-flex;
-        }
-
-        .nav-mobile-menu {
-          position: absolute;
-          top: calc(100% + 12px);
-          left: 14px;
-          right: 14px;
-          padding: 20px;
-          border-radius: 30px;
-          background: rgba(19,7,13,.96);
-          backdrop-filter: blur(18px);
-          border: 1px solid rgba(255,255,255,.12);
-          box-shadow: 0 24px 70px rgba(0,0,0,.35);
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .nav-mobile-menu .nav-link-custom {
-          margin: 0;
-          padding: 12px 14px;
-          border-radius: 16px;
-          font-size: 0.92rem;
-        }
-
-        .nav-mobile-menu .btn-reservar {
-          width: 100%;
-          margin: 10px 0 0;
-          text-align: center;
-          font-size: 0.92rem;
-        }
-      }
-
-      html,
-      body {
-        overscroll-behavior-y: none;
-      }
-
-      body {
-        overflow-anchor: none;
-      }
-
-      @supports (height: 100dvh) {
-        .hero {
-          min-height: 100dvh;
-        }
-
-        @media (max-width: 575px) {
-          .hero.home-hero {
-            min-height: 100dvh;
-          }
-        }
-      }
-
-
-    </style>
-  </head>
-
-  <body class="theme-spring">
-    <div class="season-preview-panel" id="seasonPreviewPanel" aria-label="Previsualizar tema de temporada">
-      <button class="season-btn active" data-season="spring">Primavera</button>
-      <button class="season-btn" data-season="summer">Verano</button>
-      <button class="season-btn" data-season="autumn">Otoño</button>
-      <button class="season-btn" data-season="winter">Invierno</button>
+      <div class="collapse nav-mobile-menu d-lg-flex align-items-lg-center" id="navbarMobile">
+        <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
+        <a href="index.html#momentos" class="nav-link-custom">Momentos</a>
+        <a href="index.html#servicios" class="nav-link-custom">Servicios</a>
+        <a href="catalogo.html" class="nav-link-custom">Catálogo</a>
+        <a href="index.html#novias" class="nav-link-custom">Novias</a>
+        <a href="rastreo.html" class="nav-link-custom active">Rastrea tu pedido</a>
+        <a href="index.html#nosotros" class="nav-link-custom">Quiénes somos</a>
+        <a href="index.html#contacto" class="btn-reservar">Ordenar flores</a>
+      </div>
     </div>
+  </nav>
 
-    <nav class="navbar-custom" id="navbar">
-      <div class="container d-flex align-items-center justify-content-between">
-        <a href="index.html#inicio" class="brand-logo">
-          <span class="logo-mark">
-            <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
-          </span>
-          Juan H <span>Magno</span>
-        </a>
+  <nav class="mobile-app-nav" aria-label="Navegación móvil">
+    <a href="index.html#inicio">
+      <i class="bi bi-house-heart"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="catalogo.html#productos">
+      <i class="bi bi-bag-heart"></i>
+      <span>Arreglos</span>
+    </a>
+    <a href="rastreo.html" class="active">
+      <i class="bi bi-truck"></i>
+      <span>Rastrear</span>
+    </a>
+    <a href="carrito.html">
+      <i class="bi bi-basket"></i>
+      <span>Carrito</span>
+    </a>
+  </nav>
 
-        <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMobile" aria-controls="navbarMobile" aria-expanded="false" aria-label="Abrir menú">
-          <i class="bi bi-list"></i>
-        </button>
+  <header class="tracking-hero" id="inicio">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <div class="hero-badge">
+            <i class="bi bi-truck"></i>
+            Seguimiento de pedidos
+          </div>
+          <h1 class="tracking-title">Rastrea tu <span>pedido floral.</span></h1>
+          <p class="tracking-description">
+            Consulta el avance de tu arreglo, desde que recibimos tu pedido hasta que está listo para entrega. Una
+            experiencia clara, cálida y pensada para que sepas en qué etapa va tu detalle floral.
+          </p>
+          <div class="hero-actions-tracking">
+            <a href="#consulta" class="btn-main">
+              <i class="bi bi-search-heart"></i> Consultar pedido
+            </a>
 
-        <div class="collapse nav-mobile-menu d-lg-flex align-items-lg-center" id="navbarMobile">
-          <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
-          <a href="index.html#momentos" class="nav-link-custom">Momentos</a>
-          <a href="index.html#servicios" class="nav-link-custom">Servicios</a>
-          <a href="catalogo.html" class="nav-link-custom">Catálogo</a>
-          <a href="index.html#novias" class="nav-link-custom">Novias</a>
-          <a href="rastreo.html" class="nav-link-custom active">Rastrea tu pedido</a>
-          <a href="index.html#nosotros" class="nav-link-custom">Quiénes somos</a>
-          <a href="index.html#contacto" class="btn-reservar">Ordenar flores</a>
+            <a href="index.html#contacto" class="btn-soft">
+              <i class="bi bi-whatsapp"></i> Ayuda por WhatsApp
+            </a>
+
+            <a href="#mapa-tiempo-real" class="btn-soft">
+              <i class="bi bi-geo-alt"></i> Ver mapa demo
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-6" id="consulta">
+          <div class="tracking-card">
+            <div class="eyebrow">Consulta rápida</div>
+            <h2>Ingresa tu número de pedido</h2>
+            <p>
+              Por ahora esta pantalla funciona como una vista preparada para el rastreo. Cuando conectemos la base de
+              datos, cada cliente podrá consultar el estado real de su pedido.
+            </p>
+
+            <form class="tracking-form" id="trackingForm">
+              <input class="tracking-input" id="trackingInput" type="text" placeholder="Ej. JHM-0001"
+                aria-label="Número de pedido" />
+              <button class="btn-main" type="submit">Rastrear</button>
+            </form>
+
+            <div class="sample-code">
+              Prueba con:
+              <button type="button" data-code="JHM-0001">JHM-0001</button>
+              <button type="button" data-code="JHM-0002">JHM-0002</button>
+            </div>
+          </div>
         </div>
       </div>
-    </nav>
+    </div>
+  </header>
 
-    <nav class="mobile-app-nav" aria-label="Navegación móvil">
-      <a href="index.html#inicio">
-        <i class="bi bi-house-heart"></i>
-        <span>Inicio</span>
-      </a>
-      <a href="catalogo.html#productos">
-        <i class="bi bi-bag-heart"></i>
-        <span>Arreglos</span>
-      </a>
-      <a href="rastreo.html" class="active">
-        <i class="bi bi-truck"></i>
-        <span>Rastrear</span>
-      </a>
-      <a href="carrito.html">
-        <i class="bi bi-basket"></i>
-        <span>Carrito</span>
-      </a>
-    </nav>
-
-    <header class="tracking-hero" id="inicio">
+  <main>
+    <section class="section-padding soft-section" id="estado">
       <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6">
-            <div class="hero-badge">
-              <i class="bi bi-truck"></i>
-              Seguimiento de pedidos
+        <div class="text-center mb-5 reveal">
+          <div class="eyebrow">Estado del pedido</div>
+          <h2 class="section-title">Tu arreglo, paso a paso.</h2>
+          <p class="text-muted-custom mx-auto" style="max-width:760px;">
+            Esta sección está lista para conectarse más adelante con pedidos reales. Mientras tanto, muestra una
+            experiencia visual elegante para explicar el avance de cada entrega.
+          </p>
+        </div>
+
+        <div class="status-shell reveal" id="trackingResult">
+          <div class="status-header">
+            <div>
+              <div class="eyebrow mb-2">Pedido consultado</div>
+              <h3 class="serif mb-0" id="orderTitle" style="font-size:2.25rem; color:#261017;">JHM-0001</h3>
             </div>
-            <h1 class="tracking-title">Rastrea tu <span>pedido floral.</span></h1>
-            <p class="tracking-description">
-              Consulta el avance de tu arreglo, desde que recibimos tu pedido hasta que está listo para entrega. Una experiencia clara, cálida y pensada para que sepas en qué etapa va tu detalle floral.
-            </p>
-            <div class="hero-actions-tracking">
-              <a href="#consulta" class="btn-main">
-                <i class="bi bi-search-heart"></i> Consultar pedido
-              </a>
-
-              <a href="index.html#contacto" class="btn-soft">
-                <i class="bi bi-whatsapp"></i> Ayuda por WhatsApp
-              </a>
-
-              <a href="#mapa-tiempo-real" class="btn-soft">
-                <i class="bi bi-geo-alt"></i> Ver mapa demo
-              </a>
+            <div class="order-pill">
+              <i class="bi bi-clock-history"></i>
+              <span id="orderBadge">En diseño floral</span>
             </div>
           </div>
 
-          <div class="col-lg-6" id="consulta">
-            <div class="tracking-card">
-              <div class="eyebrow">Consulta rápida</div>
-              <h2>Ingresa tu número de pedido</h2>
-              <p>
-                Por ahora esta pantalla funciona como una vista preparada para el rastreo. Cuando conectemos la base de datos, cada cliente podrá consultar el estado real de su pedido.
+          <div class="status-body">
+            <div class="progress-track" id="progressTrack">
+              <div class="progress-line">
+                <div class="progress-line-fill" id="progressFill"></div>
+              </div>
+
+              <div class="progress-step done" data-step="0">
+                <div class="step-icon"><i class="bi bi-check2-circle"></i></div>
+                <span>Pedido recibido</span>
+              </div>
+
+              <div class="progress-step active" data-step="1">
+                <div class="step-icon"><i class="bi bi-flower1"></i></div>
+                <span>En diseño floral</span>
+              </div>
+
+              <div class="progress-step" data-step="2">
+                <div class="step-icon"><i class="bi bi-gift"></i></div>
+                <span>Listo para entrega</span>
+              </div>
+
+              <div class="progress-step" data-step="3">
+                <div class="step-icon"><i class="bi bi-truck"></i></div>
+                <span>En camino</span>
+              </div>
+
+              <div class="progress-step" data-step="4">
+                <div class="step-icon"><i class="bi bi-house-heart"></i></div>
+                <span>Entregado</span>
+              </div>
+            </div>
+
+            <div class="status-message">
+              <h3 id="statusTitle">Tu arreglo está en diseño floral.</h3>
+              <p class="text-muted-custom mb-0" id="statusText">
+                Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones
+                naturales según disponibilidad de flores y temporada.
               </p>
 
-              <form class="tracking-form" id="trackingForm">
-                <input class="tracking-input" id="trackingInput" type="text" placeholder="Ej. JHM-0001" aria-label="Número de pedido" />
-                <button class="btn-main" type="submit">Rastrear</button>
-              </form>
-
-              <div class="sample-code">
-                Prueba con:
-                <button type="button" data-code="JHM-0001">JHM-0001</button>
-                <button type="button" data-code="JHM-0002">JHM-0002</button>
+              <div class="status-meta">
+                <div class="meta-card">
+                  <small>Entrega estimada</small>
+                  <strong id="deliveryTime">Hoy, 5:00 p.m. - 7:00 p.m.</strong>
+                </div>
+                <div class="meta-card">
+                  <small>Tipo de pedido</small>
+                  <strong id="orderType">Ramo premium</strong>
+                </div>
+                <div class="meta-card">
+                  <small>Canal de atención</small>
+                  <strong>WhatsApp</strong>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <section class="section-padding soft-section" id="estado">
-        <div class="container">
-          <div class="text-center mb-5 reveal">
-            <div class="eyebrow">Estado del pedido</div>
-            <h2 class="section-title">Tu arreglo, paso a paso.</h2>
-            <p class="text-muted-custom mx-auto" style="max-width:760px;">
-              Esta sección está lista para conectarse más adelante con pedidos reales. Mientras tanto, muestra una experiencia visual elegante para explicar el avance de cada entrega.
-            </p>
-          </div>
-
-          <div class="status-shell reveal" id="trackingResult">
-            <div class="status-header">
-              <div>
-                <div class="eyebrow mb-2">Pedido consultado</div>
-                <h3 class="serif mb-0" id="orderTitle" style="font-size:2.25rem; color:#261017;">JHM-0001</h3>
-              </div>
-              <div class="order-pill">
-                <i class="bi bi-clock-history"></i>
-                <span id="orderBadge">En diseño floral</span>
-              </div>
-            </div>
-
-            <div class="status-body">
-              <div class="progress-track" id="progressTrack">
-                <div class="progress-line"><div class="progress-line-fill" id="progressFill"></div></div>
-
-                <div class="progress-step done" data-step="0">
-                  <div class="step-icon"><i class="bi bi-check2-circle"></i></div>
-                  <span>Pedido recibido</span>
-                </div>
-
-                <div class="progress-step active" data-step="1">
-                  <div class="step-icon"><i class="bi bi-flower1"></i></div>
-                  <span>En diseño floral</span>
-                </div>
-
-                <div class="progress-step" data-step="2">
-                  <div class="step-icon"><i class="bi bi-gift"></i></div>
-                  <span>Listo para entrega</span>
-                </div>
-
-                <div class="progress-step" data-step="3">
-                  <div class="step-icon"><i class="bi bi-truck"></i></div>
-                  <span>En camino</span>
-                </div>
-
-                <div class="progress-step" data-step="4">
-                  <div class="step-icon"><i class="bi bi-house-heart"></i></div>
-                  <span>Entregado</span>
-                </div>
-              </div>
-
-              <div class="status-message">
-                <h3 id="statusTitle">Tu arreglo está en diseño floral.</h3>
-                <p class="text-muted-custom mb-0" id="statusText">
-                  Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones naturales según disponibilidad de flores y temporada.
-                </p>
-
-                <div class="status-meta">
-                  <div class="meta-card">
-                    <small>Entrega estimada</small>
-                    <strong id="deliveryTime">Hoy, 5:00 p.m. - 7:00 p.m.</strong>
-                  </div>
-                  <div class="meta-card">
-                    <small>Tipo de pedido</small>
-                    <strong id="orderType">Ramo premium</strong>
-                  </div>
-                  <div class="meta-card">
-                    <small>Canal de atención</small>
-                    <strong>WhatsApp</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-padding" id="funciona">
-        <div class="container">
-          <div class="text-center mb-5 reveal">
-            <div class="eyebrow">Cómo funciona</div>
-            <h2 class="section-title">Una experiencia sencilla para tus clientes.</h2>
-          </div>
-
-          <div class="row g-4">
-            <div class="col-md-4 reveal">
-              <div class="info-card">
-                <div class="mini-icon"><i class="bi bi-receipt-cutoff"></i></div>
-                <h3>1. Recibe su código</h3>
-                <p class="text-muted-custom mb-0">
-                  Al confirmar el pedido, el cliente recibe un número como JHM-0001 para consultar el avance de su arreglo.
-                </p>
-              </div>
-            </div>
-
-            <div class="col-md-4 reveal">
-              <div class="info-card">
-                <div class="mini-icon"><i class="bi bi-search-heart"></i></div>
-                <h3>2. Consulta el avance</h3>
-                <p class="text-muted-custom mb-0">
-                  Desde esta página puede revisar si el pedido fue recibido, está en diseño, listo para entrega o en camino.
-                </p>
-              </div>
-            </div>
-
-            <div class="col-md-4 reveal">
-              <div class="info-card">
-                <div class="mini-icon"><i class="bi bi-whatsapp"></i></div>
-                <h3>3. Contacta por WhatsApp</h3>
-                <p class="text-muted-custom mb-0">
-                  Si necesita más información, puede escribir directamente con su nombre y número de pedido.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <section class="section-padding live-map-section" id="mapa-tiempo-real">
-        <div class="container">
-          <div class="live-map-shell reveal">
-            <div class="live-map-header">
-              <div>
-                <div class="eyebrow">Propuesta premium</div>
-                <h2 class="section-title mb-3">Visualiza tu entrega en tiempo real.</h2>
-                <p class="text-muted-custom" style="max-width:760px;">
-                  Cuando el pedido esté en camino, esta sección podrá mostrar un mapa con la ubicación aproximada del repartidor y el avance de la ruta hasta el punto de entrega.
-                </p>
-              </div>
-              <div class="text-lg-end">
-                <span class="live-map-badge"><i class="bi bi-geo-alt-fill"></i> Demo visual de rastreo</span>
-              </div>
-            </div>
-
-            <div class="live-map-area" aria-label="Mapa demo de seguimiento en tiempo real">
-              <div class="map-road road-1"></div>
-              <div class="map-road road-2"></div>
-              <div class="map-road road-3"></div>
-              <div class="map-road road-4"></div>
-
-              <div class="map-pin origin">
-                <i class="bi bi-shop-window"></i>
-                <small>Floristería</small>
-              </div>
-
-              <div class="map-pin destination">
-                <i class="bi bi-house-heart"></i>
-                <small>Destino</small>
-              </div>
-
-              <svg class="route-svg" viewBox="0 0 1200 570" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#d98ca4" />
-                    <stop offset="55%" stop-color="#d6af65" />
-                    <stop offset="100%" stop-color="#f8dbe4" />
-                  </linearGradient>
-                </defs>
-                <path class="route-shadow" d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
-                <path class="route-line" d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
-              </svg>
-
-              <div class="delivery-cart" aria-hidden="true">
-                <i class="bi bi-truck"></i>
-              </div>
-
-              <div class="map-note-card">
-                <strong>Ubicación en vivo</strong>
-                <p>
-                  Esta es una maqueta visual. Más adelante puede conectarse con GPS real del repartidor, Google Maps, Mapbox o una liga de ubicación compartida.
-                </p>
-              </div>
-
-              <div class="map-status-card">
-                <div class="eyebrow mb-2">Pedido en camino</div>
-                <h3 class="serif mb-2">Tu ramo va hacia su destino.</h3>
-                <p class="text-muted-custom mb-0">
-                  El carrito se actualiza para representar el avance de la entrega. Ideal para una experiencia premium y confiable.
-                </p>
-                <div class="map-status-grid">
-                  <div class="map-status-mini">
-                    <small>ETA</small>
-                    <strong>18 min</strong>
-                  </div>
-                  <div class="map-status-mini">
-                    <small>Distancia</small>
-                    <strong>2.4 km</strong>
-                  </div>
-                  <div class="map-status-mini">
-                    <small>Estado</small>
-                    <strong>En ruta</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-padding dark-section" id="ayuda">
-        <div class="container">
-          <div class="cta-card reveal">
-            <div class="row align-items-center g-4">
-              <div class="col-lg-8">
-                <div class="eyebrow">Atención personalizada</div>
-                <h2 class="section-title mb-3">¿Necesitas confirmar tu entrega?</h2>
-                <p class="text-muted-custom mb-0" style="max-width:760px;">
-                  Escríbenos por WhatsApp con tu nombre y número de pedido. Con gusto te ayudamos a confirmar disponibilidad, horario de entrega o cualquier detalle especial.
-                </p>
-              </div>
-              <div class="col-lg-4 text-lg-end">
-                <a href="https://wa.me/520000000000" class="btn-main"><i class="bi bi-whatsapp"></i> Escribir por WhatsApp</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <button class="cart-float" type="button" aria-label="Ver carrito">
-      <i class="bi bi-bag-heart"></i>
-      <span>2</span>
-    </button>
-
-    <a class="whatsapp-float" href="https://wa.me/520000000000" target="_blank" aria-label="WhatsApp">
-      <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <footer>
+    <section class="section-padding" id="funciona">
       <div class="container">
-        <div class="row g-4 align-items-start">
-          <div class="col-md-5">
-            <a href="index.html#inicio" class="brand-logo mb-3">
-              <span class="logo-mark">
-                <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
-              </span>
-              Juan H <span>Magno</span>
-            </a>
-            <p class="mt-3" style="color:rgba(255,250,245,.68); line-height:1.8;">
-              Arte floral contemporáneo para momentos inolvidables. Cada ramo es único, especial y creado con intención.
-            </p>
-          </div>
+        <div class="text-center mb-5 reveal">
+          <div class="eyebrow">Cómo funciona</div>
+          <h2 class="section-title">Una experiencia sencilla para tus clientes.</h2>
+        </div>
 
-          <div class="col-md-3">
-            <h5 class="fw-bold mb-3">Navegación</h5>
-            <div class="d-grid gap-2">
-              <a href="index.html#inicio">Inicio</a>
-              <a href="catalogo.html">Catálogo</a>
-              <a href="rastreo.html">Rastrea tu pedido</a>
-              <a href="index.html#contacto">Contacto</a>
+        <div class="row g-4">
+          <div class="col-md-4 reveal">
+            <div class="info-card">
+              <div class="mini-icon"><i class="bi bi-receipt-cutoff"></i></div>
+              <h3>1. Recibe su código</h3>
+              <p class="text-muted-custom mb-0">
+                Al confirmar el pedido, el cliente recibe un número como JHM-0001 para consultar el avance de su
+                arreglo.
+              </p>
             </div>
           </div>
 
-          <div class="col-md-4">
-            <h5 class="fw-bold mb-3">Horario de atención</h5>
-            <p style="color:rgba(255,250,245,.68); line-height:1.8;">
-              Lunes a sábado de 9:00 a.m. a 7:00 p.m.<br>
-              Pedidos y disponibilidad por WhatsApp.
-            </p>
+          <div class="col-md-4 reveal">
+            <div class="info-card">
+              <div class="mini-icon"><i class="bi bi-search-heart"></i></div>
+              <h3>2. Consulta el avance</h3>
+              <p class="text-muted-custom mb-0">
+                Desde esta página puede revisar si el pedido fue recibido, está en diseño, listo para entrega o en
+                camino.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-4 reveal">
+            <div class="info-card">
+              <div class="mini-icon"><i class="bi bi-whatsapp"></i></div>
+              <h3>3. Contacta por WhatsApp</h3>
+              <p class="text-muted-custom mb-0">
+                Si necesita más información, puede escribir directamente con su nombre y número de pedido.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section-padding live-map-section" id="mapa-tiempo-real">
+      <div class="container">
+        <div class="live-map-shell reveal">
+          <div class="live-map-header">
+            <div>
+              <div class="eyebrow">Propuesta premium</div>
+              <h2 class="section-title mb-3">Visualiza tu entrega en tiempo real.</h2>
+              <p class="text-muted-custom" style="max-width:760px;">
+                Cuando el pedido esté en camino, esta sección podrá mostrar un mapa con la ubicación aproximada del
+                repartidor y el avance de la ruta hasta el punto de entrega.
+              </p>
+            </div>
+            <div class="text-lg-end">
+              <span class="live-map-badge"><i class="bi bi-geo-alt-fill"></i> Demo visual de rastreo</span>
+            </div>
+          </div>
+
+          <div class="live-map-area" aria-label="Mapa demo de seguimiento en tiempo real">
+            <div class="map-road road-1"></div>
+            <div class="map-road road-2"></div>
+            <div class="map-road road-3"></div>
+            <div class="map-road road-4"></div>
+
+            <div class="map-pin origin">
+              <i class="bi bi-shop-window"></i>
+              <small>Floristería</small>
+            </div>
+
+            <div class="map-pin destination">
+              <i class="bi bi-house-heart"></i>
+              <small>Destino</small>
+            </div>
+
+            <svg class="route-svg" viewBox="0 0 1200 570" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#d98ca4" />
+                  <stop offset="55%" stop-color="#d6af65" />
+                  <stop offset="100%" stop-color="#f8dbe4" />
+                </linearGradient>
+              </defs>
+              <path class="route-shadow"
+                d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
+              <path class="route-line"
+                d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
+            </svg>
+
+            <div class="delivery-cart" aria-hidden="true">
+              <i class="bi bi-truck"></i>
+            </div>
+
+            <div class="map-note-card">
+              <strong>Ubicación en vivo</strong>
+              <p>
+                Esta es una maqueta visual. Más adelante puede conectarse con GPS real del repartidor, Google Maps,
+                Mapbox o una liga de ubicación compartida.
+              </p>
+            </div>
+
+            <div class="map-status-card">
+              <div class="eyebrow mb-2">Pedido en camino</div>
+              <h3 class="serif mb-2">Tu ramo va hacia su destino.</h3>
+              <p class="text-muted-custom mb-0">
+                El carrito se actualiza para representar el avance de la entrega. Ideal para una experiencia premium y
+                confiable.
+              </p>
+              <div class="map-status-grid">
+                <div class="map-status-mini">
+                  <small>ETA</small>
+                  <strong>18 min</strong>
+                </div>
+                <div class="map-status-mini">
+                  <small>Distancia</small>
+                  <strong>2.4 km</strong>
+                </div>
+                <div class="map-status-mini">
+                  <small>Estado</small>
+                  <strong>En ruta</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding dark-section" id="ayuda">
+      <div class="container">
+        <div class="cta-card reveal">
+          <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+              <div class="eyebrow">Atención personalizada</div>
+              <h2 class="section-title mb-3">¿Necesitas confirmar tu entrega?</h2>
+              <p class="text-muted-custom mb-0" style="max-width:760px;">
+                Escríbenos por WhatsApp con tu nombre y número de pedido. Con gusto te ayudamos a confirmar
+                disponibilidad, horario de entrega o cualquier detalle especial.
+              </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+              <a href="https://wa.me/520000000000" class="btn-main"><i class="bi bi-whatsapp"></i> Escribir por
+                WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button class="cart-float" type="button" aria-label="Ver carrito">
+    <i class="bi bi-bag-heart"></i>
+    <span>2</span>
+  </button>
+
+  <a class="whatsapp-float" href="https://wa.me/520000000000" target="_blank" aria-label="WhatsApp">
+    <i class="bi bi-whatsapp"></i>
+  </a>
+
+  <footer>
+    <div class="container">
+      <div class="row g-4 align-items-start">
+        <div class="col-md-5">
+          <a href="index.html#inicio" class="brand-logo mb-3">
+            <span class="logo-mark">
+              <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
+            </span>
+            Juan H <span>Magno</span>
+          </a>
+          <p class="mt-3" style="color:rgba(255,250,245,.68); line-height:1.8;">
+            Arte floral contemporáneo para momentos inolvidables. Cada ramo es único, especial y creado con intención.
+          </p>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="fw-bold mb-3">Navegación</h5>
+          <div class="d-grid gap-2">
+            <a href="index.html#inicio">Inicio</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="rastreo.html">Rastrea tu pedido</a>
+            <a href="index.html#contacto">Contacto</a>
           </div>
         </div>
 
-        <hr style="border-color:rgba(255,255,255,.10); margin:34px 0 22px;">
-        <div class="d-flex justify-content-between flex-wrap gap-3" style="color:rgba(255,250,245,.56); font-size:.9rem;">
-          <span>© 2026 Juan H Magno. Todos los derechos reservados.</span>
-          <span>Diseño floral en Guadalajara.</span>
+        <div class="col-md-4">
+          <h5 class="fw-bold mb-3">Horario de atención</h5>
+          <p style="color:rgba(255,250,245,.68); line-height:1.8;">
+            Lunes a sábado de 9:00 a.m. a 7:00 p.m.<br>
+            Pedidos y disponibilidad por WhatsApp.
+          </p>
         </div>
       </div>
-    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      const navbar = document.getElementById('navbar');
-      window.addEventListener('scroll', () => {
-        navbar.classList.toggle('scrolled', window.scrollY > 30);
+      <hr style="border-color:rgba(255,255,255,.10); margin:34px 0 22px;">
+      <div class="d-flex justify-content-between flex-wrap gap-3" style="color:rgba(255,250,245,.56); font-size:.9rem;">
+        <span>© 2026 Juan H Magno. Todos los derechos reservados.</span>
+        <span>Diseño floral en Guadalajara.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    });
+
+    const seasonButtons = document.querySelectorAll('.season-btn');
+    const seasonClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+    seasonButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const season = button.dataset.season;
+        document.body.classList.remove(...seasonClasses);
+        document.body.classList.add(`theme-${season}`);
+        seasonButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
       });
+    });
 
-      const seasonButtons = document.querySelectorAll('.season-btn');
-      const seasonClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
-      seasonButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          const season = button.dataset.season;
-          document.body.classList.remove(...seasonClasses);
-          document.body.classList.add(`theme-${season}`);
-          seasonButtons.forEach((btn) => btn.classList.remove('active'));
-          button.classList.add('active');
-        });
-      });
-
-      const reveals = document.querySelectorAll('.reveal');
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12 });
-      reveals.forEach((el) => revealObserver.observe(el));
-
-      const demoOrders = {
-        'JHM-0001': {
-          step: 1,
-          badge: 'En diseño floral',
-          title: 'Tu arreglo está en diseño floral.',
-          text: 'Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones naturales según disponibilidad de flores y temporada.',
-          delivery: 'Hoy, 5:00 p.m. - 7:00 p.m.',
-          type: 'Ramo premium'
-        },
-        'JHM-0002': {
-          step: 3,
-          badge: 'En camino',
-          title: 'Tu pedido va en camino.',
-          text: 'El arreglo ya salió para entrega. Ten a la mano tu teléfono para cualquier actualización del repartidor o del equipo de atención.',
-          delivery: 'En los próximos 35 minutos',
-          type: 'Arreglo especial'
-        },
-        'JHM-0003': {
-          step: 4,
-          badge: 'Entregado',
-          title: 'Tu pedido fue entregado.',
-          text: 'Gracias por confiar en Juan H Magno. Esperamos que este detalle floral haya acompañado un momento especial.',
-          delivery: 'Entregado hoy',
-          type: 'Ramo de temporada'
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
         }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach((el) => revealObserver.observe(el));
+
+    const demoOrders = {
+      'JHM-0001': {
+        step: 1,
+        badge: 'En diseño floral',
+        title: 'Tu arreglo está en diseño floral.',
+        text: 'Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones naturales según disponibilidad de flores y temporada.',
+        delivery: 'Hoy, 5:00 p.m. - 7:00 p.m.',
+        type: 'Ramo premium'
+      },
+      'JHM-0002': {
+        step: 3,
+        badge: 'En camino',
+        title: 'Tu pedido va en camino.',
+        text: 'El arreglo ya salió para entrega. Ten a la mano tu teléfono para cualquier actualización del repartidor o del equipo de atención.',
+        delivery: 'En los próximos 35 minutos',
+        type: 'Arreglo especial'
+      },
+      'JHM-0003': {
+        step: 4,
+        badge: 'Entregado',
+        title: 'Tu pedido fue entregado.',
+        text: 'Gracias por confiar en Juan H Magno. Esperamos que este detalle floral haya acompañado un momento especial.',
+        delivery: 'Entregado hoy',
+        type: 'Ramo de temporada'
+      }
+    };
+
+    const trackingForm = document.getElementById('trackingForm');
+    const trackingInput = document.getElementById('trackingInput');
+    const orderTitle = document.getElementById('orderTitle');
+    const orderBadge = document.getElementById('orderBadge');
+    const statusTitle = document.getElementById('statusTitle');
+    const statusText = document.getElementById('statusText');
+    const deliveryTime = document.getElementById('deliveryTime');
+    const orderType = document.getElementById('orderType');
+    const progressFill = document.getElementById('progressFill');
+    const progressSteps = document.querySelectorAll('.progress-step');
+
+    function renderOrder(code) {
+      const normalizedCode = code.trim().toUpperCase() || 'JHM-0001';
+      const order = demoOrders[normalizedCode] || {
+        step: 0,
+        badge: 'Pedido por confirmar',
+        title: 'No encontramos ese pedido en la vista demo.',
+        text: 'Esta página está lista para conectarse a pedidos reales. Por ahora, confirma el estado de tu pedido por WhatsApp con tu nombre y número de pedido.',
+        delivery: 'Por confirmar',
+        type: 'Por confirmar'
       };
 
-      const trackingForm = document.getElementById('trackingForm');
-      const trackingInput = document.getElementById('trackingInput');
-      const orderTitle = document.getElementById('orderTitle');
-      const orderBadge = document.getElementById('orderBadge');
-      const statusTitle = document.getElementById('statusTitle');
-      const statusText = document.getElementById('statusText');
-      const deliveryTime = document.getElementById('deliveryTime');
-      const orderType = document.getElementById('orderType');
-      const progressFill = document.getElementById('progressFill');
-      const progressSteps = document.querySelectorAll('.progress-step');
+      orderTitle.textContent = normalizedCode;
+      orderBadge.textContent = order.badge;
+      statusTitle.textContent = order.title;
+      statusText.textContent = order.text;
+      deliveryTime.textContent = order.delivery;
+      orderType.textContent = order.type;
+      progressFill.style.width = `${(order.step / 4) * 100}%`;
 
-      function renderOrder(code) {
-        const normalizedCode = code.trim().toUpperCase() || 'JHM-0001';
-        const order = demoOrders[normalizedCode] || {
-          step: 0,
-          badge: 'Pedido por confirmar',
-          title: 'No encontramos ese pedido en la vista demo.',
-          text: 'Esta página está lista para conectarse a pedidos reales. Por ahora, confirma el estado de tu pedido por WhatsApp con tu nombre y número de pedido.',
-          delivery: 'Por confirmar',
-          type: 'Por confirmar'
-        };
-
-        orderTitle.textContent = normalizedCode;
-        orderBadge.textContent = order.badge;
-        statusTitle.textContent = order.title;
-        statusText.textContent = order.text;
-        deliveryTime.textContent = order.delivery;
-        orderType.textContent = order.type;
-        progressFill.style.width = `${(order.step / 4) * 100}%`;
-
-        progressSteps.forEach((step) => {
-          const index = Number(step.dataset.step);
-          step.classList.toggle('done', index < order.step);
-          step.classList.toggle('active', index === order.step);
-        });
-
-        document.getElementById('estado').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      trackingForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        renderOrder(trackingInput.value);
+      progressSteps.forEach((step) => {
+        const index = Number(step.dataset.step);
+        step.classList.toggle('done', index < order.step);
+        step.classList.toggle('active', index === order.step);
       });
 
-      document.querySelectorAll('[data-code]').forEach((button) => {
-        button.addEventListener('click', () => {
-          trackingInput.value = button.dataset.code;
-          renderOrder(button.dataset.code);
-        });
+      document.getElementById('estado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    trackingForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      renderOrder(trackingInput.value);
+    });
+
+    document.querySelectorAll('[data-code]').forEach((button) => {
+      button.addEventListener('click', () => {
+        trackingInput.value = button.dataset.code;
+        renderOrder(button.dataset.code);
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>
