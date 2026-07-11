@@ -9012,3 +9012,2146 @@ body.page-carrito .empty-cart-message i,
 body.page-carrito .eyebrow {
     color: #d6af65 !important;
 }
+
+
+
+/* ==========================================================
+   TEMA FLOWERDOSE
+   SOLO CAMBIO DE COLORES
+   Este bloque debe permanecer AL FINAL de style.css
+   Si quieres regresar al estilo original solo remueve este bloque
+========================================================== */
+
+:root {
+    --fd-white: #ffffff;
+    --fd-pink: #fbe7e8;
+    --fd-pink-soft: #fff4f4;
+    --fd-black: #111111;
+    --fd-gray: #6f6f6f;
+    --fd-gray-light: #e8e8e8;
+    --fd-gray-soft: #f7f7f7;
+    --fd-green: #64725d;
+    --fd-success: #2f7d4a;
+    --fd-shadow: 0 18px 50px rgba(17, 17, 17, 0.07);
+}
+
+/* ----------------------------------------------------------
+   VARIABLES GENERALES
+---------------------------------------------------------- */
+
+body.page-index,
+body.page-catalogo,
+body.page-carrito,
+body.page-ideas,
+body.page-rastreo,
+body.page-admin {
+    --flor-dark: var(--fd-white);
+    --flor-wine: var(--fd-pink);
+    --flor-rose: #e9bfc2;
+    --flor-blush: var(--fd-pink);
+    --flor-gold: var(--fd-black);
+    --flor-cream: var(--fd-white);
+    --flor-muted: var(--fd-gray);
+
+    --dark: var(--fd-white);
+    --wine: var(--fd-pink);
+    --rose: #e9bfc2;
+    --gold: var(--fd-black);
+    --cream: var(--fd-white);
+    --muted: var(--fd-gray);
+
+    --glass: rgba(255, 255, 255, 0.96);
+    --border: var(--fd-gray-light);
+    --ink: var(--fd-black);
+    --paper: var(--fd-white);
+    --shadow: var(--fd-shadow);
+
+    --season-accent: #e9bfc2;
+    --season-accent-2: var(--fd-black);
+    --season-soft: rgba(251, 231, 232, 0.72);
+    --season-soft-2: rgba(255, 255, 255, 0.86);
+    --season-particle: #e9bfc2;
+
+    --theme-bg: var(--fd-white);
+    --theme-bg-2: var(--fd-pink);
+    --theme-accent: #e9bfc2;
+    --theme-accent-2: var(--fd-black);
+    --theme-card: var(--fd-white);
+    --theme-soft: var(--fd-pink);
+    --theme-particle: #e9bfc2;
+
+    background-color: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   TIPOGRAFÍA Y COLORES GENERALES
+---------------------------------------------------------- */
+
+body.page-index h1,
+body.page-index h2,
+body.page-index h3,
+body.page-index h4,
+body.page-index h5,
+body.page-index h6,
+body.page-catalogo h1,
+body.page-catalogo h2,
+body.page-catalogo h3,
+body.page-catalogo h4,
+body.page-carrito h1,
+body.page-carrito h2,
+body.page-carrito h3,
+body.page-carrito h4,
+body.page-ideas h1,
+body.page-ideas h2,
+body.page-ideas h3,
+body.page-ideas h4,
+body.page-rastreo h1,
+body.page-rastreo h2,
+body.page-rastreo h3,
+body.page-rastreo h4,
+body.page-admin h1,
+body.page-admin h2,
+body.page-admin h3,
+body.page-admin h4 {
+    color: var(--fd-black) !important;
+}
+
+body.page-index p,
+body.page-catalogo p,
+body.page-carrito p,
+body.page-ideas p,
+body.page-rastreo p,
+body.page-admin p,
+body.page-index .text-muted-custom,
+body.page-catalogo .text-muted-custom,
+body.page-carrito .text-muted-custom,
+body.page-ideas .text-muted-custom,
+body.page-rastreo .text-muted-custom,
+body.page-admin .small-muted {
+    color: var(--fd-gray) !important;
+}
+
+body.page-index .eyebrow,
+body.page-catalogo .eyebrow,
+body.page-carrito .eyebrow,
+body.page-ideas .eyebrow,
+body.page-rastreo .eyebrow,
+body.page-admin .eyebrow {
+    color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   NAVBAR DE ESCRITORIO
+---------------------------------------------------------- */
+
+body.page-index .navbar-custom,
+body.page-index .navbar-custom.scrolled,
+body.page-catalogo .navbar-custom,
+body.page-carrito .navbar-custom,
+body.page-ideas .navbar-custom,
+body.page-rastreo .navbar-custom {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-bottom: 1px solid var(--fd-gray-light) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(16px);
+}
+
+body.page-index .brand-logo,
+body.page-catalogo .brand-logo,
+body.page-carrito .brand-logo,
+body.page-ideas .brand-logo,
+body.page-rastreo .brand-logo {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+body.page-index .brand-logo>span:not(.logo-mark),
+body.page-catalogo .brand-logo>span:not(.logo-mark),
+body.page-carrito .brand-logo>span:not(.logo-mark),
+body.page-ideas .brand-logo>span:not(.logo-mark),
+body.page-rastreo .brand-logo>span:not(.logo-mark) {
+    color: var(--fd-black) !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+body.page-index .brand-logo .logo-mark,
+body.page-catalogo .brand-logo .logo-mark,
+body.page-carrito .brand-logo .logo-mark,
+body.page-ideas .brand-logo .logo-mark,
+body.page-rastreo .brand-logo .logo-mark {
+    background: var(--fd-white) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: none !important;
+}
+
+body.page-index .nav-link-custom,
+body.page-catalogo .nav-link-custom,
+body.page-carrito .nav-link-custom,
+body.page-ideas .nav-link-custom,
+body.page-rastreo .nav-link-custom {
+    color: var(--fd-black) !important;
+}
+
+body.page-index .nav-link-custom:hover,
+body.page-index .nav-link-custom.active,
+body.page-catalogo .nav-link-custom:hover,
+body.page-catalogo .nav-link-custom.active,
+body.page-carrito .nav-link-custom:hover,
+body.page-carrito .nav-link-custom.active,
+body.page-ideas .nav-link-custom:hover,
+body.page-ideas .nav-link-custom.active,
+body.page-rastreo .nav-link-custom:hover,
+body.page-rastreo .nav-link-custom.active {
+    color: var(--fd-black) !important;
+    opacity: 0.58;
+}
+
+body.page-index .custom-toggler,
+body.page-catalogo .custom-toggler,
+body.page-rastreo .custom-toggler {
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+/* Botón destacado del menú */
+
+body.page-index .btn-reservar,
+body.page-rastreo .btn-reservar {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+    box-shadow: none !important;
+}
+
+body.page-index .btn-reservar:hover,
+body.page-rastreo .btn-reservar:hover {
+    background: #333333 !important;
+    color: var(--fd-white) !important;
+}
+
+/* ----------------------------------------------------------
+   NAVEGACIÓN MÓVIL
+---------------------------------------------------------- */
+
+body.page-index .mobile-app-nav,
+body.page-catalogo .mobile-app-nav,
+body.page-carrito .mobile-app-nav,
+body.page-ideas .mobile-app-nav,
+body.page-rastreo .mobile-app-nav {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: 0 14px 45px rgba(17, 17, 17, 0.12) !important;
+}
+
+body.page-index .mobile-app-nav a,
+body.page-index .mobile-app-nav button,
+body.page-catalogo .mobile-app-nav a,
+body.page-catalogo .mobile-app-nav button,
+body.page-carrito .mobile-app-nav a,
+body.page-carrito .mobile-app-nav button,
+body.page-ideas .mobile-app-nav a,
+body.page-ideas .mobile-app-nav button,
+body.page-rastreo .mobile-app-nav a,
+body.page-rastreo .mobile-app-nav button {
+    color: var(--fd-gray) !important;
+}
+
+body.page-index .mobile-app-nav a.active,
+body.page-index .mobile-app-nav button.active,
+body.page-catalogo .mobile-app-nav a.active,
+body.page-catalogo .mobile-app-nav button.active,
+body.page-carrito .mobile-app-nav a.active,
+body.page-carrito .mobile-app-nav button.active,
+body.page-ideas .mobile-app-nav a.active,
+body.page-ideas .mobile-app-nav button.active,
+body.page-rastreo .mobile-app-nav a.active,
+body.page-rastreo .mobile-app-nav button.active {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   BOTONES GENERALES
+---------------------------------------------------------- */
+
+body.page-index .btn-main,
+body.page-catalogo .btn-luxury,
+body.page-catalogo .cart-float,
+body.page-carrito .btn-pay,
+body.page-carrito .btn-cart,
+body.page-ideas .btn-ai,
+body.page-ideas .btn-cart,
+body.page-rastreo .btn-main,
+body.page-admin .btn-gold {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+body.page-index .btn-main:hover,
+body.page-catalogo .btn-luxury:hover,
+body.page-catalogo .cart-float:hover,
+body.page-carrito .btn-pay:hover,
+body.page-carrito .btn-cart:hover,
+body.page-ideas .btn-ai:hover,
+body.page-ideas .btn-cart:hover,
+body.page-rastreo .btn-main:hover,
+body.page-admin .btn-gold:hover {
+    background: #333333 !important;
+    color: var(--fd-white) !important;
+    border-color: #333333 !important;
+}
+
+body.page-index .btn-secondary-hero,
+body.page-catalogo .btn-soft,
+body.page-carrito .btn-soft,
+body.page-ideas .btn-soft,
+body.page-rastreo .btn-soft,
+body.page-admin .btn-soft {
+    background: transparent !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-black) !important;
+    box-shadow: none !important;
+}
+
+body.page-index .btn-secondary-hero:hover,
+body.page-catalogo .btn-soft:hover,
+body.page-carrito .btn-soft:hover,
+body.page-ideas .btn-soft:hover,
+body.page-rastreo .btn-soft:hover,
+body.page-admin .btn-soft:hover {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+/* Bootstrap outline usado en carrito */
+
+body.page-carrito .btn-outline-light {
+    color: var(--fd-black) !important;
+    border-color: var(--fd-black) !important;
+    background: transparent !important;
+}
+
+body.page-carrito .btn-outline-light:hover {
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+    background: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   PÁGINA INDEX
+---------------------------------------------------------- */
+
+body.page-index {
+    background: var(--fd-white) !important;
+}
+
+body.page-index .hero {
+    background:
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0.94) 0%,
+            rgba(255, 244, 244, 0.82) 47%,
+            rgba(255, 255, 255, 0.22) 100%) !important;
+}
+
+body.page-index .hero::before {
+    background:
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0.80) 0%,
+            rgba(255, 244, 244, 0.42) 52%,
+            rgba(255, 255, 255, 0.04) 100%),
+        var(--season-bg-image) !important;
+    opacity: 0.72 !important;
+}
+
+body.page-index .hero::after {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.58),
+            rgba(255, 255, 255, 0.06)) !important;
+}
+
+body.page-index .hero-title,
+body.page-index .home-title {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+body.page-index .hero-description,
+body.page-index .home-description {
+    color: var(--fd-gray) !important;
+}
+
+body.page-index .hero-badge {
+    color: var(--fd-black) !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: none !important;
+}
+
+body.page-index .hero-badge i {
+    color: var(--fd-black) !important;
+}
+
+body.page-index .scroll-indicator {
+    color: var(--fd-black) !important;
+}
+
+body.page-index .scroll-indicator::after {
+    background: linear-gradient(var(--fd-black), transparent) !important;
+}
+
+body.page-index .soft-section,
+body.page-index section:not(.dark-section):not(.cta-section) {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-index .soft-section:nth-of-type(even),
+body.page-index #momentos,
+body.page-index #contacto {
+    background: var(--fd-pink) !important;
+}
+
+body.page-index .dark-section {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-index .cta-section {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+body.page-index .cta-section h1,
+body.page-index .cta-section h2,
+body.page-index .cta-section h3,
+body.page-index .cta-section p,
+body.page-index .cta-section .eyebrow {
+    color: var(--fd-white) !important;
+}
+
+body.page-index .service-card,
+body.page-index .story-card,
+body.page-index .cart-card,
+body.page-index .meaning-card,
+body.page-index .unique-note-card,
+body.page-index .flower-card,
+body.page-index .home-card-label {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-index .service-card p,
+body.page-index .story-card p,
+body.page-index .cart-card p,
+body.page-index .meaning-card p,
+body.page-index .unique-note-card p,
+body.page-index .home-card-label p {
+    color: var(--fd-gray) !important;
+}
+
+body.page-index .season-preview-panel {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-index .season-btn {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-index .season-btn.active {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   CATÁLOGO
+---------------------------------------------------------- */
+
+body.page-catalogo {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero {
+    background:
+        linear-gradient(135deg,
+            var(--fd-pink) 0%,
+            var(--fd-pink-soft) 55%,
+            var(--fd-white) 100%) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero::before,
+body.page-catalogo .catalog-hero::after {
+    background-color: transparent !important;
+}
+
+body.page-catalogo .catalog-hero-title,
+body.page-catalogo .catalog-hero-title span {
+    color: var(--fd-black) !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+body.page-catalogo .catalog-hero-description,
+body.page-catalogo .catalog-stat-item span {
+    color: var(--fd-gray) !important;
+}
+
+body.page-catalogo .catalog-stat-item strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero-badge {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-catalogo .catalog-scroll-indicator {
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .collection-section {
+    background: var(--fd-white) !important;
+}
+
+body.page-catalogo .product-card {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: none !important;
+}
+
+body.page-catalogo .product-card:hover {
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-catalogo .product-card p {
+    color: var(--fd-gray) !important;
+}
+
+body.page-catalogo .product-card .price {
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .product-badge {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-catalogo .filter-chip {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-catalogo .filter-chip.active,
+body.page-catalogo .filter-chip:hover {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   CARRITO
+---------------------------------------------------------- */
+
+body.page-carrito,
+body.page-carrito .cart-page {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-carrito .glass-card,
+body.page-carrito .cart-list-card,
+body.page-carrito .payment-card,
+body.page-carrito .delivery-card,
+body.page-carrito .empty-cart-message {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-carrito .cart-item {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-carrito .cart-item p,
+body.page-carrito .page-copy,
+body.page-carrito .mp-brand span {
+    color: var(--fd-gray) !important;
+}
+
+body.page-carrito .summary-row {
+    color: var(--fd-gray) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-carrito .summary-row strong,
+body.page-carrito .summary-total,
+body.page-carrito .summary-total strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-carrito .mp-header,
+body.page-carrito .mp-secure-pill,
+body.page-carrito .mini-note {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-carrito .mp-logo-mark {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+body.page-carrito .pay-option,
+body.page-carrito .slot-option {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-carrito .pay-option.active,
+body.page-carrito .pay-option:hover,
+body.page-carrito .slot-option.active,
+body.page-carrito .slot-option:hover {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    border-color: #e9bfc2 !important;
+}
+
+/* ----------------------------------------------------------
+   IDEAS CON IA
+---------------------------------------------------------- */
+
+body.page-ideas,
+body.page-ideas .ideas-page {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-ideas .hero-title,
+body.page-ideas .hero-title span {
+    color: var(--fd-black) !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+body.page-ideas .hero-copy {
+    color: var(--fd-gray) !important;
+}
+
+body.page-ideas .glass-card,
+body.page-ideas .builder-card,
+body.page-ideas .result-card,
+body.page-ideas .micro-card {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-ideas .micro-card {
+    color: var(--fd-gray) !important;
+}
+
+body.page-ideas .micro-card strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-ideas .micro-card i {
+    color: var(--fd-black) !important;
+}
+
+body.page-ideas .color-chip,
+body.page-ideas .style-chip {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-ideas .color-chip.active,
+body.page-ideas .color-chip:hover,
+body.page-ideas .style-chip.active,
+body.page-ideas .style-chip:hover {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    border-color: #e9bfc2 !important;
+    box-shadow: none !important;
+}
+
+body.page-ideas .result-badge,
+body.page-ideas .tag {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    border-color: #e9bfc2 !important;
+}
+
+body.page-ideas .result-description,
+body.page-ideas .price-row span {
+    color: var(--fd-gray) !important;
+}
+
+body.page-ideas .result-name,
+body.page-ideas .price-row strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-ideas .price-row {
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-ideas .ai-loading {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-ideas .loading-line {
+    background: linear-gradient(90deg,
+            var(--fd-gray-light),
+            var(--fd-pink),
+            var(--fd-gray-light)) !important;
+}
+
+body.page-ideas .toast-added {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+/* ----------------------------------------------------------
+   RASTREO
+---------------------------------------------------------- */
+
+body.page-rastreo {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-rastreo .tracking-hero {
+    background:
+        linear-gradient(135deg,
+            var(--fd-pink) 0%,
+            var(--fd-pink-soft) 55%,
+            var(--fd-white) 100%) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-rastreo .tracking-title,
+body.page-rastreo .tracking-title span {
+    color: var(--fd-black) !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+body.page-rastreo .tracking-description {
+    color: var(--fd-gray) !important;
+}
+
+body.page-rastreo .hero-badge {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-rastreo .tracking-card,
+body.page-rastreo .status-shell,
+body.page-rastreo .info-card,
+body.page-rastreo .meta-card {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-rastreo .tracking-card p,
+body.page-rastreo .status-shell p,
+body.page-rastreo .info-card p,
+body.page-rastreo .meta-card small {
+    color: var(--fd-gray) !important;
+}
+
+body.page-rastreo section {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-rastreo section:nth-of-type(odd),
+body.page-rastreo .soft-section {
+    background: var(--fd-pink-soft) !important;
+}
+
+body.page-rastreo .sample-code button {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-rastreo .sample-code button:hover {
+    background: var(--fd-pink) !important;
+    border-color: #e9bfc2 !important;
+}
+
+body.page-rastreo .progress-step .step-icon {
+    background: var(--fd-white) !important;
+    color: var(--fd-gray) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-rastreo .progress-step.active .step-icon,
+body.page-rastreo .progress-step.completed .step-icon {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+body.page-rastreo .status-badge {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+}
+
+/* ----------------------------------------------------------
+   ADMINISTRADOR
+---------------------------------------------------------- */
+
+body.page-admin,
+body.page-admin .admin-shell {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-admin .glass,
+body.page-admin .login-card,
+body.page-admin .topbar,
+body.page-admin .tabs-card,
+body.page-admin .content-card,
+body.page-admin .settings-box,
+body.page-admin .kpi {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+    box-shadow: var(--fd-shadow) !important;
+}
+
+body.page-admin .brand,
+body.page-admin .brand span {
+    color: var(--fd-black) !important;
+}
+
+body.page-admin .small-muted,
+body.page-admin .kpi span {
+    color: var(--fd-gray) !important;
+}
+
+body.page-admin .kpi strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-admin .tab-btn {
+    background: transparent !important;
+    color: var(--fd-gray) !important;
+    border-color: transparent !important;
+}
+
+body.page-admin .tab-btn.active,
+body.page-admin .tab-btn:hover {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    border-color: #e9bfc2 !important;
+}
+
+body.page-admin .table {
+    color: var(--fd-black) !important;
+}
+
+body.page-admin .table> :not(caption)>*>* {
+    background: transparent !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-admin .table thead th {
+    color: var(--fd-gray) !important;
+    background: var(--fd-gray-soft) !important;
+}
+
+body.page-admin .modal-content {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-admin .btn-close {
+    filter: none !important;
+}
+
+/* ----------------------------------------------------------
+   FORMULARIOS DE TODAS LAS PÁGINAS
+---------------------------------------------------------- */
+
+body.page-index input,
+body.page-index textarea,
+body.page-index select,
+body.page-index .form-control,
+body.page-index .form-select,
+body.page-catalogo input,
+body.page-catalogo textarea,
+body.page-catalogo select,
+body.page-catalogo .form-control,
+body.page-catalogo .form-select,
+body.page-carrito input,
+body.page-carrito textarea,
+body.page-carrito select,
+body.page-carrito .form-control,
+body.page-carrito .form-select,
+body.page-ideas input,
+body.page-ideas textarea,
+body.page-ideas select,
+body.page-ideas .form-control,
+body.page-ideas .form-select,
+body.page-rastreo input,
+body.page-rastreo textarea,
+body.page-rastreo select,
+body.page-rastreo .form-control,
+body.page-rastreo .form-select,
+body.page-admin input,
+body.page-admin textarea,
+body.page-admin select,
+body.page-admin .form-control,
+body.page-admin .form-select {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border-color: #d9d9d9 !important;
+    box-shadow: none !important;
+}
+
+body.page-index input:focus,
+body.page-index textarea:focus,
+body.page-index select:focus,
+body.page-catalogo input:focus,
+body.page-catalogo textarea:focus,
+body.page-catalogo select:focus,
+body.page-carrito input:focus,
+body.page-carrito textarea:focus,
+body.page-carrito select:focus,
+body.page-ideas input:focus,
+body.page-ideas textarea:focus,
+body.page-ideas select:focus,
+body.page-rastreo input:focus,
+body.page-rastreo textarea:focus,
+body.page-rastreo select:focus,
+body.page-admin input:focus,
+body.page-admin textarea:focus,
+body.page-admin select:focus {
+    border-color: var(--fd-black) !important;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07) !important;
+}
+
+body.page-index input::placeholder,
+body.page-index textarea::placeholder,
+body.page-catalogo input::placeholder,
+body.page-catalogo textarea::placeholder,
+body.page-carrito input::placeholder,
+body.page-carrito textarea::placeholder,
+body.page-ideas input::placeholder,
+body.page-ideas textarea::placeholder,
+body.page-rastreo input::placeholder,
+body.page-rastreo textarea::placeholder,
+body.page-admin input::placeholder,
+body.page-admin textarea::placeholder {
+    color: #999999 !important;
+}
+
+/* ----------------------------------------------------------
+   FOOTER
+---------------------------------------------------------- */
+
+body.page-index footer,
+body.page-catalogo footer,
+body.page-carrito footer,
+body.page-ideas footer,
+body.page-rastreo footer {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+body.page-index footer h1,
+body.page-index footer h2,
+body.page-index footer h3,
+body.page-index footer h4,
+body.page-index footer p,
+body.page-index footer a,
+body.page-catalogo footer h1,
+body.page-catalogo footer h2,
+body.page-catalogo footer h3,
+body.page-catalogo footer h4,
+body.page-catalogo footer p,
+body.page-catalogo footer a,
+body.page-rastreo footer h1,
+body.page-rastreo footer h2,
+body.page-rastreo footer h3,
+body.page-rastreo footer h4,
+body.page-rastreo footer p,
+body.page-rastreo footer a {
+    color: var(--fd-white) !important;
+}
+
+body.page-index footer hr,
+body.page-catalogo footer hr,
+body.page-rastreo footer hr {
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* ==========================================================
+   CORRECCIONES VISUALES TEMA FLOWERDOSE
+   Mantener este bloque al final de style.css
+========================================================== */
+
+
+/* ==========================================================
+   1. TARJETA SOBRE LA IMAGEN DE ROSAS — INDEX
+========================================================== */
+
+body.page-index .flower-photo-card {
+    background: var(--fd-white) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 24px 60px rgba(17, 17, 17, 0.10) !important;
+}
+
+body.page-index .flower-photo-card::after {
+    background: linear-gradient(to top,
+            rgba(17, 17, 17, 0.22) 0%,
+            rgba(17, 17, 17, 0.04) 45%,
+            transparent 72%) !important;
+}
+
+body.page-index .flower-photo-tag {
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid rgba(255, 255, 255, 0.82) !important;
+    box-shadow: 0 20px 50px rgba(17, 17, 17, 0.14) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+body.page-index .flower-photo-tag .eyebrow {
+    color: var(--fd-gray) !important;
+}
+
+body.page-index .flower-photo-tag h3 {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+
+/* Evita que el texto quede demasiado pegado o cortado */
+
+body.page-index .flower-photo-tag {
+    left: 30px !important;
+    right: 30px !important;
+    bottom: 30px !important;
+    padding: 26px 28px !important;
+}
+
+body.page-index .flower-photo-tag h3 {
+    font-size: clamp(2rem, 3.2vw, 2.65rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.045em !important;
+}
+
+
+/* ==========================================================
+   2. TARJETAS DE SIGNIFICADO — INDEX
+========================================================== */
+
+body.page-index .story-card {
+    background: var(--fd-white) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 24px 60px rgba(17, 17, 17, 0.07) !important;
+}
+
+body.page-index .meaning-card {
+    background: var(--fd-white) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 14px 40px rgba(17, 17, 17, 0.055) !important;
+}
+
+body.page-index .meaning-card:hover {
+    background: var(--fd-pink-soft) !important;
+    border-color: #e9bfc2 !important;
+    box-shadow: 0 20px 50px rgba(17, 17, 17, 0.08) !important;
+}
+
+body.page-index .meaning-card .mini-icon {
+    background: #f8edda !important;
+    color: #b28649 !important;
+    border: none !important;
+}
+
+body.page-index .meaning-card h4 {
+    color: var(--fd-black) !important;
+}
+
+body.page-index .meaning-card p {
+    color: var(--fd-gray) !important;
+}
+
+
+/* ==========================================================
+   3. HERO DEL CATÁLOGO
+========================================================== */
+
+body.page-catalogo .catalog-hero {
+    min-height: 100vh !important;
+    background:
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 52%,
+            #ffffff 100%) !important;
+    color: var(--fd-black) !important;
+    isolation: isolate;
+}
+
+
+/* Elimina la imagen y la oscuridad heredadas del diseño anterior */
+
+body.page-catalogo .catalog-hero::before {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    background:
+        radial-gradient(circle at 75% 30%,
+            rgba(233, 191, 194, 0.36),
+            transparent 34%),
+        radial-gradient(circle at 20% 78%,
+            rgba(255, 255, 255, 0.94),
+            transparent 36%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 55%,
+            #ffffff 100%) !important;
+}
+
+body.page-catalogo .catalog-hero::after {
+    background: none !important;
+    opacity: 0 !important;
+}
+
+
+/* Desactiva manchas oscuras animadas */
+
+body.page-catalogo .catalog-ink-layer,
+body.page-catalogo .catalog-mouse-light {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+
+/* Las ramas decorativas pueden permanecer, pero mucho más suaves */
+
+body.page-catalogo .catalog-branch {
+    opacity: 0.22 !important;
+}
+
+body.page-catalogo .catalog-branch path {
+    stroke: rgba(17, 17, 17, 0.18) !important;
+}
+
+
+/* Mantiene el contenido por encima del fondo */
+
+body.page-catalogo .catalog-hero>.container {
+    position: relative;
+    z-index: 10;
+}
+
+body.page-catalogo .catalog-hero-content {
+    position: relative;
+    z-index: 10;
+}
+
+
+/* ==========================================================
+   4. TEXTOS DEL HERO DEL CATÁLOGO
+========================================================== */
+
+body.page-catalogo .catalog-hero-badge {
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 12px 35px rgba(17, 17, 17, 0.06) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+body.page-catalogo .catalog-hero-badge i {
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero-title,
+body.page-catalogo .catalog-hero-title span {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+    background: none !important;
+    -webkit-text-fill-color: var(--fd-black) !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+
+/* Reduce ligeramente el título para que respire mejor */
+
+body.page-catalogo .catalog-hero-title {
+    max-width: 1050px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: clamp(4.5rem, 8.2vw, 8.6rem) !important;
+    line-height: 0.86 !important;
+    letter-spacing: -0.06em !important;
+}
+
+body.page-catalogo .catalog-hero-description {
+    color: var(--fd-gray) !important;
+    max-width: 880px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: clamp(1rem, 1.5vw, 1.18rem) !important;
+    line-height: 1.75 !important;
+}
+
+
+/* La línea dorada vieja pasa a negro/gris muy suave */
+
+body.page-catalogo .catalog-hero-title::after,
+body.page-catalogo .catalog-hero-title span::after {
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(17, 17, 17, 0.24),
+            transparent) !important;
+}
+
+
+/* ==========================================================
+   5. BOTONES Y ESTADÍSTICAS DEL HERO
+========================================================== */
+
+body.page-catalogo .catalog-hero-actions .btn-luxury {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero-actions .btn-soft {
+    background: transparent !important;
+    color: var(--fd-black) !important;
+    border-color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-hero-actions .btn-soft:hover {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+body.page-catalogo .catalog-stat-strip {
+    border-color: var(--fd-gray-light) !important;
+}
+
+body.page-catalogo .catalog-stat-item strong {
+    color: var(--fd-black) !important;
+}
+
+body.page-catalogo .catalog-stat-item span {
+    color: var(--fd-gray) !important;
+}
+
+body.page-catalogo .catalog-scroll-indicator {
+    color: var(--fd-gray) !important;
+}
+
+body.page-catalogo .catalog-scroll-indicator::after {
+    background: linear-gradient(var(--fd-black),
+            transparent) !important;
+}
+
+
+/* ==========================================================
+   6. SELECTOR DE TEMPORADA DEL CATÁLOGO
+========================================================== */
+
+body.page-catalogo .season-preview-panel {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 16px 45px rgba(17, 17, 17, 0.08) !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+body.page-catalogo .season-btn {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: none !important;
+}
+
+body.page-catalogo .season-btn.active {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    border-color: #e9bfc2 !important;
+}
+
+
+/* ==========================================================
+   7. AJUSTES RESPONSIVOS
+========================================================== */
+
+@media (max-width: 991px) {
+
+    body.page-index .flower-photo-tag {
+        left: 20px !important;
+        right: 20px !important;
+        bottom: 20px !important;
+        padding: 22px !important;
+    }
+
+    body.page-catalogo .catalog-hero {
+        min-height: auto !important;
+    }
+
+    body.page-catalogo .catalog-hero-title {
+        font-size: clamp(3.4rem, 13vw, 5.5rem) !important;
+        line-height: 0.88 !important;
+    }
+}
+
+@media (max-width: 575px) {
+
+    body.page-index .flower-photo-tag {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 14px !important;
+        padding: 18px !important;
+        border-radius: 22px !important;
+    }
+
+    body.page-index .flower-photo-tag h3 {
+        font-size: 1.75rem !important;
+        line-height: 1.05 !important;
+    }
+
+    body.page-catalogo .catalog-hero-title {
+        font-size: clamp(3rem, 15vw, 4.25rem) !important;
+        line-height: 0.88 !important;
+    }
+
+    body.page-catalogo .catalog-hero-description {
+        font-size: 0.96rem !important;
+        line-height: 1.65 !important;
+    }
+}
+
+/* ==========================================================
+   CORRECCIÓN FINAL — SECCIÓN TEMPORADAS DEL INDEX
+   Mantener este bloque al final de style.css
+========================================================== */
+
+
+/* Fondo exterior de toda la sección */
+
+body.page-index #temporadas.dark-section {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+}
+
+
+/* Contenedor grande principal */
+
+body.page-index #temporadas .season-stage {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(38px, 5vw, 68px) !important;
+
+    background:
+        radial-gradient(circle at 88% 15%,
+            rgba(233, 191, 194, 0.40),
+            transparent 34%),
+        radial-gradient(circle at 8% 92%,
+            rgba(255, 255, 255, 0.92),
+            transparent 36%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 52%,
+            #ffffff 100%) !important;
+
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 34px !important;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.08) !important;
+}
+
+
+/* Elimina capas oscuras anteriores */
+
+body.page-index #temporadas .season-stage::before,
+body.page-index #temporadas .season-stage::after {
+    opacity: 0 !important;
+    background: none !important;
+}
+
+
+/* Texto pequeño superior */
+
+body.page-index #temporadas .season-stage .eyebrow {
+    color: var(--fd-black) !important;
+    opacity: 0.72 !important;
+}
+
+
+/* Título principal */
+
+body.page-index #temporadas #seasonTitle {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+    background: none !important;
+    -webkit-text-fill-color: var(--fd-black) !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+
+    font-size: clamp(3.4rem, 6vw, 6.2rem) !important;
+    line-height: 0.93 !important;
+    letter-spacing: -0.055em !important;
+}
+
+
+/* Descripción principal */
+
+body.page-index #temporadas #seasonText {
+    color: var(--fd-gray) !important;
+    max-width: 760px !important;
+    line-height: 1.75 !important;
+}
+
+
+/* Texto inferior explicativo */
+
+body.page-index #temporadas .season-stage small,
+body.page-index #temporadas .season-stage small.text-muted-custom {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Tarjeta blanca del producto */
+
+body.page-index #temporadas .season-stage .cart-card {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 30px !important;
+    box-shadow: 0 20px 55px rgba(17, 17, 17, 0.08) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+
+/* Título de la tarjeta */
+
+body.page-index #temporadas .season-stage .cart-card h3 {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+
+/* Descripción dentro de la tarjeta */
+
+body.page-index #temporadas #seasonProduct {
+    color: var(--fd-gray) !important;
+    line-height: 1.7 !important;
+}
+
+
+/* Botón */
+
+body.page-index #temporadas .season-stage .cart-card .btn-main {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border: 1px solid var(--fd-black) !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+body.page-index #temporadas .season-stage .cart-card .btn-main:hover {
+    background: #333333 !important;
+    color: var(--fd-white) !important;
+    border-color: #333333 !important;
+}
+
+
+/* ==========================================================
+   VARIACIONES SUTILES SEGÚN TEMPORADA
+========================================================== */
+
+
+/* Primavera */
+
+body.page-index.theme-spring #temporadas .season-stage {
+    background:
+        radial-gradient(circle at 86% 16%,
+            rgba(233, 191, 194, 0.42),
+            transparent 34%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff5f5 58%,
+            #ffffff 100%) !important;
+}
+
+
+/* Verano */
+
+body.page-index.theme-summer #temporadas .season-stage {
+    background:
+        radial-gradient(circle at 84% 18%,
+            rgba(246, 200, 143, 0.34),
+            transparent 34%),
+        linear-gradient(135deg,
+            #fff0dd 0%,
+            #fff8ef 58%,
+            #ffffff 100%) !important;
+}
+
+
+/* Otoño */
+
+body.page-index.theme-autumn #temporadas .season-stage {
+    background:
+        radial-gradient(circle at 84% 18%,
+            rgba(201, 130, 104, 0.28),
+            transparent 34%),
+        linear-gradient(135deg,
+            #f7e4dc 0%,
+            #fff5ef 58%,
+            #ffffff 100%) !important;
+}
+
+
+/* Invierno */
+
+body.page-index.theme-winter #temporadas .season-stage {
+    background:
+        radial-gradient(circle at 84% 18%,
+            rgba(134, 169, 184, 0.28),
+            transparent 34%),
+        linear-gradient(135deg,
+            #eaf3f6 0%,
+            #f7fbfc 58%,
+            #ffffff 100%) !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 991px) {
+
+    body.page-index #temporadas .season-stage {
+        padding: 34px !important;
+    }
+
+    body.page-index #temporadas #seasonTitle {
+        font-size: clamp(3rem, 10vw, 5rem) !important;
+    }
+
+    body.page-index #temporadas .season-stage .cart-card {
+        padding: 28px !important;
+    }
+}
+
+@media (max-width: 575px) {
+
+    body.page-index #temporadas .season-stage {
+        padding: 24px !important;
+        border-radius: 26px !important;
+    }
+
+    body.page-index #temporadas #seasonTitle {
+        font-size: clamp(2.8rem, 14vw, 4rem) !important;
+        line-height: 0.95 !important;
+    }
+
+    body.page-index #temporadas .season-stage .cart-card {
+        padding: 22px !important;
+        border-radius: 24px !important;
+    }
+}
+
+/* ==========================================================
+   CORRECCIONES FINALES FLOWERDOSE
+   EXPERIENCIA + UBICACIÓN + RASTREO + NAV ACTIVO
+   Este bloque debe permanecer al final de style.css
+========================================================== */
+
+
+/* ==========================================================
+   1. INDEX — SECCIÓN "CADA ARREGLO ES ESPECIAL"
+========================================================== */
+
+body.page-index #experiencia {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-index #experiencia .experience {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 82% 22%,
+            rgba(233, 191, 194, 0.34),
+            transparent 34%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 55%,
+            #ffffff 100%) !important;
+
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 36px !important;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.08) !important;
+}
+
+
+/* Elimina la fotografía oscura y las capas heredadas */
+
+body.page-index #experiencia .experience::before,
+body.page-index #experiencia .experience::after {
+    opacity: 0 !important;
+    background: none !important;
+}
+
+
+/* Textos del lado izquierdo */
+
+body.page-index #experiencia .eyebrow {
+    color: var(--fd-black) !important;
+    opacity: 0.68 !important;
+}
+
+body.page-index #experiencia .section-title {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+body.page-index #experiencia p {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Corrige específicamente los colores inline del HTML */
+
+body.page-index #experiencia h2[style],
+body.page-index #experiencia p[style] {
+    color: var(--fd-black) !important;
+}
+
+body.page-index #experiencia p[style] {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Tarjeta "Importante antes de ordenar" */
+
+body.page-index #experiencia .quiz-card {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 32px !important;
+    box-shadow: 0 20px 55px rgba(17, 17, 17, 0.08) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+}
+
+body.page-index #experiencia .quiz-card h3 {
+    color: var(--fd-black) !important;
+}
+
+
+/* Tarjetas internas */
+
+body.page-index #experiencia .suggestion-box {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid #f0dfe0 !important;
+    box-shadow: none !important;
+}
+
+body.page-index #experiencia .suggestion-box .eyebrow {
+    color: var(--fd-black) !important;
+    opacity: 1 !important;
+}
+
+body.page-index #experiencia .suggestion-box p {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Botón */
+
+body.page-index #experiencia .btn-main {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+body.page-index #experiencia .btn-main:hover {
+    background: #333333 !important;
+    border-color: #333333 !important;
+}
+
+
+/* ==========================================================
+   2. INDEX — SECCIÓN UBICACIÓN
+========================================================== */
+
+body.page-index #ubicacion {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-index #ubicacion .map-card {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(90deg,
+            rgba(251, 231, 232, 0.98) 0%,
+            rgba(255, 244, 244, 0.90) 48%,
+            rgba(255, 255, 255, 0.40) 100%),
+        url("https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1800&q=85") center / cover no-repeat !important;
+
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 36px !important;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.08) !important;
+}
+
+
+/* Neutraliza la capa negra anterior */
+
+body.page-index #ubicacion .map-card-overlay {
+    background: linear-gradient(90deg,
+            rgba(255, 244, 244, 0.96) 0%,
+            rgba(255, 244, 244, 0.76) 52%,
+            rgba(255, 255, 255, 0.16) 100%) !important;
+    opacity: 1 !important;
+}
+
+body.page-index #ubicacion .map-card-content {
+    position: relative;
+    z-index: 3;
+}
+
+body.page-index #ubicacion .eyebrow {
+    color: var(--fd-black) !important;
+    opacity: 0.68 !important;
+}
+
+body.page-index #ubicacion .map-card h2 {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+body.page-index #ubicacion .map-card p {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Corrige el color inline rosa del eyebrow */
+
+body.page-index #ubicacion .eyebrow[style] {
+    color: var(--fd-black) !important;
+}
+
+
+/* Botón principal del mapa */
+
+body.page-index #ubicacion .btn-map-primary {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border: 1px solid var(--fd-black) !important;
+    box-shadow: none !important;
+}
+
+body.page-index #ubicacion .btn-map-primary:hover {
+    background: #333333 !important;
+    color: var(--fd-white) !important;
+    border-color: #333333 !important;
+}
+
+
+/* Botón secundario */
+
+body.page-index #ubicacion .btn-map-secondary {
+    background: rgba(255, 255, 255, 0.88) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-black) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+body.page-index #ubicacion .btn-map-secondary:hover {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+
+/* ==========================================================
+   3. RASTREO — HERO PRINCIPAL
+========================================================== */
+
+body.page-rastreo .tracking-hero {
+    min-height: 100vh !important;
+
+    background:
+        radial-gradient(circle at 84% 20%,
+            rgba(233, 191, 194, 0.38),
+            transparent 32%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 56%,
+            #ffffff 100%) !important;
+
+    color: var(--fd-black) !important;
+}
+
+
+/* Elimina las capas oscuras del hero */
+
+body.page-rastreo .tracking-hero::before,
+body.page-rastreo .tracking-hero::after {
+    opacity: 0 !important;
+    background: none !important;
+}
+
+
+/* Texto izquierdo */
+
+body.page-rastreo .tracking-hero .hero-badge {
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 12px 35px rgba(17, 17, 17, 0.06) !important;
+}
+
+body.page-rastreo .tracking-title,
+body.page-rastreo .tracking-title span {
+    color: var(--fd-black) !important;
+    background: none !important;
+    -webkit-text-fill-color: var(--fd-black) !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    text-shadow: none !important;
+}
+
+body.page-rastreo .tracking-description {
+    color: var(--fd-gray) !important;
+}
+
+
+/* Tarjeta de consulta */
+
+body.page-rastreo .tracking-card {
+    background: rgba(255, 255, 255, 0.97) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.08) !important;
+}
+
+body.page-rastreo .tracking-card h2 {
+    color: var(--fd-black) !important;
+}
+
+body.page-rastreo .tracking-card p {
+    color: var(--fd-gray) !important;
+}
+
+body.page-rastreo .tracking-input {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+    border: 1px solid #d9d9d9 !important;
+}
+
+body.page-rastreo .tracking-input:focus {
+    border-color: var(--fd-black) !important;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07) !important;
+}
+
+
+/* Botones secundarios del hero */
+
+body.page-rastreo .hero-actions-tracking .btn-soft {
+    background: transparent !important;
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-black) !important;
+}
+
+body.page-rastreo .hero-actions-tracking .btn-soft:hover {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+}
+
+
+/* ==========================================================
+   4. RASTREO — CTA "¿NECESITAS CONFIRMAR TU ENTREGA?"
+========================================================== */
+
+body.page-rastreo #ayuda.dark-section {
+    background: var(--fd-white) !important;
+    color: var(--fd-black) !important;
+}
+
+body.page-rastreo #ayuda .cta-card {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 78% 25%,
+            rgba(233, 191, 194, 0.38),
+            transparent 34%),
+        linear-gradient(135deg,
+            #fbe7e8 0%,
+            #fff4f4 58%,
+            #ffffff 100%) !important;
+
+    color: var(--fd-black) !important;
+    border: 1px solid var(--fd-gray-light) !important;
+    border-radius: 36px !important;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.08) !important;
+}
+
+
+/* Elimina imagen/capa oscura vieja */
+
+body.page-rastreo #ayuda .cta-card::before,
+body.page-rastreo #ayuda .cta-card::after {
+    opacity: 0 !important;
+    background: none !important;
+}
+
+body.page-rastreo #ayuda .eyebrow {
+    color: var(--fd-black) !important;
+    opacity: 0.68 !important;
+}
+
+body.page-rastreo #ayuda .section-title {
+    color: var(--fd-black) !important;
+    text-shadow: none !important;
+}
+
+body.page-rastreo #ayuda p {
+    color: var(--fd-gray) !important;
+}
+
+body.page-rastreo #ayuda .btn-main {
+    background: var(--fd-black) !important;
+    color: var(--fd-white) !important;
+    border-color: var(--fd-black) !important;
+}
+
+body.page-rastreo #ayuda .btn-main:hover {
+    background: #333333 !important;
+    border-color: #333333 !important;
+}
+
+
+/* ==========================================================
+   5. NAVBAR — ESTADO ACTIVO MÁS CLARO
+========================================================== */
+
+/*
+   Estilo tipo Flowerdose:
+   texto negro + fondo rosa muy suave + pequeña línea inferior.
+*/
+
+body.page-index .nav-link-custom,
+body.page-catalogo .nav-link-custom,
+body.page-carrito .nav-link-custom,
+body.page-ideas .nav-link-custom,
+body.page-rastreo .nav-link-custom {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 13px !important;
+    margin-left: 4px !important;
+
+    border-radius: 999px;
+    color: var(--fd-black) !important;
+    opacity: 1 !important;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* Hover */
+
+body.page-index .nav-link-custom:hover,
+body.page-catalogo .nav-link-custom:hover,
+body.page-carrito .nav-link-custom:hover,
+body.page-ideas .nav-link-custom:hover,
+body.page-rastreo .nav-link-custom:hover {
+    background: var(--fd-pink-soft) !important;
+    color: var(--fd-black) !important;
+    opacity: 1 !important;
+    transform: translateY(-1px);
+}
+
+
+/* Página o sección activa */
+
+body.page-index .nav-link-custom.active,
+body.page-catalogo .nav-link-custom.active,
+body.page-carrito .nav-link-custom.active,
+body.page-ideas .nav-link-custom.active,
+body.page-rastreo .nav-link-custom.active {
+    background: var(--fd-pink) !important;
+    color: var(--fd-black) !important;
+    font-weight: 800 !important;
+    opacity: 1 !important;
+}
+
+
+/* Línea inferior del elemento activo */
+
+body.page-index .nav-link-custom.active::after,
+body.page-catalogo .nav-link-custom.active::after,
+body.page-carrito .nav-link-custom.active::after,
+body.page-ideas .nav-link-custom.active::after,
+body.page-rastreo .nav-link-custom.active::after {
+    content: "";
+    position: absolute;
+
+    left: 22%;
+    right: 22%;
+    bottom: 4px;
+
+    height: 2px;
+    border-radius: 999px;
+    background: var(--fd-black);
+}
+
+
+/* Evita líneas viejas duplicadas */
+
+body.page-index .nav-link-custom::before,
+body.page-catalogo .nav-link-custom::before,
+body.page-carrito .nav-link-custom::before,
+body.page-ideas .nav-link-custom::before,
+body.page-rastreo .nav-link-custom::before {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   6. RESPONSIVE
+========================================================== */
+
+@media (max-width: 991px) {
+
+    body.page-index #experiencia .experience,
+    body.page-index #ubicacion .map-card,
+    body.page-rastreo #ayuda .cta-card {
+        border-radius: 28px !important;
+    }
+
+    body.page-index #experiencia .experience {
+        padding: 34px !important;
+    }
+
+    body.page-index #ubicacion .map-card-content {
+        padding: 42px 32px !important;
+    }
+
+    body.page-rastreo .tracking-hero {
+        min-height: auto !important;
+    }
+
+    body.page-rastreo #ayuda .cta-card {
+        padding: 34px !important;
+    }
+}
+
+@media (max-width: 575px) {
+
+    body.page-index #experiencia .experience,
+    body.page-index #ubicacion .map-card,
+    body.page-rastreo #ayuda .cta-card {
+        border-radius: 24px !important;
+    }
+
+    body.page-index #experiencia .experience {
+        padding: 24px !important;
+    }
+
+    body.page-index #experiencia .quiz-card {
+        padding: 22px !important;
+        border-radius: 24px !important;
+    }
+
+    body.page-index #ubicacion .map-card-content {
+        padding: 34px 22px !important;
+    }
+
+    body.page-index #ubicacion .map-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    body.page-index #ubicacion .btn-map-primary,
+    body.page-index #ubicacion .btn-map-secondary {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    body.page-rastreo #ayuda .cta-card {
+        padding: 24px !important;
+    }
+
+    body.page-index .nav-link-custom,
+    body.page-catalogo .nav-link-custom,
+    body.page-carrito .nav-link-custom,
+    body.page-ideas .nav-link-custom,
+    body.page-rastreo .nav-link-custom {
+        padding: 10px 12px !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ==========================================================
+   FINAL DE TEMA FLOWERDOSE
+   SOLO CAMBIO DE COLORES
+   Este bloque debe permanecer AL FINAL de style.css
+   Si quieres regresar al estilo original solo remueve este bloque
+========================================================== */

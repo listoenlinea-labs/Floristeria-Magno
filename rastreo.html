@@ -6,535 +6,530 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Rastrea tu pedido floral de Juan H Magno." />
   <title>Rastrea tu pedido | Juan H Magno</title>
+
   <link rel="icon" href="assets/img/icon/fav-mago-2.png">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
     rel="stylesheet">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Rastrea tu pedido floral de Juan H Magno." />
-    <title>Rastrea tu pedido | Juan H Magno</title>
-    <link rel="icon" href="assets/img/icon/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
-      rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-  </head>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
 
 <body class="theme-spring page-rastreo">
-  <div class="season-preview-panel" id="seasonPreviewPanel" aria-label="Previsualizar tema de temporada">
-    <button class="season-btn active" data-season="spring">Primavera</button>
-    <button class="season-btn" data-season="summer">Verano</button>
-    <button class="season-btn" data-season="autumn">Otoño</button>
-    <button class="season-btn" data-season="winter">Invierno</button>
-  </div>
 
-  <nav class="navbar-custom" id="navbar">
-    <div class="container d-flex align-items-center justify-content-between">
-      <a href="index.html#inicio" class="brand-logo">
-        <span class="logo-mark">
-          <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
-        </span>
-        Juan H <span>Magno</span>
-      </a>
-
-      <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarMobile" aria-controls="navbarMobile" aria-expanded="false" aria-label="Abrir menú">
-        <i class="bi bi-list"></i>
-      </button>
-
-      <div class="collapse nav-mobile-menu d-lg-flex align-items-lg-center" id="navbarMobile">
-        <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
-        <a href="index.html#momentos" class="nav-link-custom">Momentos</a>
-        <a href="index.html#servicios" class="nav-link-custom">Servicios</a>
-        <a href="catalogo.html" class="nav-link-custom">Catálogo</a>
-        <a href="index.html#novias" class="nav-link-custom">Novias</a>
-        <a href="rastreo.html" class="nav-link-custom active">Rastrea tu pedido</a>
-        <a href="index.html#nosotros" class="nav-link-custom">Quiénes somos</a>
-        <a href="index.html#contacto" class="btn-reservar">Ordenar flores</a>
-      </div>
+  <body class="theme-spring page-rastreo">
+    <div class="season-preview-panel" id="seasonPreviewPanel" aria-label="Previsualizar tema de temporada">
+      <button class="season-btn active" data-season="spring">Primavera</button>
+      <button class="season-btn" data-season="summer">Verano</button>
+      <button class="season-btn" data-season="autumn">Otoño</button>
+      <button class="season-btn" data-season="winter">Invierno</button>
     </div>
-  </nav>
 
-  <nav class="mobile-app-nav" aria-label="Navegación móvil">
-    <a href="index.html#inicio">
-      <i class="bi bi-house-heart"></i>
-      <span>Inicio</span>
-    </a>
-    <a href="catalogo.html#productos">
-      <i class="bi bi-bag-heart"></i>
-      <span>Arreglos</span>
-    </a>
-    <a href="rastreo.html" class="active">
-      <i class="bi bi-truck"></i>
-      <span>Rastrear</span>
-    </a>
-    <a href="carrito.html">
-      <i class="bi bi-basket"></i>
-      <span>Carrito</span>
-    </a>
-  </nav>
+    <nav class="navbar-custom" id="navbar">
+      <div class="container d-flex align-items-center justify-content-between">
+        <a href="index.html#inicio" class="brand-logo">
+          <span class="logo-mark">
+            <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
+          </span>
+          Juan H <span>Magno</span>
+        </a>
 
-  <header class="tracking-hero" id="inicio">
-    <div class="container">
-      <div class="row align-items-center g-5">
-        <div class="col-lg-6">
-          <div class="hero-badge">
-            <i class="bi bi-truck"></i>
-            Seguimiento de pedidos
-          </div>
-          <h1 class="tracking-title">Rastrea tu <span>pedido floral.</span></h1>
-          <p class="tracking-description">
-            Consulta el avance de tu arreglo, desde que recibimos tu pedido hasta que está listo para entrega. Una
-            experiencia clara, cálida y pensada para que sepas en qué etapa va tu detalle floral.
-          </p>
-          <div class="hero-actions-tracking">
-            <a href="#consulta" class="btn-main">
-              <i class="bi bi-search-heart"></i> Consultar pedido
-            </a>
+        <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarMobile" aria-controls="navbarMobile" aria-expanded="false" aria-label="Abrir menú">
+          <i class="bi bi-list"></i>
+        </button>
 
-            <a href="index.html#contacto" class="btn-soft">
-              <i class="bi bi-whatsapp"></i> Ayuda por WhatsApp
-            </a>
-
-            <a href="#mapa-tiempo-real" class="btn-soft">
-              <i class="bi bi-geo-alt"></i> Ver mapa demo
-            </a>
-          </div>
-        </div>
-
-        <div class="col-lg-6" id="consulta">
-          <div class="tracking-card">
-            <div class="eyebrow">Consulta rápida</div>
-            <h2>Ingresa tu número de pedido</h2>
-            <p>
-              Por ahora esta pantalla funciona como una vista preparada para el rastreo. Cuando conectemos la base de
-              datos, cada cliente podrá consultar el estado real de su pedido.
-            </p>
-
-            <form class="tracking-form" id="trackingForm">
-              <input class="tracking-input" id="trackingInput" type="text" placeholder="Ej. JHM-0001"
-                aria-label="Número de pedido" />
-              <button class="btn-main" type="submit">Rastrear</button>
-            </form>
-
-            <div class="sample-code">
-              Prueba con:
-              <button type="button" data-code="JHM-0001">JHM-0001</button>
-              <button type="button" data-code="JHM-0002">JHM-0002</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="section-padding soft-section" id="estado">
-      <div class="container">
-        <div class="text-center mb-5 reveal">
-          <div class="eyebrow">Estado del pedido</div>
-          <h2 class="section-title">Tu arreglo, paso a paso.</h2>
-          <p class="text-muted-custom mx-auto" style="max-width:760px;">
-            Esta sección está lista para conectarse más adelante con pedidos reales. Mientras tanto, muestra una
-            experiencia visual elegante para explicar el avance de cada entrega.
-          </p>
-        </div>
-
-        <div class="status-shell reveal" id="trackingResult">
-          <div class="status-header">
-            <div>
-              <div class="eyebrow mb-2">Pedido consultado</div>
-              <h3 class="serif mb-0" id="orderTitle" style="font-size:2.25rem; color:#261017;">JHM-0001</h3>
-            </div>
-            <div class="order-pill">
-              <i class="bi bi-clock-history"></i>
-              <span id="orderBadge">En diseño floral</span>
-            </div>
-          </div>
-
-          <div class="status-body">
-            <div class="progress-track" id="progressTrack">
-              <div class="progress-line">
-                <div class="progress-line-fill" id="progressFill"></div>
-              </div>
-
-              <div class="progress-step done" data-step="0">
-                <div class="step-icon"><i class="bi bi-check2-circle"></i></div>
-                <span>Pedido recibido</span>
-              </div>
-
-              <div class="progress-step active" data-step="1">
-                <div class="step-icon"><i class="bi bi-flower1"></i></div>
-                <span>En diseño floral</span>
-              </div>
-
-              <div class="progress-step" data-step="2">
-                <div class="step-icon"><i class="bi bi-gift"></i></div>
-                <span>Listo para entrega</span>
-              </div>
-
-              <div class="progress-step" data-step="3">
-                <div class="step-icon"><i class="bi bi-truck"></i></div>
-                <span>En camino</span>
-              </div>
-
-              <div class="progress-step" data-step="4">
-                <div class="step-icon"><i class="bi bi-house-heart"></i></div>
-                <span>Entregado</span>
-              </div>
-            </div>
-
-            <div class="status-message">
-              <h3 id="statusTitle">Tu arreglo está en diseño floral.</h3>
-              <p class="text-muted-custom mb-0" id="statusText">
-                Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones
-                naturales según disponibilidad de flores y temporada.
-              </p>
-
-              <div class="status-meta">
-                <div class="meta-card">
-                  <small>Entrega estimada</small>
-                  <strong id="deliveryTime">Hoy, 5:00 p.m. - 7:00 p.m.</strong>
-                </div>
-                <div class="meta-card">
-                  <small>Tipo de pedido</small>
-                  <strong id="orderType">Ramo premium</strong>
-                </div>
-                <div class="meta-card">
-                  <small>Canal de atención</small>
-                  <strong>WhatsApp</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-padding" id="funciona">
-      <div class="container">
-        <div class="text-center mb-5 reveal">
-          <div class="eyebrow">Cómo funciona</div>
-          <h2 class="section-title">Una experiencia sencilla para tus clientes.</h2>
-        </div>
-
-        <div class="row g-4">
-          <div class="col-md-4 reveal">
-            <div class="info-card">
-              <div class="mini-icon"><i class="bi bi-receipt-cutoff"></i></div>
-              <h3>1. Recibe su código</h3>
-              <p class="text-muted-custom mb-0">
-                Al confirmar el pedido, el cliente recibe un número como JHM-0001 para consultar el avance de su
-                arreglo.
-              </p>
-            </div>
-          </div>
-
-          <div class="col-md-4 reveal">
-            <div class="info-card">
-              <div class="mini-icon"><i class="bi bi-search-heart"></i></div>
-              <h3>2. Consulta el avance</h3>
-              <p class="text-muted-custom mb-0">
-                Desde esta página puede revisar si el pedido fue recibido, está en diseño, listo para entrega o en
-                camino.
-              </p>
-            </div>
-          </div>
-
-          <div class="col-md-4 reveal">
-            <div class="info-card">
-              <div class="mini-icon"><i class="bi bi-whatsapp"></i></div>
-              <h3>3. Contacta por WhatsApp</h3>
-              <p class="text-muted-custom mb-0">
-                Si necesita más información, puede escribir directamente con su nombre y número de pedido.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <section class="section-padding live-map-section" id="mapa-tiempo-real">
-      <div class="container">
-        <div class="live-map-shell reveal">
-          <div class="live-map-header">
-            <div>
-              <div class="eyebrow">Propuesta premium</div>
-              <h2 class="section-title mb-3">Visualiza tu entrega en tiempo real.</h2>
-              <p class="text-muted-custom" style="max-width:760px;">
-                Cuando el pedido esté en camino, esta sección podrá mostrar un mapa con la ubicación aproximada del
-                repartidor y el avance de la ruta hasta el punto de entrega.
-              </p>
-            </div>
-            <div class="text-lg-end">
-              <span class="live-map-badge"><i class="bi bi-geo-alt-fill"></i> Demo visual de rastreo</span>
-            </div>
-          </div>
-
-          <div class="live-map-area" aria-label="Mapa demo de seguimiento en tiempo real">
-            <div class="map-road road-1"></div>
-            <div class="map-road road-2"></div>
-            <div class="map-road road-3"></div>
-            <div class="map-road road-4"></div>
-
-            <div class="map-pin origin">
-              <i class="bi bi-shop-window"></i>
-              <small>Floristería</small>
-            </div>
-
-            <div class="map-pin destination">
-              <i class="bi bi-house-heart"></i>
-              <small>Destino</small>
-            </div>
-
-            <svg class="route-svg" viewBox="0 0 1200 570" preserveAspectRatio="none" aria-hidden="true">
-              <defs>
-                <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#d98ca4" />
-                  <stop offset="55%" stop-color="#d6af65" />
-                  <stop offset="100%" stop-color="#f8dbe4" />
-                </linearGradient>
-              </defs>
-              <path class="route-shadow"
-                d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
-              <path class="route-line"
-                d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
-            </svg>
-
-            <div class="delivery-cart" aria-hidden="true">
-              <i class="bi bi-truck"></i>
-            </div>
-
-            <div class="map-note-card">
-              <strong>Ubicación en vivo</strong>
-              <p>
-                Esta es una maqueta visual. Más adelante puede conectarse con GPS real del repartidor, Google Maps,
-                Mapbox o una liga de ubicación compartida.
-              </p>
-            </div>
-
-            <div class="map-status-card">
-              <div class="eyebrow mb-2">Pedido en camino</div>
-              <h3 class="serif mb-2">Tu ramo va hacia su destino.</h3>
-              <p class="text-muted-custom mb-0">
-                El carrito se actualiza para representar el avance de la entrega. Ideal para una experiencia premium y
-                confiable.
-              </p>
-              <div class="map-status-grid">
-                <div class="map-status-mini">
-                  <small>ETA</small>
-                  <strong>18 min</strong>
-                </div>
-                <div class="map-status-mini">
-                  <small>Distancia</small>
-                  <strong>2.4 km</strong>
-                </div>
-                <div class="map-status-mini">
-                  <small>Estado</small>
-                  <strong>En ruta</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-padding dark-section" id="ayuda">
-      <div class="container">
-        <div class="cta-card reveal">
-          <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-              <div class="eyebrow">Atención personalizada</div>
-              <h2 class="section-title mb-3">¿Necesitas confirmar tu entrega?</h2>
-              <p class="text-muted-custom mb-0" style="max-width:760px;">
-                Escríbenos por WhatsApp con tu nombre y número de pedido. Con gusto te ayudamos a confirmar
-                disponibilidad, horario de entrega o cualquier detalle especial.
-              </p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-              <a href="https://wa.me/520000000000" class="btn-main"><i class="bi bi-whatsapp"></i> Escribir por
-                WhatsApp</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <button class="cart-float" type="button" aria-label="Ver carrito">
-    <i class="bi bi-bag-heart"></i>
-    <span>2</span>
-  </button>
-
-  <a class="whatsapp-float" href="https://wa.me/520000000000" target="_blank" aria-label="WhatsApp">
-    <i class="bi bi-whatsapp"></i>
-  </a>
-
-  <footer>
-    <div class="container">
-      <div class="row g-4 align-items-start">
-        <div class="col-md-5">
-          <a href="index.html#inicio" class="brand-logo mb-3">
-            <span class="logo-mark">
-              <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
-            </span>
-            Juan H <span>Magno</span>
+        <div class="collapse nav-mobile-menu d-lg-flex align-items-lg-center" id="navbarMobile">
+          <a href="index.html#inicio" class="nav-link-custom">Inicio</a>
+          <a href="index.html#momentos" class="nav-link-custom">Momentos</a>
+          <a href="index.html#servicios" class="nav-link-custom">Servicios</a>
+          <a href="catalogo.html" class="nav-link-custom">Catálogo</a>
+          <a href="index.html#novias" class="nav-link-custom">Novias</a>
+          <a href="rastreo.html" class="nav-link-custom active" aria-current="page">
+            Rastrea tu pedido
           </a>
-          <p class="mt-3" style="color:rgba(255,250,245,.68); line-height:1.8;">
-            Arte floral contemporáneo para momentos inolvidables. Cada ramo es único, especial y creado con intención.
-          </p>
+          <a href="index.html#nosotros" class="nav-link-custom">Quiénes somos</a>
+          <a href="index.html#contacto" class="btn-reservar">Ordenar flores</a>
         </div>
+      </div>
+    </nav>
 
-        <div class="col-md-3">
-          <h5 class="fw-bold mb-3">Navegación</h5>
-          <div class="d-grid gap-2">
-            <a href="index.html#inicio">Inicio</a>
-            <a href="catalogo.html">Catálogo</a>
-            <a href="rastreo.html">Rastrea tu pedido</a>
-            <a href="index.html#contacto">Contacto</a>
+    <nav class="mobile-app-nav" aria-label="Navegación móvil">
+      <a href="index.html#inicio">
+        <i class="bi bi-house-heart"></i>
+        <span>Inicio</span>
+      </a>
+      <a href="catalogo.html#productos">
+        <i class="bi bi-bag-heart"></i>
+        <span>Arreglos</span>
+      </a>
+      <a href="rastreo.html" class="active">
+        <i class="bi bi-truck"></i>
+        <span>Rastrear</span>
+      </a>
+      <a href="carrito.html">
+        <i class="bi bi-basket"></i>
+        <span>Carrito</span>
+      </a>
+    </nav>
+
+    <header class="tracking-hero" id="inicio">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <div class="hero-badge">
+              <i class="bi bi-truck"></i>
+              Seguimiento de pedidos
+            </div>
+            <h1 class="tracking-title">Rastrea tu <span>pedido floral.</span></h1>
+            <p class="tracking-description">
+              Consulta el avance de tu arreglo, desde que recibimos tu pedido hasta que está listo para entrega. Una
+              experiencia clara, cálida y pensada para que sepas en qué etapa va tu detalle floral.
+            </p>
+            <div class="hero-actions-tracking">
+              <a href="#consulta" class="btn-main">
+                <i class="bi bi-search-heart"></i> Consultar pedido
+              </a>
+
+              <a href="index.html#contacto" class="btn-soft">
+                <i class="bi bi-whatsapp"></i> Ayuda por WhatsApp
+              </a>
+
+              <a href="#mapa-tiempo-real" class="btn-soft">
+                <i class="bi bi-geo-alt"></i> Ver mapa demo
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-6" id="consulta">
+            <div class="tracking-card">
+              <div class="eyebrow">Consulta rápida</div>
+              <h2>Ingresa tu número de pedido</h2>
+              <p>
+                Por ahora esta pantalla funciona como una vista preparada para el rastreo. Cuando conectemos la base de
+                datos, cada cliente podrá consultar el estado real de su pedido.
+              </p>
+
+              <form class="tracking-form" id="trackingForm">
+                <input class="tracking-input" id="trackingInput" type="text" placeholder="Ej. JHM-0001"
+                  aria-label="Número de pedido" />
+                <button class="btn-main" type="submit">Rastrear</button>
+              </form>
+
+              <div class="sample-code">
+                Prueba con:
+                <button type="button" data-code="JHM-0001">JHM-0001</button>
+                <button type="button" data-code="JHM-0002">JHM-0002</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section-padding soft-section" id="estado">
+        <div class="container">
+          <div class="text-center mb-5 reveal">
+            <div class="eyebrow">Estado del pedido</div>
+            <h2 class="section-title">Tu arreglo, paso a paso.</h2>
+            <p class="text-muted-custom mx-auto" style="max-width:760px;">
+              Esta sección está lista para conectarse más adelante con pedidos reales. Mientras tanto, muestra una
+              experiencia visual elegante para explicar el avance de cada entrega.
+            </p>
+          </div>
+
+          <div class="status-shell reveal" id="trackingResult">
+            <div class="status-header">
+              <div>
+                <div class="eyebrow mb-2">Pedido consultado</div>
+                <h3 class="serif mb-0" id="orderTitle" style="font-size:2.25rem; color:#261017;">JHM-0001</h3>
+              </div>
+              <div class="order-pill">
+                <i class="bi bi-clock-history"></i>
+                <span id="orderBadge">En diseño floral</span>
+              </div>
+            </div>
+
+            <div class="status-body">
+              <div class="progress-track" id="progressTrack">
+                <div class="progress-line">
+                  <div class="progress-line-fill" id="progressFill"></div>
+                </div>
+
+                <div class="progress-step done" data-step="0">
+                  <div class="step-icon"><i class="bi bi-check2-circle"></i></div>
+                  <span>Pedido recibido</span>
+                </div>
+
+                <div class="progress-step active" data-step="1">
+                  <div class="step-icon"><i class="bi bi-flower1"></i></div>
+                  <span>En diseño floral</span>
+                </div>
+
+                <div class="progress-step" data-step="2">
+                  <div class="step-icon"><i class="bi bi-gift"></i></div>
+                  <span>Listo para entrega</span>
+                </div>
+
+                <div class="progress-step" data-step="3">
+                  <div class="step-icon"><i class="bi bi-truck"></i></div>
+                  <span>En camino</span>
+                </div>
+
+                <div class="progress-step" data-step="4">
+                  <div class="step-icon"><i class="bi bi-house-heart"></i></div>
+                  <span>Entregado</span>
+                </div>
+              </div>
+
+              <div class="status-message">
+                <h3 id="statusTitle">Tu arreglo está en diseño floral.</h3>
+                <p class="text-muted-custom mb-0" id="statusText">
+                  Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones
+                  naturales según disponibilidad de flores y temporada.
+                </p>
+
+                <div class="status-meta">
+                  <div class="meta-card">
+                    <small>Entrega estimada</small>
+                    <strong id="deliveryTime">Hoy, 5:00 p.m. - 7:00 p.m.</strong>
+                  </div>
+                  <div class="meta-card">
+                    <small>Tipo de pedido</small>
+                    <strong id="orderType">Ramo premium</strong>
+                  </div>
+                  <div class="meta-card">
+                    <small>Canal de atención</small>
+                    <strong>WhatsApp</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-padding" id="funciona">
+        <div class="container">
+          <div class="text-center mb-5 reveal">
+            <div class="eyebrow">Cómo funciona</div>
+            <h2 class="section-title">Una experiencia sencilla para tus clientes.</h2>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-4 reveal">
+              <div class="info-card">
+                <div class="mini-icon"><i class="bi bi-receipt-cutoff"></i></div>
+                <h3>1. Recibe su código</h3>
+                <p class="text-muted-custom mb-0">
+                  Al confirmar el pedido, el cliente recibe un número como JHM-0001 para consultar el avance de su
+                  arreglo.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+              <div class="info-card">
+                <div class="mini-icon"><i class="bi bi-search-heart"></i></div>
+                <h3>2. Consulta el avance</h3>
+                <p class="text-muted-custom mb-0">
+                  Desde esta página puede revisar si el pedido fue recibido, está en diseño, listo para entrega o en
+                  camino.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+              <div class="info-card">
+                <div class="mini-icon"><i class="bi bi-whatsapp"></i></div>
+                <h3>3. Contacta por WhatsApp</h3>
+                <p class="text-muted-custom mb-0">
+                  Si necesita más información, puede escribir directamente con su nombre y número de pedido.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="section-padding live-map-section" id="mapa-tiempo-real">
+        <div class="container">
+          <div class="live-map-shell reveal">
+            <div class="live-map-header">
+              <div>
+                <div class="eyebrow">Propuesta premium</div>
+                <h2 class="section-title mb-3">Visualiza tu entrega en tiempo real.</h2>
+                <p class="text-muted-custom" style="max-width:760px;">
+                  Cuando el pedido esté en camino, esta sección podrá mostrar un mapa con la ubicación aproximada del
+                  repartidor y el avance de la ruta hasta el punto de entrega.
+                </p>
+              </div>
+              <div class="text-lg-end">
+                <span class="live-map-badge"><i class="bi bi-geo-alt-fill"></i> Demo visual de rastreo</span>
+              </div>
+            </div>
+
+            <div class="live-map-area" aria-label="Mapa demo de seguimiento en tiempo real">
+              <div class="map-road road-1"></div>
+              <div class="map-road road-2"></div>
+              <div class="map-road road-3"></div>
+              <div class="map-road road-4"></div>
+
+              <div class="map-pin origin">
+                <i class="bi bi-shop-window"></i>
+                <small>Floristería</small>
+              </div>
+
+              <div class="map-pin destination">
+                <i class="bi bi-house-heart"></i>
+                <small>Destino</small>
+              </div>
+
+              <svg class="route-svg" viewBox="0 0 1200 570" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d98ca4" />
+                    <stop offset="55%" stop-color="#d6af65" />
+                    <stop offset="100%" stop-color="#f8dbe4" />
+                  </linearGradient>
+                </defs>
+                <path class="route-shadow"
+                  d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
+                <path class="route-line"
+                  d="M 120 145 C 260 95, 362 210, 470 238 S 698 228, 775 350 S 950 442, 1060 370" />
+              </svg>
+
+              <div class="delivery-cart" aria-hidden="true">
+                <i class="bi bi-truck"></i>
+              </div>
+
+              <div class="map-note-card">
+                <strong>Ubicación en vivo</strong>
+                <p>
+                  Esta es una maqueta visual. Más adelante puede conectarse con GPS real del repartidor, Google Maps,
+                  Mapbox o una liga de ubicación compartida.
+                </p>
+              </div>
+
+              <div class="map-status-card">
+                <div class="eyebrow mb-2">Pedido en camino</div>
+                <h3 class="serif mb-2">Tu ramo va hacia su destino.</h3>
+                <p class="text-muted-custom mb-0">
+                  El carrito se actualiza para representar el avance de la entrega. Ideal para una experiencia premium y
+                  confiable.
+                </p>
+                <div class="map-status-grid">
+                  <div class="map-status-mini">
+                    <small>ETA</small>
+                    <strong>18 min</strong>
+                  </div>
+                  <div class="map-status-mini">
+                    <small>Distancia</small>
+                    <strong>2.4 km</strong>
+                  </div>
+                  <div class="map-status-mini">
+                    <small>Estado</small>
+                    <strong>En ruta</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-padding dark-section" id="ayuda">
+        <div class="container">
+          <div class="cta-card reveal">
+            <div class="row align-items-center g-4">
+              <div class="col-lg-8">
+                <div class="eyebrow">Atención personalizada</div>
+                <h2 class="section-title mb-3">¿Necesitas confirmar tu entrega?</h2>
+                <p class="text-muted-custom mb-0" style="max-width:760px;">
+                  Escríbenos por WhatsApp con tu nombre y número de pedido. Con gusto te ayudamos a confirmar
+                  disponibilidad, horario de entrega o cualquier detalle especial.
+                </p>
+              </div>
+              <div class="col-lg-4 text-lg-end">
+                <a href="https://wa.me/520000000000" class="btn-main"><i class="bi bi-whatsapp"></i> Escribir por
+                  WhatsApp</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <button class="cart-float" type="button" aria-label="Ver carrito">
+      <i class="bi bi-bag-heart"></i>
+      <span>2</span>
+    </button>
+
+    <a class="whatsapp-float" href="https://wa.me/520000000000" target="_blank" aria-label="WhatsApp">
+      <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <footer>
+      <div class="container">
+        <div class="row g-4 align-items-start">
+          <div class="col-md-5">
+            <a href="index.html#inicio" class="brand-logo mb-3">
+              <span class="logo-mark">
+                <img src="assets/img/icon/logo_lpb.png" alt="Logo Floristería Juan H Magno">
+              </span>
+              Juan H <span>Magno</span>
+            </a>
+            <p class="mt-3" style="color:rgba(255,250,245,.68); line-height:1.8;">
+              Arte floral contemporáneo para momentos inolvidables. Cada ramo es único, especial y creado con intención.
+            </p>
+          </div>
+
+          <div class="col-md-3">
+            <h5 class="fw-bold mb-3">Navegación</h5>
+            <div class="d-grid gap-2">
+              <a href="index.html#inicio">Inicio</a>
+              <a href="catalogo.html">Catálogo</a>
+              <a href="rastreo.html">Rastrea tu pedido</a>
+              <a href="index.html#contacto">Contacto</a>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <h5 class="fw-bold mb-3">Horario de atención</h5>
+            <p style="color:rgba(255,250,245,.68); line-height:1.8;">
+              Lunes a sábado de 9:00 a.m. a 7:00 p.m.<br>
+              Pedidos y disponibilidad por WhatsApp.
+            </p>
           </div>
         </div>
 
-        <div class="col-md-4">
-          <h5 class="fw-bold mb-3">Horario de atención</h5>
-          <p style="color:rgba(255,250,245,.68); line-height:1.8;">
-            Lunes a sábado de 9:00 a.m. a 7:00 p.m.<br>
-            Pedidos y disponibilidad por WhatsApp.
-          </p>
+        <hr style="border-color:rgba(255,255,255,.10); margin:34px 0 22px;">
+        <div class="d-flex justify-content-between flex-wrap gap-3"
+          style="color:rgba(255,250,245,.56); font-size:.9rem;">
+          <span>© 2026 Juan H Magno. Todos los derechos reservados.</span>
+          <span>Diseño floral en Guadalajara.</span>
         </div>
       </div>
+    </footer>
 
-      <hr style="border-color:rgba(255,255,255,.10); margin:34px 0 22px;">
-      <div class="d-flex justify-content-between flex-wrap gap-3" style="color:rgba(255,250,245,.56); font-size:.9rem;">
-        <span>© 2026 Juan H Magno. Todos los derechos reservados.</span>
-        <span>Diseño floral en Guadalajara.</span>
-      </div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 30);
-    });
-
-    const seasonButtons = document.querySelectorAll('.season-btn');
-    const seasonClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
-    seasonButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const season = button.dataset.season;
-        document.body.classList.remove(...seasonClasses);
-        document.body.classList.add(`theme-${season}`);
-        seasonButtons.forEach((btn) => btn.classList.remove('active'));
-        button.classList.add('active');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 30);
       });
-    });
 
-    const reveals = document.querySelectorAll('.reveal');
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
+      const seasonButtons = document.querySelectorAll('.season-btn');
+      const seasonClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+      seasonButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const season = button.dataset.season;
+          document.body.classList.remove(...seasonClasses);
+          document.body.classList.add(`theme-${season}`);
+          seasonButtons.forEach((btn) => btn.classList.remove('active'));
+          button.classList.add('active');
+        });
+      });
+
+      const reveals = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach((el) => revealObserver.observe(el));
+
+      const demoOrders = {
+        'JHM-0001': {
+          step: 1,
+          badge: 'En diseño floral',
+          title: 'Tu arreglo está en diseño floral.',
+          text: 'Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones naturales según disponibilidad de flores y temporada.',
+          delivery: 'Hoy, 5:00 p.m. - 7:00 p.m.',
+          type: 'Ramo premium'
+        },
+        'JHM-0002': {
+          step: 3,
+          badge: 'En camino',
+          title: 'Tu pedido va en camino.',
+          text: 'El arreglo ya salió para entrega. Ten a la mano tu teléfono para cualquier actualización del repartidor o del equipo de atención.',
+          delivery: 'En los próximos 35 minutos',
+          type: 'Arreglo especial'
+        },
+        'JHM-0003': {
+          step: 4,
+          badge: 'Entregado',
+          title: 'Tu pedido fue entregado.',
+          text: 'Gracias por confiar en Juan H Magno. Esperamos que este detalle floral haya acompañado un momento especial.',
+          delivery: 'Entregado hoy',
+          type: 'Ramo de temporada'
         }
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach((el) => revealObserver.observe(el));
-
-    const demoOrders = {
-      'JHM-0001': {
-        step: 1,
-        badge: 'En diseño floral',
-        title: 'Tu arreglo está en diseño floral.',
-        text: 'Estamos preparando tu pedido con cuidado. Recuerda que cada ramo es único y puede tener variaciones naturales según disponibilidad de flores y temporada.',
-        delivery: 'Hoy, 5:00 p.m. - 7:00 p.m.',
-        type: 'Ramo premium'
-      },
-      'JHM-0002': {
-        step: 3,
-        badge: 'En camino',
-        title: 'Tu pedido va en camino.',
-        text: 'El arreglo ya salió para entrega. Ten a la mano tu teléfono para cualquier actualización del repartidor o del equipo de atención.',
-        delivery: 'En los próximos 35 minutos',
-        type: 'Arreglo especial'
-      },
-      'JHM-0003': {
-        step: 4,
-        badge: 'Entregado',
-        title: 'Tu pedido fue entregado.',
-        text: 'Gracias por confiar en Juan H Magno. Esperamos que este detalle floral haya acompañado un momento especial.',
-        delivery: 'Entregado hoy',
-        type: 'Ramo de temporada'
-      }
-    };
-
-    const trackingForm = document.getElementById('trackingForm');
-    const trackingInput = document.getElementById('trackingInput');
-    const orderTitle = document.getElementById('orderTitle');
-    const orderBadge = document.getElementById('orderBadge');
-    const statusTitle = document.getElementById('statusTitle');
-    const statusText = document.getElementById('statusText');
-    const deliveryTime = document.getElementById('deliveryTime');
-    const orderType = document.getElementById('orderType');
-    const progressFill = document.getElementById('progressFill');
-    const progressSteps = document.querySelectorAll('.progress-step');
-
-    function renderOrder(code) {
-      const normalizedCode = code.trim().toUpperCase() || 'JHM-0001';
-      const order = demoOrders[normalizedCode] || {
-        step: 0,
-        badge: 'Pedido por confirmar',
-        title: 'No encontramos ese pedido en la vista demo.',
-        text: 'Esta página está lista para conectarse a pedidos reales. Por ahora, confirma el estado de tu pedido por WhatsApp con tu nombre y número de pedido.',
-        delivery: 'Por confirmar',
-        type: 'Por confirmar'
       };
 
-      orderTitle.textContent = normalizedCode;
-      orderBadge.textContent = order.badge;
-      statusTitle.textContent = order.title;
-      statusText.textContent = order.text;
-      deliveryTime.textContent = order.delivery;
-      orderType.textContent = order.type;
-      progressFill.style.width = `${(order.step / 4) * 100}%`;
+      const trackingForm = document.getElementById('trackingForm');
+      const trackingInput = document.getElementById('trackingInput');
+      const orderTitle = document.getElementById('orderTitle');
+      const orderBadge = document.getElementById('orderBadge');
+      const statusTitle = document.getElementById('statusTitle');
+      const statusText = document.getElementById('statusText');
+      const deliveryTime = document.getElementById('deliveryTime');
+      const orderType = document.getElementById('orderType');
+      const progressFill = document.getElementById('progressFill');
+      const progressSteps = document.querySelectorAll('.progress-step');
 
-      progressSteps.forEach((step) => {
-        const index = Number(step.dataset.step);
-        step.classList.toggle('done', index < order.step);
-        step.classList.toggle('active', index === order.step);
+      function renderOrder(code) {
+        const normalizedCode = code.trim().toUpperCase() || 'JHM-0001';
+        const order = demoOrders[normalizedCode] || {
+          step: 0,
+          badge: 'Pedido por confirmar',
+          title: 'No encontramos ese pedido en la vista demo.',
+          text: 'Esta página está lista para conectarse a pedidos reales. Por ahora, confirma el estado de tu pedido por WhatsApp con tu nombre y número de pedido.',
+          delivery: 'Por confirmar',
+          type: 'Por confirmar'
+        };
+
+        orderTitle.textContent = normalizedCode;
+        orderBadge.textContent = order.badge;
+        statusTitle.textContent = order.title;
+        statusText.textContent = order.text;
+        deliveryTime.textContent = order.delivery;
+        orderType.textContent = order.type;
+        progressFill.style.width = `${(order.step / 4) * 100}%`;
+
+        progressSteps.forEach((step) => {
+          const index = Number(step.dataset.step);
+          step.classList.toggle('done', index < order.step);
+          step.classList.toggle('active', index === order.step);
+        });
+
+        document.getElementById('estado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      trackingForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        renderOrder(trackingInput.value);
       });
 
-      document.getElementById('estado').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    trackingForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      renderOrder(trackingInput.value);
-    });
-
-    document.querySelectorAll('[data-code]').forEach((button) => {
-      button.addEventListener('click', () => {
-        trackingInput.value = button.dataset.code;
-        renderOrder(button.dataset.code);
+      document.querySelectorAll('[data-code]').forEach((button) => {
+        button.addEventListener('click', () => {
+          trackingInput.value = button.dataset.code;
+          renderOrder(button.dataset.code);
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 
 </html>
