@@ -17,6 +17,7 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/mobile-nav.css">
 
 </head>
 
@@ -42,27 +43,8 @@
     </div>
   </nav>
 
-  <nav class="mobile-app-nav" aria-label="Navegación móvil">
-    <a href="index.html#inicio">
-      <i class="bi bi-house-heart"></i>
-      <span>Inicio</span>
-    </a>
-
-    <a href="catalogo.html#productos">
-      <i class="bi bi-bag-heart"></i>
-      <span>Arreglos</span>
-    </a>
-
-    <a href="carrito.html">
-      <i class="bi bi-basket"></i>
-      <span>Carrito</span>
-    </a>
-
-    <a href="ideas.html" class="active">
-      <i class="bi bi-stars"></i>
-      <span>Ideas</span>
-    </a>
-  </nav>
+  <!-- Navegación móvil compartida -->
+  <div id="mobile-nav-container"></div>
 
   <main class="ideas-page">
     <div class="container">
@@ -425,6 +407,7 @@
 
     renderGeneratedProduct();
   </script>
+  <script src="assets/js/mobile-nav.js"></script>
 </body>
 
 </html>

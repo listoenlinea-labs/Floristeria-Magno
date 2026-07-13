@@ -11155,3 +11155,20 @@ body.page-rastreo .nav-link-custom::before {
    Este bloque debe permanecer AL FINAL de style.css
    Si quieres regresar al estilo original solo remueve este bloque
 ========================================================== */
+
+
+/* ==========================================================
+   AJUSTE DE ANCLAS PARA NAVBAR FIJO
+========================================================== */
+
+body.page-index #inicio,
+body.page-index #momentos,
+body.page-index #servicios,
+body.page-index #novias,
+body.page-index #nosotros,
+body.page-index #historias,
+body.page-index #temporadas,
+body.page-index #contacto,
+body.page-index #ubicacion {
+    scroll-margin-top: 115px;
+}

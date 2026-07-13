@@ -19,6 +19,7 @@
     rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/mobile-nav.css">
 </head>
 
 <body class="theme-spring page-index">
@@ -80,32 +81,8 @@
     </div>
   </nav>
 
-  <nav class="mobile-app-nav" aria-label="Navegación móvil">
-    <a href="index.html#inicio" class="active">
-      <i class="bi bi-house-heart"></i>
-      <span>Inicio</span>
-    </a>
-
-    <a href="catalogo.html#productos">
-      <i class="bi bi-bag-heart"></i>
-      <span>Arreglos</span>
-    </a>
-
-    <a href="carrito.html">
-      <i class="bi bi-basket"></i>
-      <span>Carrito</span>
-    </a>
-
-    <a href="rastreo.html">
-      <i class="bi bi-truck"></i>
-      <span>Rastrear</span>
-    </a>
-
-    <a href="ideas.html">
-      <i class="bi bi-stars"></i>
-      <span>Ideas</span>
-    </a>
-  </nav>
+  <!-- Navegación móvil compartida -->
+  <div id="mobile-nav-container"></div>
 
   <!-- HERO EDITORIAL PARA INICIO -->
   <header class="hero home-hero" id="inicio">
@@ -1319,13 +1296,15 @@
     }
 
     function initNavbarScrollSpy() {
+      const navbar = document.querySelector('.navbar-custom');
+
       const sectionLinks = Array.from(
         document.querySelectorAll(
           '.navbar-custom .nav-link-custom[data-section]'
         )
       );
 
-      if (!sectionLinks.length) return;
+      if (!navbar || !sectionLinks.length) return;
 
       const sections = sectionLinks
         .map(link => {
@@ -1333,59 +1312,198 @@
           const section = document.getElementById(sectionId);
 
           return {
+            id: sectionId,
             link,
             section
           };
         })
         .filter(item => item.section);
 
-      function updateActiveSection() {
-        const navbar = document.querySelector('.navbar-custom');
-        const navbarHeight = navbar?.offsetHeight || 90;
+      if (!sections.length) return;
 
-        const scrollReference =
-          window.scrollY + navbarHeight + window.innerHeight * 0.22;
+      let clickedSectionId = null;
+      let clickReleaseTimer = null;
+
+      function activateLink(sectionId) {
+        sectionLinks.forEach(link => {
+          const isActive = link.dataset.section === sectionId;
+
+          link.classList.toggle('active', isActive);
+
+          if (isActive) {
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      function getCurrentSection() {
+        /*
+          Se usa aproximadamente el centro superior de la pantalla.
+          Esto evita marcar la sección anterior cuando el título
+          de la nueva sección ya es claramente visible.
+        */
+        const detectionPoint = window.innerHeight * 0.38;
 
         let currentSection = sections[0];
 
         sections.forEach(item => {
-          if (item.section.offsetTop <= scrollReference) {
+          const rect = item.section.getBoundingClientRect();
+
+          if (
+            rect.top <= detectionPoint &&
+            rect.bottom > detectionPoint
+          ) {
             currentSection = item;
           }
         });
 
-        sectionLinks.forEach(link => {
-          link.classList.remove('active');
-          link.removeAttribute('aria-current');
-        });
+        /*
+          Cuando estamos entre secciones rastreadas, conserva la última
+          sección cuyo inicio ya pasó el punto de detección.
+        */
+        if (!currentSection) {
+          currentSection = sections[0];
+
+          sections.forEach(item => {
+            const rect = item.section.getBoundingClientRect();
+
+            if (rect.top <= detectionPoint) {
+              currentSection = item;
+            }
+          });
+        }
+
+        const isAtBottom =
+          window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 10;
+
+        if (isAtBottom) {
+          currentSection = sections[sections.length - 1];
+        }
+
+        return currentSection;
+      }
+
+      function updateActiveSection() {
+        /*
+          Mientras termina el desplazamiento iniciado por un clic,
+          mantenemos activo el enlace seleccionado.
+        */
+        if (clickedSectionId) {
+          activateLink(clickedSectionId);
+          return;
+        }
+
+        const currentSection = getCurrentSection();
 
         if (currentSection) {
-          currentSection.link.classList.add('active');
-          currentSection.link.setAttribute('aria-current', 'page');
+          activateLink(currentSection.id);
         }
       }
 
-      window.addEventListener('scroll', updateActiveSection, {
-        passive: true
-      });
-
-      window.addEventListener('resize', updateActiveSection);
-
       sectionLinks.forEach(link => {
-        link.addEventListener('click', () => {
-          sectionLinks.forEach(item => {
-            item.classList.remove('active');
-            item.removeAttribute('aria-current');
+        link.addEventListener('click', event => {
+          const sectionId = link.dataset.section;
+          const section = document.getElementById(sectionId);
+
+          if (!section) return;
+
+          event.preventDefault();
+
+          clickedSectionId = sectionId;
+          activateLink(sectionId);
+
+          const navbarHeight = navbar.offsetHeight || 90;
+
+          const targetPosition =
+            section.getBoundingClientRect().top +
+            window.scrollY -
+            navbarHeight -
+            12;
+
+          window.history.replaceState(
+            null,
+            '',
+            `#${sectionId}`
+          );
+
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth'
           });
 
-          link.classList.add('active');
-          link.setAttribute('aria-current', 'page');
+          window.clearTimeout(clickReleaseTimer);
+
+          /*
+            Damos tiempo suficiente para que termine el smooth scroll.
+            Después liberamos el scroll spy.
+          */
+          clickReleaseTimer = window.setTimeout(() => {
+            clickedSectionId = null;
+            updateActiveSection();
+          }, 1200);
         });
+      });
+
+      window.addEventListener(
+        'scroll',
+        updateActiveSection,
+        { passive: true }
+      );
+
+      window.addEventListener(
+        'resize',
+        updateActiveSection
+      );
+
+      /*
+        Navegadores modernos: libera el bloqueo justo cuando
+        realmente termina el desplazamiento.
+      */
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', () => {
+          clickedSectionId = null;
+          updateActiveSection();
+        });
+      }
+
+      window.addEventListener('load', () => {
+        const hash = window.location.hash.replace('#', '');
+
+        const matchingSection = sections.find(
+          item => item.id === hash
+        );
+
+        if (matchingSection) {
+          activateLink(matchingSection.id);
+
+          window.setTimeout(() => {
+            const navbarHeight = navbar.offsetHeight || 90;
+
+            const targetPosition =
+              matchingSection.section.getBoundingClientRect().top +
+              window.scrollY -
+              navbarHeight -
+              12;
+
+            window.scrollTo({
+              top: Math.max(0, targetPosition),
+              behavior: 'auto'
+            });
+
+            activateLink(matchingSection.id);
+          }, 100);
+        } else {
+          updateActiveSection();
+        }
       });
 
       updateActiveSection();
     }
   </script>
+  <script src="assets/js/mobile-nav.js"></script>
 </body>
 
 </html>
