@@ -10,7 +10,9 @@ const requiredVariables = [
 
 for (const variable of requiredVariables) {
     if (!process.env[variable]) {
-        throw new Error(`Falta la variable de entorno requerida: ${variable}`);
+        throw new Error(
+            `Falta la variable de entorno requerida: ${variable}`
+        );
     }
 }
 
@@ -40,7 +42,7 @@ const sequelize = new Sequelize(
                 ? {
                     ssl: {
                         require: true,
-                        rejectUnauthorized: true
+                        rejectUnauthorized: false
                     }
                 }
                 : {}

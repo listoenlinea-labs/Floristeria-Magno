@@ -1,17 +1,26 @@
 {
-  "name": "backend",
+  "name": "floristeria-juan-h-magno-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API REST de Floristería Juan H Magno",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "db:inspect": "node src/scripts/inspect-schema.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "express",
+    "sequelize",
+    "mysql",
+    "floristeria"
+  ],
+  "author": "Vladimir Rodríguez",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20 <25",
+    "npm": ">=10"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

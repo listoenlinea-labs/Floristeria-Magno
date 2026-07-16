@@ -20,6 +20,7 @@ app.use(
 
 const allowedOrigins = [
     process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_WWW,
     'http://localhost:5500',
     'http://127.0.0.1:5500',
     'https://vlad04.github.io'
@@ -94,6 +95,14 @@ app.get('/api/health', (req, res) => {
         ok: true,
         service: 'Floristería Juan H Magno API',
         environment: process.env.NODE_ENV
+    });
+});
+
+app.get('/', (req, res) => {
+    res.status(200).json({
+        ok: true,
+        service: 'Floristería Juan H Magno API',
+        documentation: '/api/health'
     });
 });
 
