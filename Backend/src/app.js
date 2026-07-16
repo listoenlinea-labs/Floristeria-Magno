@@ -131,7 +131,10 @@ app.get('/api/health/database', async (req, res, next) => {
 /*
  * Rutas funcionales.
  */
-app.use('/api/productos', productosRoutes);
+app.use(
+    '/api/floristeria-magno/productos',
+    productosRoutes
+);
 
 
 /*
