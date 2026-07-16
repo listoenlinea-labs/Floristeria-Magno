@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
 const sequelize = require('./config/database');
+const authRoutes = require('./routes/auth.routes');
 const productosRoutes = require('./routes/productos.routes');
 
 const app = express();
@@ -127,7 +128,10 @@ app.get('/api/health/database', async (req, res, next) => {
     }
 });
 
-
+/*
+ * Rutas de autenticación.
+ */
+app.use('/api/auth', authRoutes);
 /*
  * Rutas funcionales.
  */
