@@ -1481,8 +1481,8 @@
 
       if (!sections.length) return;
 
-      let clickedSectionId = null;
-      let clickReleaseTimer = null;
+let clickedSectionId = null;
+let scrollStopTimer = null;
 
       function activateLink(sectionId) {
         sectionLinks.forEach(link => {
