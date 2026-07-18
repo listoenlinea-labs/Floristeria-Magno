@@ -375,6 +375,9 @@ class SiteHeader extends HTMLElement {
       }))
       .filter((item) => item.section);
 
+    let clickedSectionId = null;
+    let scrollStopTimer = null;
+
     const scrollToSection = (section, updateHash = true) => {
       const targetTop =
         section.getBoundingClientRect().top +
@@ -398,6 +401,7 @@ class SiteHeader extends HTMLElement {
         if (!section) return;
 
         event.preventDefault();
+        clickedSectionId = section.id;
         activateLink(link);
         closeMenu();
         scrollToSection(section);
@@ -405,6 +409,15 @@ class SiteHeader extends HTMLElement {
     });
 
     this.handleSectionScroll = () => {
+      // Durante un desplazamiento iniciado por clic, conserva el botón elegido.
+      if (clickedSectionId) {
+        const clickedLink = sectionLinks.find(
+          (link) => link.dataset.section === clickedSectionId
+        );
+        activateLink(clickedLink);
+        return;
+      }
+
       const marker = window.scrollY + header.offsetHeight + 90;
       let activeItem = sections[0];
 
@@ -415,14 +428,33 @@ class SiteHeader extends HTMLElement {
       activateLink(activeItem?.link);
     };
 
-    window.addEventListener('scroll', this.handleSectionScroll, { passive: true });
+    this.handleSectionScrollWithRelease = () => {
+      this.handleSectionScroll();
+      window.clearTimeout(scrollStopTimer);
+
+      scrollStopTimer = window.setTimeout(() => {
+        clickedSectionId = null;
+        this.handleSectionScroll();
+      }, 180);
+    };
+
+    window.addEventListener('scroll', this.handleSectionScrollWithRelease, { passive: true });
     window.addEventListener('resize', this.handleSectionScroll);
+
+    if ('onscrollend' in window) {
+      this.handleScrollEnd = () => {
+        clickedSectionId = null;
+        this.handleSectionScroll();
+      };
+      window.addEventListener('scrollend', this.handleScrollEnd);
+    }
 
     const hash = window.location.hash.replace('#', '');
     const hashItem = sections.find((item) => item.section.id === hash);
 
     if (hashItem) {
       window.setTimeout(() => {
+        clickedSectionId = hashItem.section.id;
         scrollToSection(hashItem.section, false);
         activateLink(hashItem.link);
       }, 100);
@@ -436,8 +468,9 @@ class SiteHeader extends HTMLElement {
     document.removeEventListener('keydown', this.handleEscape);
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('scroll', this.handleHeaderScroll);
-    window.removeEventListener('scroll', this.handleSectionScroll);
+    window.removeEventListener('scroll', this.handleSectionScrollWithRelease);
     window.removeEventListener('resize', this.handleSectionScroll);
+    window.removeEventListener('scrollend', this.handleScrollEnd);
   }
 }
 
