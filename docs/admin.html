@@ -58,10 +58,7 @@
 
             <div class="tabs-card glass">
                 <button class="tab-btn active" onclick="setTab('products')">
-                    <i class="bi bi-flower1"></i> Productos
-                </button>
-                <button class="tab-btn" onclick="setTab('sections')">
-                    <i class="bi bi-layout-text-window-reverse"></i> Secciones
+                    <i class="bi bi-flower1"></i> Catálogo
                 </button>
                 <button class="tab-btn" onclick="setTab('gallery')">
                     <i class="bi bi-images"></i> Galería
@@ -77,14 +74,17 @@
                         <span>Productos activos</span>
                         <strong id="kpiActive">0</strong>
                     </div>
+
                     <div class="kpi">
                         <span>Productos ocultos</span>
                         <strong id="kpiInactive">0</strong>
                     </div>
+
                     <div class="kpi">
                         <span>Inventario total</span>
                         <strong id="kpiStock">0</strong>
                     </div>
+
                     <div class="kpi">
                         <span>Precio promedio</span>
                         <strong id="kpiAvg">$0</strong>
@@ -95,13 +95,15 @@
                     <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
                         <div>
                             <h2 class="mb-1">Productos</h2>
-                            <p class="small-muted mb-0">Estos productos alimentan el catálogo público.</p>
+                            <p class="small-muted mb-0">
+                                Estos productos alimentan el catálogo público.
+                            </p>
                         </div>
                     </div>
 
                     <div class="toolbar">
-                        <input id="searchInput" class="form-control" placeholder="Buscar producto o categoría..."
-                            oninput="renderProducts()">
+                        <input id="searchInput" class="form-control"
+                            placeholder="Buscar producto, categoría o descripción..." oninput="renderProducts()">
 
                         <select id="categoryFilter" class="form-select" onchange="renderProducts()">
                             <option value="">Todas las categorías</option>
@@ -121,22 +123,7 @@
                         </select>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Foto</th>
-                                    <th>Producto</th>
-                                    <th>Categoría</th>
-                                    <th>Precio</th>
-                                    <th>Stock</th>
-                                    <th>Estado</th>
-                                    <th class="text-end">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTable"></tbody>
-                        </table>
-                    </div>
+                    <div id="productsTable" class="admin-products-list"></div>
                 </div>
             </section>
 
@@ -179,21 +166,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Imagen</th>
-                                    <th>Título</th>
-                                    <th>Categoría</th>
-                                    <th>Orden</th>
-                                    <th>Estado</th>
-                                    <th class="text-end">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="galleryTable"></tbody>
-                        </table>
-                    </div>
+                    <div id="galleryTable" class="admin-gallery-grid"></div>
                 </div>
             </section>
 
@@ -851,55 +824,232 @@
         }
 
         function renderProducts() {
-            const tbody = document.getElementById("productsTable");
-            const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
-            const category = document.getElementById("categoryFilter")?.value || "";
-            const status = document.getElementById("statusFilter")?.value || "";
+            const container = document.getElementById("productsTable");
 
-            let filtered = products.filter(p => {
+            const search =
+                document.getElementById("searchInput")
+                    ?.value
+                    .trim()
+                    .toLowerCase() || "";
+
+            const category =
+                document.getElementById("categoryFilter")?.value || "";
+
+            const status =
+                document.getElementById("statusFilter")?.value || "";
+
+            let filtered = products.filter(product => {
                 const matchesSearch =
-                    String(p.name || "").toLowerCase().includes(search) ||
-                    String(p.category || "").toLowerCase().includes(search) ||
-                    String(p.description || "").toLowerCase().includes(search);
+                    String(product.name || "")
+                        .toLowerCase()
+                        .includes(search) ||
+                    String(product.category || "")
+                        .toLowerCase()
+                        .includes(search) ||
+                    String(product.description || "")
+                        .toLowerCase()
+                        .includes(search) ||
+                    String(product.tag || "")
+                        .toLowerCase()
+                        .includes(search);
 
-                const matchesCategory = !category || p.category === category;
-                const matchesStatus = !status || p.active === status;
+                const matchesCategory =
+                    !category || product.category === category;
 
-                return matchesSearch && matchesCategory && matchesStatus;
+                const matchesStatus =
+                    !status || product.active === status;
+
+                return (
+                    matchesSearch &&
+                    matchesCategory &&
+                    matchesStatus
+                );
             });
 
-            filtered.sort((a, b) => Number(a.sortOrder || 999) - Number(b.sortOrder || 999));
+            filtered.sort(
+                (a, b) =>
+                    Number(a.sortOrder || 999) -
+                    Number(b.sortOrder || 999)
+            );
 
             if (!filtered.length) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center small-muted py-5">No hay productos para mostrar.</td></tr>`;
+                container.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="bi bi-flower1"></i>
+
+                <h4>No hay productos para mostrar</h4>
+
+                <p>
+                    Cambia los filtros o agrega un nuevo producto.
+                </p>
+            </div>
+        `;
+
                 updateKpis();
                 return;
             }
 
-            tbody.innerHTML = filtered.map(p => `
-        <tr>
-          <td><img class="product-img" src="${convertDriveUrl(p.imageUrl)}" onerror="this.src='https://via.placeholder.com/120?text=Foto'"></td>
-          <td>
-            <div class="product-title">${escapeHtml(p.name || "")}</div>
-            <div class="product-desc">${escapeHtml(p.description || "")}</div>
-          </td>
-          <td>
-            ${escapeHtml(p.category || "")}
-            ${p.tag ? `<div class="small-muted">${escapeHtml(p.tag)}</div>` : ""}
-          </td>
-          <td><strong>$${Number(p.price || 0).toLocaleString("es-MX")}</strong></td>
-          <td class="${Number(p.stock || 0) <= 3 ? "stock-low" : ""}">${Number(p.stock || 0)}</td>
-          <td>
-            <span class="status-pill ${p.active === "SI" ? "active-pill" : "inactive-pill"}">
-              ${p.active === "SI" ? "Activo" : "Oculto"}
-            </span>
-          </td>
-          <td class="text-end">
-            <button class="btn-soft btn-sm" onclick='editProduct("${p.id}")'><i class="bi bi-pencil"></i> Editar</button>
-            <button class="btn-soft btn-sm ms-1" onclick='toggleProduct("${p.id}")'>${p.active === "SI" ? "Ocultar" : "Activar"}</button>
-          </td>
-        </tr>
-      `).join("");
+            container.innerHTML = filtered.map(product => {
+                const imageUrl =
+                    convertDriveUrl(product.imageUrl) ||
+                    "https://via.placeholder.com/240x240?text=Sin+foto";
+
+                const price =
+                    Number(product.price || 0)
+                        .toLocaleString("es-MX", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                const stock = Number(product.stock || 0);
+
+                const isActive = product.active === "SI";
+                const isLowStock = stock <= 3;
+
+                const description =
+                    product.description ||
+                    "Este producto todavía no tiene descripción.";
+
+                return `
+            <article class="admin-product-card">
+
+                <div class="admin-product-image-wrap">
+                    <img
+                        class="admin-product-image"
+                        src="${imageUrl}"
+                        alt="${escapeHtml(product.name || "Producto")}"
+                        loading="lazy"
+                        onerror="
+                            this.onerror = null;
+                            this.src = 'https://via.placeholder.com/240x240?text=Sin+foto';
+                        "
+                    >
+
+                    ${product.featured === "SI"
+                        ? `
+                                <span class="admin-featured-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    Destacado
+                                </span>
+                            `
+                        : ""
+                    }
+                </div>
+
+                <div class="admin-product-main">
+
+                    <div class="admin-product-heading">
+                        <div>
+                            <span class="admin-product-category">
+                                ${escapeHtml(product.category || "Sin categoría")}
+                            </span>
+
+                            <h3 class="admin-product-name">
+                                ${escapeHtml(product.name || "Producto sin nombre")}
+                            </h3>
+                        </div>
+
+                        <span
+                            class="
+                                admin-status-badge
+                                ${isActive
+                        ? "is-active"
+                        : "is-inactive"}
+                            "
+                        >
+                            <span class="admin-status-dot"></span>
+
+                            ${isActive ? "Activo" : "Oculto"}
+                        </span>
+                    </div>
+
+                    ${product.tag
+                        ? `
+                                <div class="admin-product-tags">
+                                    <span>
+                                        <i class="bi bi-tag"></i>
+                                        ${escapeHtml(product.tag)}
+                                    </span>
+                                </div>
+                            `
+                        : ""
+                    }
+
+                    <p class="admin-product-description">
+                        ${escapeHtml(description)}
+                    </p>
+
+                    <div class="admin-product-info-grid">
+
+                        <div class="admin-product-info">
+                            <span>Precio</span>
+                            <strong>$${price}</strong>
+                        </div>
+
+                        <div class="admin-product-info">
+                            <span>Existencias</span>
+
+                            <strong class="${isLowStock ? "stock-low" : ""}">
+                                ${stock}
+                            </strong>
+
+                            ${isLowStock
+                        ? `
+                                        <small class="admin-low-stock">
+                                            Stock bajo
+                                        </small>
+                                    `
+                        : ""
+                    }
+                        </div>
+
+                        <div class="admin-product-info">
+                            <span>Orden</span>
+                            <strong>
+                                ${Number(product.sortOrder || 0)}
+                            </strong>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="admin-product-actions">
+
+                    <button
+                        type="button"
+                        class="admin-action-btn admin-action-edit"
+                        onclick='editProduct("${product.id}")'
+                    >
+                        <i class="bi bi-pencil-square"></i>
+                        Editar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="
+                            admin-action-btn
+                            ${isActive
+                        ? "admin-action-hide"
+                        : "admin-action-show"}
+                        "
+                        onclick='toggleProduct("${product.id}")'
+                    >
+                        <i
+                            class="
+                                bi
+                                ${isActive
+                        ? "bi-eye-slash"
+                        : "bi-eye"}
+                            "
+                        ></i>
+
+                        ${isActive ? "Ocultar" : "Activar"}
+                    </button>
+
+                </div>
+            </article>
+        `;
+            }).join("");
 
             updateKpis();
         }
@@ -959,32 +1109,124 @@
         }
 
         function renderGallery() {
-            const tbody = document.getElementById("galleryTable");
+            const container = document.getElementById("galleryTable");
 
             if (!gallery.length) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center small-muted py-5">No hay imágenes.</td></tr>`;
+                container.innerHTML = `
+            <div class="admin-gallery-empty">
+                <i class="bi bi-images"></i>
+
+                <h4>La galería está vacía</h4>
+
+                <p>
+                    Agrega fotografías de arreglos, eventos o trabajos realizados.
+                </p>
+            </div>
+        `;
+
                 return;
             }
 
-            const sorted = [...gallery].sort((a, b) => Number(a.sortOrder || 999) - Number(b.sortOrder || 999));
+            const sorted = [...gallery].sort(
+                (a, b) =>
+                    Number(a.sortOrder || 999) -
+                    Number(b.sortOrder || 999)
+            );
 
-            tbody.innerHTML = sorted.map(g => `
-        <tr>
-          <td><img class="mini-img wide" src="${convertDriveUrl(g.imageUrl)}" onerror="this.src='https://via.placeholder.com/140?text=Imagen'"></td>
-          <td><strong>${escapeHtml(g.title || "")}</strong></td>
-          <td>${escapeHtml(g.category || "")}</td>
-          <td>${g.sortOrder || ""}</td>
-          <td>
-            <span class="status-pill ${g.active === "SI" ? "active-pill" : "inactive-pill"}">
-              ${g.active === "SI" ? "Activo" : "Oculto"}
-            </span>
-          </td>
-          <td class="text-end">
-            <button class="btn-soft btn-sm" onclick='editGalleryItem("${g.id}")'><i class="bi bi-pencil"></i> Editar</button>
-            <button class="btn-soft btn-sm ms-1" onclick='toggleGalleryItem("${g.id}")'>${g.active === "SI" ? "Ocultar" : "Activar"}</button>
-          </td>
-        </tr>
-      `).join("");
+            container.innerHTML = sorted.map(item => {
+                const imageUrl =
+                    convertDriveUrl(item.imageUrl) ||
+                    "https://via.placeholder.com/600x450?text=Sin+imagen";
+
+                const isActive = item.active === "SI";
+
+                return `
+            <article class="admin-gallery-card">
+
+                <div class="admin-gallery-image-wrap">
+                    <img
+                        class="admin-gallery-image"
+                        src="${imageUrl}"
+                        alt="${escapeHtml(item.title || "Imagen de galería")}"
+                        loading="lazy"
+                        onerror="
+                            this.onerror = null;
+                            this.src = 'https://via.placeholder.com/600x450?text=Sin+imagen';
+                        "
+                    >
+
+                    <div class="admin-gallery-image-overlay"></div>
+
+                    <span
+                        class="
+                            admin-gallery-status
+                            ${isActive
+                        ? "is-active"
+                        : "is-inactive"}
+                        "
+                    >
+                        <span class="admin-status-dot"></span>
+
+                        ${isActive ? "Visible" : "Oculta"}
+                    </span>
+
+                    <span class="admin-gallery-order">
+                        Orden ${Number(item.sortOrder || 0)}
+                    </span>
+                </div>
+
+                <div class="admin-gallery-content">
+
+                    <div class="admin-gallery-heading">
+                        <div>
+                            <span class="admin-gallery-category">
+                                ${escapeHtml(item.category || "Sin categoría")}
+                            </span>
+
+                            <h3>
+                                ${escapeHtml(item.title || "Imagen sin título")}
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="admin-gallery-actions">
+
+                        <button
+                            type="button"
+                            class="admin-gallery-btn admin-gallery-edit"
+                            onclick='editGalleryItem("${item.id}")'
+                        >
+                            <i class="bi bi-pencil-square"></i>
+                            Editar
+                        </button>
+
+                        <button
+                            type="button"
+                            class="
+                                admin-gallery-btn
+                                ${isActive
+                        ? "admin-gallery-hide"
+                        : "admin-gallery-show"}
+                            "
+                            onclick='toggleGalleryItem("${item.id}")'
+                        >
+                            <i
+                                class="
+                                    bi
+                                    ${isActive
+                        ? "bi-eye-slash"
+                        : "bi-eye"}
+                                "
+                            ></i>
+
+                            ${isActive ? "Ocultar" : "Mostrar"}
+                        </button>
+
+                    </div>
+                </div>
+            </article>
+        `;
+            }).join("");
         }
 
         function renderSettings() {
