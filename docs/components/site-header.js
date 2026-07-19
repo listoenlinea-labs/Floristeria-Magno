@@ -376,7 +376,21 @@ class SiteHeader extends HTMLElement {
       .filter((item) => item.section);
 
     let isAutomaticScrolling = false;
-    let automaticScrollTimer = null;
+    let automaticScrollTargetLink = null;
+    let automaticScrollStopTimer = null;
+
+    const finishAutomaticScroll = () => {
+      if (!isAutomaticScrolling) return;
+
+      isAutomaticScrolling = false;
+      window.clearTimeout(automaticScrollStopTimer);
+      automaticScrollStopTimer = null;
+
+      // Conserva activo el enlace que inició el desplazamiento.
+      // El siguiente desplazamiento manual volverá a ejecutar el scroll spy.
+      activateLink(automaticScrollTargetLink);
+      automaticScrollTargetLink = null;
+    };
 
     const scrollToSection = (section, updateHash = true) => {
       const targetTop =
@@ -403,46 +417,59 @@ class SiteHeader extends HTMLElement {
         event.preventDefault();
 
         isAutomaticScrolling = true;
+        automaticScrollTargetLink = link;
+        window.clearTimeout(automaticScrollStopTimer);
+
         activateLink(link);
         closeMenu();
         scrollToSection(section);
-
-        window.clearTimeout(automaticScrollTimer);
-        automaticScrollTimer = window.setTimeout(() => {
-          isAutomaticScrolling = false;
-          activateLink(link);
-          this.handleSectionScroll();
-        }, 900);
       });
     });
 
-this.handleSectionScroll = () => {
-  if (isAutomaticScrolling) return;
+    this.handleSectionScroll = () => {
+      if (!sections.length) return;
 
-  const scrollPosition =
-    window.scrollY +
-    header.offsetHeight +
-    20;
+      /*
+        Se usa getBoundingClientRect() porque offsetTop es relativo al
+        offsetParent. En esta página las secciones están dentro de <main>,
+        que tiene position: relative; por eso comparar offsetTop con
+        window.scrollY hacía que ninguna sección coincidiera y el menú
+        regresara a Inicio.
+      */
+      const detectionLine = header.offsetHeight + 24;
+      let activeItem = sections[0];
 
-  let activeItem = sections[0];
+      sections.forEach((item) => {
+        const rect = item.section.getBoundingClientRect();
 
-  sections.forEach((item) => {
-    const sectionTop = item.section.offsetTop;
-    const sectionBottom =
-      sectionTop + item.section.offsetHeight;
+        if (rect.top <= detectionLine) {
+          activeItem = item;
+        }
+      });
 
-    if (
-      scrollPosition >= sectionTop &&
-      scrollPosition < sectionBottom
-    ) {
-      activeItem = item;
-    }
-  });
+      activateLink(activeItem.link);
+    };
 
-  activateLink(activeItem?.link);
-};
+    this.handleSectionScrollEvent = () => {
+      if (isAutomaticScrolling) {
+        // El temporizador se reinicia con cada evento de scroll y solo
+        // termina cuando el desplazamiento suave realmente se detiene.
+        window.clearTimeout(automaticScrollStopTimer);
+        automaticScrollStopTimer = window.setTimeout(
+          finishAutomaticScroll,
+          180
+        );
+        return;
+      }
 
-    window.addEventListener('scroll', this.handleSectionScroll, { passive: true });
+      this.handleSectionScroll();
+    };
+
+    window.addEventListener(
+      'scroll',
+      this.handleSectionScrollEvent,
+      { passive: true }
+    );
     window.addEventListener('resize', this.handleSectionScroll);
 
     const hash = window.location.hash.replace('#', '');
@@ -450,12 +477,21 @@ this.handleSectionScroll = () => {
 
     if (hashItem) {
       window.setTimeout(() => {
-        scrollToSection(hashItem.section, false);
+        isAutomaticScrolling = true;
+        automaticScrollTargetLink = hashItem.link;
         activateLink(hashItem.link);
+        scrollToSection(hashItem.section, false);
       }, 100);
     } else {
       this.handleSectionScroll();
     }
+
+    this.cancelAutomaticScroll = () => {
+      window.clearTimeout(automaticScrollStopTimer);
+      automaticScrollStopTimer = null;
+      isAutomaticScrolling = false;
+      automaticScrollTargetLink = null;
+    };
   }
 
   disconnectedCallback() {
@@ -463,8 +499,9 @@ this.handleSectionScroll = () => {
     document.removeEventListener('keydown', this.handleEscape);
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('scroll', this.handleHeaderScroll);
-    window.removeEventListener('scroll', this.handleSectionScroll);
+    window.removeEventListener('scroll', this.handleSectionScrollEvent);
     window.removeEventListener('resize', this.handleSectionScroll);
+    if (this.cancelAutomaticScroll) this.cancelAutomaticScroll();
   }
 }
 
