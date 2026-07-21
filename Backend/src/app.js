@@ -13,15 +13,10 @@ const detallesPedidoRoutes = require(
     './routes/detalles-pedido.routes'
 );
 const galeriaRoutes = require('./routes/galeria.routes');
-const path = require('path');
-const app = express();
-const uploadsRoutes = require(
-    './routes/uploads.routes'
-);
+const mercadoPagoRoutes = require('./routes/mercadopago.routes');
 
-const {
-    uploadsRoot
-} = require('./config/uploads');
+const app = express();
+
 /*
  * Hostinger ejecuta la aplicación detrás de un proxy inverso.
  * Confiamos en un salto de proxy para obtener correctamente
@@ -84,15 +79,6 @@ app.use(
             'Authorization'
         ],
         credentials: false
-    })
-);
-
-app.use(
-    '/uploads',
-    express.static(uploadsRoot, {
-        fallthrough: false,
-        maxAge: '7d',
-        immutable: false
     })
 );
 
@@ -192,10 +178,11 @@ app.use(
     galeriaRoutes
 );
 
-app.use(
-    '/api/floristeria-magno/uploads',
-    uploadsRoutes
-);
+/*
+ * Checkout Pro de Mercado Pago.
+ */
+app.use('/api/mercadopago', mercadoPagoRoutes);
+
 /*
  * 404 siempre después de las rutas.
  */
@@ -212,22 +199,11 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
     console.error('Error API:', error);
 
-    if (error.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({
-            ok: false,
-            message:
-                'La imagen no puede pesar más de 8 MB'
-        });
-    }
-
     res.status(error.status || 500).json({
         ok: false,
         message:
             process.env.NODE_ENV === 'production'
-                ? (
-                    error.message ||
-                    'Ocurrió un error en el servidor'
-                )
+                ? 'Ocurrió un error en el servidor'
                 : error.message
     });
 });

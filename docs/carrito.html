@@ -92,11 +92,10 @@
 
             <div class="mt-4">
               <label class="form-label">Método de pago</label>
-              <div class="pay-option-grid">
-                <button class="pay-option active" type="button"><i class="bi bi-credit-card"></i>Tarjeta</button>
-                <button class="pay-option" type="button"><i class="bi bi-bank"></i>Transfer</button>
-                <button class="pay-option" type="button"><i class="bi bi-cash-coin"></i>Efectivo</button>
-              </div>
+              <p class="small text-white-50 mb-0">
+                Al continuar, Mercado Pago mostrará los métodos disponibles para el comprador,
+                como tarjeta, saldo, transferencia o efectivo.
+              </p>
             </div>
 
             <div class="mp-payment-methods" aria-label="Métodos compatibles con Mercado Pago">
@@ -111,7 +110,7 @@
               Pagar con Mercado Pago
             </button>
 
-            <div id="wallet_container"></div>
+            <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
 
             <a class="whatsapp-confirm" id="whatsappConfirm" href="https://wa.me/5210000000000" target="_blank"
               rel="noopener">
@@ -175,7 +174,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
 
   <script>
     const CART_KEY = 'jhmagno_cart';
@@ -193,14 +191,15 @@
     const deliveryAddress = document.getElementById('deliveryAddress');
     const deliveryDate = document.getElementById('deliveryDate');
     const deliverySlot = document.getElementById('deliverySlot');
+    const mercadoPagoMessage = document.getElementById('mercadoPagoMessage');
 
-    const MERCADO_PAGO_PUBLIC_KEY = 'PON_AQUI_TU_PUBLIC_KEY';
-    const BACKEND_CREATE_PREFERENCE_URL = '/api/mercadopago/create-preference';
+    const BACKEND_BASE_URL = window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:3000'
+      : 'https://api.listoenlinea.host';
 
-    let mp = null;
-    if (window.MercadoPago && MERCADO_PAGO_PUBLIC_KEY !== 'PON_AQUI_TU_PUBLIC_KEY') {
-      mp = new MercadoPago(MERCADO_PAGO_PUBLIC_KEY, { locale: 'es-MX' });
-    }
+    const BACKEND_CREATE_PREFERENCE_URL =
+      `${BACKEND_BASE_URL}/api/mercadopago/create-preference`;
 
     function money(value) {
       return new Intl.NumberFormat('es-MX', {
@@ -337,13 +336,7 @@
     });
 
     document.addEventListener('click', (event) => {
-      const payOption = event.target.closest('.pay-option');
       const slotOption = event.target.closest('.slot-option');
-
-      if (payOption) {
-        document.querySelectorAll('.pay-option').forEach(button => button.classList.remove('active'));
-        payOption.classList.add('active');
-      }
 
       if (slotOption) {
         document.querySelectorAll('.slot-option').forEach(button => button.classList.remove('active'));
@@ -358,9 +351,106 @@
       input.addEventListener('change', renderCart);
     });
 
-    mercadoPagoBtn.addEventListener('click', () => {
-      alert('Mercado Pago aún no está configurado. Aquí se conectará el backend para crear la preferencia de pago.');
+    function setCheckoutMessage(message, type = 'error') {
+      mercadoPagoMessage.textContent = message;
+      mercadoPagoMessage.dataset.type = type;
+    }
+
+    function validateCheckout(items) {
+      if (!items.length) {
+        return 'Agrega al menos un producto al carrito.';
+      }
+
+      if (receiverName.value.trim().length < 2) {
+        receiverName.focus();
+        return 'Escribe el nombre de quien recibirá el pedido.';
+      }
+
+      if (deliveryAddress.value.trim().length < 5) {
+        deliveryAddress.focus();
+        return 'Escribe la dirección completa de entrega.';
+      }
+
+      if (!deliveryDate.value) {
+        deliveryDate.focus();
+        return 'Selecciona la fecha de entrega.';
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const selectedDate = new Date(`${deliveryDate.value}T00:00:00`);
+      if (Number.isNaN(selectedDate.getTime()) || selectedDate < today) {
+        deliveryDate.focus();
+        return 'La fecha de entrega no puede estar en el pasado.';
+      }
+
+      if (!deliverySlot.value) {
+        return 'Selecciona un horario de entrega.';
+      }
+
+      return '';
+    }
+
+    mercadoPagoBtn.addEventListener('click', async () => {
+      const items = getCartItems();
+      const validationMessage = validateCheckout(items);
+
+      if (validationMessage) {
+        setCheckoutMessage(validationMessage);
+        return;
+      }
+
+      const originalContent = mercadoPagoBtn.innerHTML;
+      mercadoPagoBtn.disabled = true;
+      mercadoPagoBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Preparando pago...';
+      setCheckoutMessage('Conectando de forma segura con Mercado Pago...', 'info');
+
+      try {
+        const response = await fetch(BACKEND_CREATE_PREFERENCE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            items: items.map(item => ({
+              id: String(item.id),
+              quantity: Number(item.qty || 0)
+            })),
+            delivery: {
+              receiverName: receiverName.value.trim(),
+              address: deliveryAddress.value.trim(),
+              date: deliveryDate.value,
+              slot: deliverySlot.value
+            }
+          })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.redirectUrl) {
+          throw new Error(
+            result.message || 'No fue posible iniciar el pago con Mercado Pago.'
+          );
+        }
+
+        setCheckoutMessage('Redirigiendo a Mercado Pago...', 'success');
+        window.location.assign(result.redirectUrl);
+      } catch (error) {
+        console.error('Error iniciando Checkout Pro:', error);
+        setCheckoutMessage(
+          error.message || 'Ocurrió un error al preparar el pago.'
+        );
+        mercadoPagoBtn.disabled = false;
+        mercadoPagoBtn.innerHTML = originalContent;
+      }
     });
+
+    const todayIso = new Date().toLocaleDateString('en-CA', {
+      timeZone: 'America/Mexico_City'
+    });
+    deliveryDate.min = todayIso;
 
     renderCart();
   </script>

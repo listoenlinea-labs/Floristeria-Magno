@@ -12272,3 +12272,32 @@ body.page-index .gallery-loading-spinner {
         height: 440px;
     }
 }
+/* Mensajes de Checkout Pro en carrito */
+.mp-checkout-message {
+  min-height: 1.35rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.mp-checkout-message:empty {
+  display: none;
+}
+
+.mp-checkout-message[data-type="error"] {
+  color: #ffb4b4;
+}
+
+.mp-checkout-message[data-type="info"] {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.mp-checkout-message[data-type="success"] {
+  color: #b7f7ca;
+}
+
+.btn-pay:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
