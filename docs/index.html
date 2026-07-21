@@ -1001,7 +1001,7 @@
 
         const images = Array.isArray(result.data)
           ? result.data
-            .filter(image => image.activo === true)
+            .filter(image => Number(image.activo) === 1)
             .sort(
               (a, b) =>
                 Number(a.orden || 999) -
@@ -1482,7 +1482,7 @@
       if (!sections.length) return;
 
       let clickedSectionId = null;
-let scrollStopTimer = null;
+      let scrollStopTimer = null;
       function activateLink(sectionId) {
         sectionLinks.forEach(link => {
           const isActive = link.dataset.section === sectionId;
@@ -1562,53 +1562,53 @@ let scrollStopTimer = null;
         }
       }
 
-sectionLinks.forEach(link => {
-  link.addEventListener('click', event => {
-    const sectionId = link.dataset.section;
-    const section = document.getElementById(sectionId);
+      sectionLinks.forEach(link => {
+        link.addEventListener('click', event => {
+          const sectionId = link.dataset.section;
+          const section = document.getElementById(sectionId);
 
-    if (!section) return;
+          if (!section) return;
 
-    event.preventDefault();
+          event.preventDefault();
 
-    clickedSectionId = sectionId;
-    activateLink(sectionId);
+          clickedSectionId = sectionId;
+          activateLink(sectionId);
 
-    const navbarHeight = navbar.offsetHeight || 90;
+          const navbarHeight = navbar.offsetHeight || 90;
 
-    const targetPosition =
-      section.getBoundingClientRect().top +
-      window.scrollY -
-      navbarHeight -
-      12;
+          const targetPosition =
+            section.getBoundingClientRect().top +
+            window.scrollY -
+            navbarHeight -
+            12;
 
-    window.history.replaceState(
-      null,
-      '',
-      `#${sectionId}`
-    );
+          window.history.replaceState(
+            null,
+            '',
+            `#${sectionId}`
+          );
 
-    window.scrollTo({
-      top: Math.max(0, targetPosition),
-      behavior: 'smooth'
-    });
-  });
-});
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth'
+          });
+        });
+      });
 
-window.addEventListener(
-  'scroll',
-  () => {
-    updateActiveSection();
+      window.addEventListener(
+        'scroll',
+        () => {
+          updateActiveSection();
 
-    window.clearTimeout(scrollStopTimer);
+          window.clearTimeout(scrollStopTimer);
 
-    scrollStopTimer = window.setTimeout(() => {
-      clickedSectionId = null;
-      updateActiveSection();
-    }, 180);
-  },
-  { passive: true }
-);
+          scrollStopTimer = window.setTimeout(() => {
+            clickedSectionId = null;
+            updateActiveSection();
+          }, 180);
+        },
+        { passive: true }
+      );
       window.addEventListener(
         'resize',
         updateActiveSection

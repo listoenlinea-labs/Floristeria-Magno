@@ -38,7 +38,8 @@ const allowedOrigins = [
     process.env.FRONTEND_URL_WWW,
     'http://localhost:5500',
     'http://127.0.0.1:5500',
-    'https://vlad04.github.io'
+    'https://vlad04.github.io',
+    'https://listoenlinea-labs.github.io'
 ].filter(Boolean);
 
 app.use(
