@@ -28,8 +28,19 @@
             </div>
 
             <div class="mb-3">
-                <label>Contraseña</label>
-                <input id="loginPass" type="password" class="form-control" placeholder="Contraseña">
+                <label for="loginPass">
+                    Contraseña
+                </label>
+
+                <div class="input-group">
+                    <input id="loginPass" type="password" class="form-control" placeholder="Contraseña"
+                        autocomplete="current-password">
+
+                    <button type="button" class="btn btn-outline-secondary" id="toggleLoginPassword"
+                        aria-label="Mostrar contraseña" aria-pressed="false" onclick="togglePasswordVisibility()">
+                        <i class="bi bi-eye" id="toggleLoginPasswordIcon"></i>
+                    </button>
+                </div>
             </div>
 
             <button class="btn-gold w-100" onclick="loginAdmin()">Entrar al panel</button>
@@ -612,11 +623,30 @@
 
         let selectedSectionImageBase64 = "";
 
-        document.addEventListener("DOMContentLoaded", () => {
-            productModal = new bootstrap.Modal(document.getElementById("productModal"));
-            sectionModal = new bootstrap.Modal(document.getElementById("sectionModal"));
-            galleryModal = new bootstrap.Modal(document.getElementById("galleryModal"));
-        });
+        document.addEventListener(
+            "DOMContentLoaded",
+            async () => {
+                productModal = new bootstrap.Modal(
+                    document.getElementById(
+                        "productModal"
+                    )
+                );
+
+                sectionModal = new bootstrap.Modal(
+                    document.getElementById(
+                        "sectionModal"
+                    )
+                );
+
+                galleryModal = new bootstrap.Modal(
+                    document.getElementById(
+                        "galleryModal"
+                    )
+                );
+
+                await restoreAdminSession();
+            }
+        );
 
         function getBasicAuthorization() {
             const encodedCredentials =
@@ -695,6 +725,116 @@
             return url;
         }
 
+        function togglePasswordVisibility() {
+            const passwordInput =
+                document.getElementById("loginPass");
+
+            const toggleButton =
+                document.getElementById(
+                    "toggleLoginPassword"
+                );
+
+            const icon =
+                document.getElementById(
+                    "toggleLoginPasswordIcon"
+                );
+
+            if (
+                !passwordInput ||
+                !toggleButton ||
+                !icon
+            ) {
+                return;
+            }
+
+            const isCurrentlyHidden =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isCurrentlyHidden
+                    ? "text"
+                    : "password";
+
+            icon.className =
+                isCurrentlyHidden
+                    ? "bi bi-eye-slash"
+                    : "bi bi-eye";
+
+            toggleButton.setAttribute(
+                "aria-label",
+                isCurrentlyHidden
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
+            );
+
+            toggleButton.setAttribute(
+                "aria-pressed",
+                String(isCurrentlyHidden)
+            );
+        }
+
+        function showLoginView() {
+            document
+                .getElementById("loginView")
+                .classList
+                .remove("hidden");
+
+            document
+                .getElementById("adminView")
+                .classList
+                .add("hidden");
+        }
+
+        function showAdminView() {
+            document
+                .getElementById("loginView")
+                .classList
+                .add("hidden");
+
+            document
+                .getElementById("adminView")
+                .classList
+                .remove("hidden");
+        }
+
+        async function restoreAdminSession() {
+            const savedCredentials =
+                sessionStorage.getItem(
+                    "flor_admin_basic_auth"
+                );
+
+            if (!savedCredentials) {
+                showLoginView();
+                return;
+            }
+
+            try {
+                /*
+                 * Esta ruta está protegida con Basic Auth.
+                 * Si responde correctamente, la sesión
+                 * almacenada todavía es válida.
+                 */
+                await apiFetch(
+                    "/productos/admin/todos"
+                );
+
+                showAdminView();
+
+                await loadAllData();
+            } catch (error) {
+                console.warn(
+                    "La sesión guardada ya no es válida:",
+                    error
+                );
+
+                sessionStorage.removeItem(
+                    "flor_admin_basic_auth"
+                );
+
+                showLoginView();
+            }
+        }
+
         async function loginAdmin() {
             const email = document
                 .getElementById("loginUser")
@@ -728,15 +868,7 @@
                     "/productos/admin/todos"
                 );
 
-                document
-                    .getElementById("loginView")
-                    .classList
-                    .add("hidden");
-
-                document
-                    .getElementById("adminView")
-                    .classList
-                    .remove("hidden");
+                showAdminView();
 
                 await loadAllData();
             } catch (error) {
@@ -753,13 +885,36 @@
                 "flor_admin_basic_auth"
             );
 
-            location.reload();
+            document.getElementById(
+                "loginUser"
+            ).value = "";
+
+            document.getElementById(
+                "loginPass"
+            ).value = "";
+
+            document.getElementById(
+                "loginPass"
+            ).type = "password";
+
+            const icon =
+                document.getElementById(
+                    "toggleLoginPasswordIcon"
+                );
+
+            if (icon) {
+                icon.className = "bi bi-eye";
+            }
+
+            showLoginView();
         }
+
         async function loadAllData() {
             try {
                 const [
                     productResult,
-                    galleryResult
+                    galleryResult,
+                    settingsResult
                 ] = await Promise.all([
                     apiFetch(
                         '/productos/admin/todos'
@@ -767,6 +922,10 @@
 
                     apiFetch(
                         '/galeria/admin/todas'
+                    ),
+
+                    apiFetch(
+                        '/configuracion'
                     )
                 ]);
 
@@ -823,7 +982,43 @@
                 );
 
                 sections = [];
-                settings = {};
+                settings = {
+                    businessName:
+                        settingsResult.data.nombreNegocio || '',
+
+                    whatsapp:
+                        settingsResult.data.whatsapp || '',
+
+                    phone:
+                        settingsResult.data.telefono || '',
+
+                    address:
+                        settingsResult.data.direccion || '',
+
+                    hours:
+                        settingsResult.data.horario || '',
+
+                    heroTitle:
+                        settingsResult.data.heroTitulo || '',
+
+                    heroSubtitle:
+                        settingsResult.data.heroSubtitulo || '',
+
+                    heroButton:
+                        settingsResult.data.heroBotonTexto || '',
+
+                    instagram:
+                        settingsResult.data.instagramUrl || '',
+
+                    facebook:
+                        settingsResult.data.facebookUrl || '',
+
+                    tiktok:
+                        settingsResult.data.tiktokUrl || '',
+
+                    googleMaps:
+                        settingsResult.data.googleMapsUrl || ''
+                };
 
                 renderAll();
             } catch (error) {
@@ -2101,29 +2296,83 @@
             }
         }
 
-        function saveSettings() {
-            settings = {
-                businessName: document.getElementById("settingBusinessName").value.trim(),
-                whatsapp: document.getElementById("settingWhatsapp").value.trim(),
-                address: document.getElementById("settingAddress").value.trim(),
-                hours: document.getElementById("settingHours").value.trim(),
-                heroTitle: document.getElementById("settingHeroTitle").value.trim(),
-                heroSubtitle: document.getElementById("settingHeroSubtitle").value.trim(),
-                heroButton: document.getElementById("settingHeroButton").value.trim(),
-                social: document.getElementById("settingSocial").value.trim()
-            };
+        async function saveSettings() {
+            try {
+                const payload = {
+                    nombreNegocio: document
+                        .getElementById(
+                            'settingBusinessName'
+                        )
+                        .value
+                        .trim(),
 
-            alert("Configuración guardada en modo demo.");
+                    whatsapp: document
+                        .getElementById(
+                            'settingWhatsapp'
+                        )
+                        .value
+                        .trim(),
 
-            /*
-            // CÓDIGO REAL PARA DESPUÉS
-            apiRequest({
-              action: "saveSettings",
-              token: sessionStorage.getItem("flor_admin_token"),
-              deviceId: getDeviceId(),
-              settings
-            });
-            */
+                    direccion: document
+                        .getElementById(
+                            'settingAddress'
+                        )
+                        .value
+                        .trim(),
+
+                    horario: document
+                        .getElementById(
+                            'settingHours'
+                        )
+                        .value
+                        .trim(),
+
+                    heroTitulo: document
+                        .getElementById(
+                            'settingHeroTitle'
+                        )
+                        .value
+                        .trim(),
+
+                    heroSubtitulo: document
+                        .getElementById(
+                            'settingHeroSubtitle'
+                        )
+                        .value
+                        .trim(),
+
+                    heroBotonTexto: document
+                        .getElementById(
+                            'settingHeroButton'
+                        )
+                        .value
+                        .trim(),
+
+                    instagramUrl: document
+                        .getElementById(
+                            'settingSocial'
+                        )
+                        .value
+                        .trim()
+                };
+
+                await apiFetch(
+                    '/configuracion',
+                    {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                await loadAllData();
+
+                alert(
+                    'Configuración guardada correctamente.'
+                );
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
         }
 
         function handleImageFile(event, type) {

@@ -15,7 +15,7 @@ const detallesPedidoRoutes = require(
 const galeriaRoutes = require('./routes/galeria.routes');
 const uploadsRoutes = require('./routes/uploads.routes');
 const mercadoPagoRoutes = require('./routes/mercadopago.routes');
-
+const configuracionRoutes = require('./routes/configuracion.routes');
 const {
     uploadsRoot
 } = require('./config/uploads');
@@ -207,6 +207,14 @@ app.use(
  * Checkout Pro de Mercado Pago.
  */
 app.use('/api/mercadopago', mercadoPagoRoutes);
+
+/*
+ * Configuración global del sitio.
+ */
+app.use(
+    '/api/floristeria-magno/configuracion',
+    configuracionRoutes
+);
 
 /*
  * 404 siempre después de las rutas.

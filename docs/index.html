@@ -84,16 +84,18 @@
             <i class="bi bi-flower1"></i>
             Arte floral contemporáneo en Guadalajara
           </div>
-          <h1 class="hero-title home-title">
+          <h1 class="hero-title home-title" id="siteHeroTitle">
             Elige tu arreglo y agenda tu entrega.
           </h1>
-          <p class="hero-description home-description">
+
+          <p class="hero-description home-description" id="siteHeroSubtitle">
             Agrega productos al carrito, selecciona fecha y horario de entrega, y confirma tu pedido por WhatsApp con
             una experiencia boutique.
           </p>
           <div class="hero-actions home-actions">
-            <a href="catalogo.html" class="btn-main page-link-transition">
-              <i class="bi bi-bag-heart me-2"></i> Ver arreglos
+            <a href="catalogo.html" class="btn-main page-link-transition" id="siteHeroButton">
+              <i class="bi bi-bag-heart me-2"></i>
+              <span id="siteHeroButtonText">Ver arreglos</span>
             </a>
             <a href="#experiencia" class="btn-secondary-hero">Detalles importantes</a>
           </div>
@@ -430,7 +432,8 @@
                     naturales. Eso hace que cada ramo sea único y especial.
                   </p>
                 </div>
-                <a href="https://wa.me/520000000000" class="btn-main mt-2 d-inline-flex">
+                <a href="https://wa.me/520000000000" class="btn-main mt-2 d-inline-flex" id="availabilityWhatsappLink"
+                  target="_blank" rel="noopener">
                   Confirmar disponibilidad
                 </a>
               </div>
@@ -542,17 +545,18 @@
           <div class="map-card-content">
             <div class="eyebrow mb-3" style="color:#ffd8df;">Ubicación</div>
             <h2 class="serif mb-3">Encuentra la tienda y abre la ruta en Google Maps.</h2>
-            <p>
+            <p id="siteAddressText">
               Visítanos en Zapopan o abre la ruta para recoger tu arreglo, cotizar un diseño personalizado
               o coordinar tu entrega floral.
             </p>
             <div class="map-actions">
-              <a class="btn-map-primary" target="_blank" rel="noopener"
+              <a class="btn-map-primary" id="googleMapsLink" target="_blank" rel="noopener"
                 href="https://www.google.com/maps/search/?api=1&query=Florister%C3%ADa%20Juan%20H%20Magno%20Zapopan%20Jalisco">
                 <i class="bi bi-map"></i>
                 Abrir Google Maps
               </a>
-              <a class="btn-map-secondary" target="_blank" rel="noopener" href="https://wa.me/520000000000">
+              <a class="btn-map-secondary" id="directionsWhatsappLink" target="_blank" rel="noopener"
+                href="https://wa.me/520000000000">
                 <i class="bi bi-whatsapp"></i>
                 Pedir indicaciones
               </a>
@@ -576,10 +580,12 @@
                 convertimos en una composición floral hecha para recordar.
               </p>
               <div class="d-flex flex-wrap gap-3">
-                <a href="https://wa.me/520000000000" class="btn-main">
-                  <i class="bi bi-whatsapp me-2"></i>Cotizar por WhatsApp
+                <a href="https://wa.me/520000000000" class="btn-main" id="contactWhatsappLink" target="_blank"
+                  rel="noopener">
+                  <i class="bi bi-whatsapp me-2"></i>
+                  Cotizar por WhatsApp
                 </a>
-                <a href="tel:+520000000000" class="btn-secondary-hero"
+                <a href="tel:+520000000000" class="btn-secondary-hero" id="contactPhoneLink"
                   style="color:#27151b; border-color:rgba(39,21,27,.18);">
                   <i class="bi bi-telephone me-2"></i>Llamar
                 </a>
@@ -590,10 +596,11 @@
             <div class="cart-card h-100">
               <div class="eyebrow mb-2">Horario de atención</div>
               <h3 class="mb-4">Estamos para ayudarte a elegir el detalle ideal.</h3>
-              <div class="hours-list mb-4">
-                <div class="hours-line"><strong>Lunes a viernes</strong><span>9:00 a.m. – 7:00 p.m.</span></div>
-                <div class="hours-line"><strong>Sábado</strong><span>9:00 a.m. – 5:00 p.m.</span></div>
-                <div class="hours-line"><strong>Domingo</strong><span>Pedidos bajo disponibilidad</span></div>
+              <div class="hours-list mb-4" id="siteHoursContainer">
+                <p class="text-muted-custom mb-0" id="siteHoursText">
+                  Lunes a viernes: 9:00 a.m. – 7:00 p.m.
+                  Sábado: 9:00 a.m. – 5:00 p.m.
+                </p>
               </div>
               <p class="text-muted-custom mb-0">
                 Para entregas el mismo día, confirma disponibilidad de flores, horarios y zona por WhatsApp.
@@ -605,15 +612,15 @@
         <div class="mt-5 reveal">
           <div class="eyebrow mb-3 text-center">Redes sociales</div>
           <div class="social-links-grid">
-            <a class="social-link-card" href="https://instagram.com/" target="_blank" rel="noopener">
+            <a class="social-link-card" id="instagramLink" href="https://instagram.com/" target="_blank" rel="noopener">
               <i class="bi bi-instagram"></i>
               <span>Instagram</span>
             </a>
-            <a class="social-link-card" href="https://facebook.com/" target="_blank" rel="noopener">
+            <a class="social-link-card" id="facebookLink" href="https://facebook.com/" target="_blank" rel="noopener">
               <i class="bi bi-facebook"></i>
               <span>Facebook</span>
             </a>
-            <a class="social-link-card" href="https://tiktok.com/" target="_blank" rel="noopener">
+            <a class="social-link-card" id="tiktokLink" href="https://tiktok.com/" target="_blank" rel="noopener">
               <i class="bi bi-tiktok"></i>
               <span>TikTok</span>
             </a>
@@ -626,7 +633,9 @@
     <div class="container">
       <div class="row g-4 align-items-start">
         <div class="col-lg-5">
-          <h3 class="mb-3">Floristería Juan H Magno</h3>
+          <h3 class="mb-3" id="footerBusinessName">
+            Floristería Juan H Magno
+          </h3>
           <p class="mb-0" style="color:rgba(255,248,239,.68);line-height:1.8;">Diseño floral contemporáneo para regalos,
             eventos y momentos inolvidables.</p>
         </div>
@@ -640,8 +649,12 @@
         </div>
         <div class="col-lg-4">
           <h5>Contacto</h5>
-          <p class="mb-2" style="color:rgba(255,248,239,.68);">Zapopan, Jalisco</p>
-          <p class="mb-2" style="color:rgba(255,248,239,.68);">Lunes a viernes 9:00 a.m. – 7:00 p.m.</p>
+          <p class="mb-2" id="footerAddress" style="color:rgba(255,248,239,.68);">
+            Zapopan, Jalisco
+          </p>
+          <p class="mb-2" id="footerHours" style="color:rgba(255,248,239,.68);">
+            Lunes a viernes 9:00 a.m. – 7:00 p.m.
+          </p>
           <a href="https://wa.me/520000000000">WhatsApp: 52 000 000 0000</a>
         </div>
       </div>
@@ -654,7 +667,8 @@
     <i class="bi bi-bag-heart"></i>
     <span id="cartCount">0</span>
   </a>
-  <a class="whatsapp-float" href="https://wa.me/520000000000" aria-label="Contactar por WhatsApp">
+  <a class="whatsapp-float" id="floatingWhatsappLink" href="https://wa.me/520000000000"
+    aria-label="Contactar por WhatsApp" target="_blank" rel="noopener">
     <i class="bi bi-whatsapp"></i>
   </a>
   <!-- MODAL CARRITO -->
@@ -784,6 +798,258 @@
       if (value >= 923 && value <= 1220) return 'autumn';
 
       return 'winter';
+    }
+
+    let siteConfiguration = null;
+
+    function normalizeWhatsappNumber(value) {
+      return String(value || "")
+        .replace(/\D/g, "");
+    }
+
+    function buildWhatsappUrl(value, message = "") {
+      const number = normalizeWhatsappNumber(value);
+
+      if (!number) {
+        return "#";
+      }
+
+      const baseUrl = `https://wa.me/${number}`;
+
+      return message
+        ? `${baseUrl}?text=${encodeURIComponent(message)}`
+        : baseUrl;
+    }
+
+    function setTextContent(id, value) {
+      const element = document.getElementById(id);
+
+      if (!element || !value) {
+        return;
+      }
+
+      element.textContent = value;
+    }
+
+    function setElementHref(id, value) {
+      const element = document.getElementById(id);
+
+      if (!element || !value) {
+        return;
+      }
+
+      element.href = value;
+    }
+
+    function toggleLinkVisibility(id, url) {
+      const element = document.getElementById(id);
+
+      if (!element) {
+        return;
+      }
+
+      if (url) {
+        element.href = url;
+        element.classList.remove("d-none");
+      } else {
+        element.classList.add("d-none");
+      }
+    }
+
+    async function loadSiteConfiguration() {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/configuracion`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json"
+            }
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok || !result.data) {
+          throw new Error(
+            result.message ||
+            "No fue posible cargar la configuración"
+          );
+        }
+
+        siteConfiguration = result.data;
+
+        applySiteConfiguration(siteConfiguration);
+      } catch (error) {
+        console.error(
+          "Error cargando configuración:",
+          error
+        );
+      }
+    }
+
+    function applySiteConfiguration(configuration) {
+      if (!configuration) {
+        return;
+      }
+
+      const {
+        nombreNegocio,
+        whatsapp,
+        telefono,
+        direccion,
+        horario,
+        heroTitulo,
+        heroSubtitulo,
+        heroBotonTexto,
+        instagramUrl,
+        facebookUrl,
+        tiktokUrl,
+        googleMapsUrl
+      } = configuration;
+
+      /*
+       * Hero.
+       */
+      setTextContent(
+        "siteHeroTitle",
+        heroTitulo
+      );
+
+      setTextContent(
+        "siteHeroSubtitle",
+        heroSubtitulo
+      );
+
+      setTextContent(
+        "siteHeroButtonText",
+        heroBotonTexto
+      );
+
+      /*
+       * Datos generales.
+       */
+      setTextContent(
+        "footerBusinessName",
+        nombreNegocio
+      );
+
+      setTextContent(
+        "siteAddressText",
+        direccion
+          ? `Visítanos en ${direccion} o abre la ruta para recoger tu arreglo, cotizar un diseño personalizado o coordinar tu entrega floral.`
+          : ""
+      );
+
+      setTextContent(
+        "footerAddress",
+        direccion
+      );
+
+      setTextContent(
+        "siteHoursText",
+        horario
+      );
+
+      setTextContent(
+        "footerHours",
+        horario
+      );
+
+      /*
+       * Google Maps.
+       */
+      setElementHref(
+        "googleMapsLink",
+        googleMapsUrl
+      );
+
+      /*
+       * WhatsApp.
+       */
+      const generalWhatsappUrl =
+        buildWhatsappUrl(whatsapp);
+
+      const availabilityWhatsappUrl =
+        buildWhatsappUrl(
+          whatsapp,
+          "Hola, quiero confirmar disponibilidad de un arreglo floral."
+        );
+
+      const directionsWhatsappUrl =
+        buildWhatsappUrl(
+          whatsapp,
+          "Hola, quisiera pedir indicaciones para llegar a la floristería."
+        );
+
+      const quoteWhatsappUrl =
+        buildWhatsappUrl(
+          whatsapp,
+          "Hola, quisiera cotizar un arreglo floral."
+        );
+
+      setElementHref(
+        "availabilityWhatsappLink",
+        availabilityWhatsappUrl
+      );
+
+      setElementHref(
+        "directionsWhatsappLink",
+        directionsWhatsappUrl
+      );
+
+      setElementHref(
+        "contactWhatsappLink",
+        quoteWhatsappUrl
+      );
+
+      setElementHref(
+        "floatingWhatsappLink",
+        generalWhatsappUrl
+      );
+
+      setElementHref(
+        "footerWhatsappLink",
+        generalWhatsappUrl
+      );
+
+      const footerWhatsapp =
+        document.getElementById(
+          "footerWhatsappLink"
+        );
+
+      if (footerWhatsapp && whatsapp) {
+        footerWhatsapp.textContent =
+          `WhatsApp: ${whatsapp}`;
+      }
+
+      /*
+       * Teléfono.
+       */
+      if (telefono) {
+        setElementHref(
+          "contactPhoneLink",
+          `tel:${telefono.replace(/[^\d+]/g, "")}`
+        );
+      }
+
+      /*
+       * Redes.
+       */
+      toggleLinkVisibility(
+        "instagramLink",
+        instagramUrl
+      );
+
+      toggleLinkVisibility(
+        "facebookLink",
+        facebookUrl
+      );
+
+      toggleLinkVisibility(
+        "tiktokLink",
+        tiktokUrl
+      );
     }
 
     async function fetchPublicData(path) {
@@ -1283,6 +1549,7 @@
 
     async function loadDynamicHomeContent() {
       await Promise.all([
+        loadSiteConfiguration(),
         loadHeroGallery(),
         loadSecondaryHeroImage(),
         loadMomentsGallery(),
