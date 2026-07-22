@@ -291,15 +291,15 @@ async function buildPreferenceItems(requestItems) {
 }
 
 function chooseRedirectUrl(preferenceResponse) {
-    const accessToken = String(process.env.MP_ACCESS_TOKEN || '');
-    const environment = String(process.env.MP_ENVIRONMENT || '').toLowerCase();
-    const useSandbox = environment === 'test' || accessToken.startsWith('TEST-');
+    const redirectUrl = preferenceResponse?.init_point;
 
-    if (useSandbox) {
-        return preferenceResponse.sandbox_init_point || preferenceResponse.init_point;
+    if (!redirectUrl) {
+        throw configurationError(
+            'Mercado Pago no devolvió init_point para iniciar el pago'
+        );
     }
 
-    return preferenceResponse.init_point;
+    return redirectUrl;
 }
 
 async function crearPreferencia(req, res, next) {
