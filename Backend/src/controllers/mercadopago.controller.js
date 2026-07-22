@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const {
     MercadoPagoConfig,
     Preference,
@@ -6,65 +7,9 @@ const {
     InvalidWebhookSignatureError
 } = require('mercadopago');
 
-const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
+const { Producto } = require('../models');
 
-/*
- * Catálogo confiable del servidor.
- *
- * El navegador solo envía el ID y la cantidad. Los nombres y precios se
- * obtienen aquí para impedir que alguien modifique localStorage y pague un
- * precio distinto.
- *
- * Cuando el catálogo se alimente completamente desde MySQL, sustituye este
- * objeto por una consulta a Producto usando los IDs de la base de datos.
- */
-const SERVER_CATALOG = Object.freeze({
-    detalle: {
-        title: 'Detalle Sorpresa',
-        description: 'Ramo chico o mediano con empaque premium.',
-        unitPrice: 350
-    },
-    premium: {
-        title: 'Ramo Premium',
-        description: 'Diseño protagonista con flores seleccionadas.',
-        unitPrice: 750
-    },
-    evento: {
-        title: 'Evento Floral',
-        description: 'Decoración y propuesta floral para eventos.',
-        unitPrice: 1200
-    },
-    rosas: {
-        title: 'Rosas Eternas',
-        description: 'Arreglo romántico de rosas y follaje.',
-        unitPrice: 680
-    },
-    girasol: {
-        title: 'Girasol Luminoso',
-        description: 'Flores cálidas para celebraciones.',
-        unitPrice: 520
-    },
-    tulipan: {
-        title: 'Tulipán Pastel',
-        description: 'Diseño delicado y moderno.',
-        unitPrice: 890
-    },
-    lirio: {
-        title: 'Lirio Sereno',
-        description: 'Composición elegante con lirios.',
-        unitPrice: 720
-    },
-    box: {
-        title: 'Flower Box',
-        description: 'Caja floral estilo boutique.',
-        unitPrice: 950
-    },
-    mesa: {
-        title: 'Centro de Mesa',
-        description: 'Centro floral para reuniones y eventos.',
-        unitPrice: 1100
-    }
-});
+const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
 
 const ALLOWED_DELIVERY_SLOTS = new Set([
     '11:00 am – 1:00 pm',
@@ -72,10 +17,14 @@ const ALLOWED_DELIVERY_SLOTS = new Set([
     '3:00 pm – 7:00 pm'
 ]);
 
-function configurationError(message) {
+function createHttpError(message, status = 400) {
     const error = new Error(message);
-    error.status = 500;
+    error.status = status;
     return error;
+}
+
+function configurationError(message) {
+    return createHttpError(message, 500);
 }
 
 function getClient() {
@@ -98,7 +47,7 @@ function getClient() {
 function getAbsoluteUrl(variableName) {
     const rawValue = String(process.env[variableName] || '')
         .trim()
-        .replace(/\/$/, '');
+        .replace(/\/+$/, '');
 
     if (!rawValue) {
         throw configurationError(
@@ -122,7 +71,7 @@ function getAbsoluteUrl(variableName) {
 }
 
 function normalizeText(value, maxLength) {
-    return String(value || '').trim().slice(0, maxLength);
+    return String(value ?? '').trim().slice(0, maxLength);
 }
 
 function validateDelivery(delivery) {
@@ -132,27 +81,19 @@ function validateDelivery(delivery) {
     const slot = normalizeText(delivery?.slot, 40);
 
     if (receiverName.length < 2) {
-        const error = new Error('Escribe el nombre de quien recibe');
-        error.status = 400;
-        throw error;
+        throw createHttpError('Escribe el nombre de quien recibe');
     }
 
     if (address.length < 5) {
-        const error = new Error('Escribe una dirección de entrega válida');
-        error.status = 400;
-        throw error;
+        throw createHttpError('Escribe una dirección de entrega válida');
     }
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        const error = new Error('Selecciona una fecha de entrega válida');
-        error.status = 400;
-        throw error;
+        throw createHttpError('Selecciona una fecha de entrega válida');
     }
 
     if (!ALLOWED_DELIVERY_SLOTS.has(slot)) {
-        const error = new Error('Selecciona un horario de entrega válido');
-        error.status = 400;
-        throw error;
+        throw createHttpError('Selecciona un horario de entrega válido');
     }
 
     return {
@@ -163,64 +104,188 @@ function validateDelivery(delivery) {
     };
 }
 
-function buildPreferenceItems(requestItems) {
+function getPlainProduct(product) {
+    if (product && typeof product.get === 'function') {
+        return product.get({ plain: true });
+    }
+
+    return product || {};
+}
+
+function getFirstDefined(object, fieldNames) {
+    for (const fieldName of fieldNames) {
+        const value = object?.[fieldName];
+
+        if (value !== undefined && value !== null && value !== '') {
+            return value;
+        }
+    }
+
+    return undefined;
+}
+
+function isInactiveProduct(product) {
+    const activeValue = getFirstDefined(product, [
+        'activo',
+        'activa',
+        'active',
+        'habilitado',
+        'disponible'
+    ]);
+
+    if (activeValue === undefined) {
+        return false;
+    }
+
+    return (
+        activeValue === false ||
+        activeValue === 0 ||
+        activeValue === '0' ||
+        String(activeValue).toLowerCase() === 'false'
+    );
+}
+
+function normalizeRequestItems(requestItems) {
     if (!Array.isArray(requestItems) || requestItems.length === 0) {
-        const error = new Error('El carrito está vacío');
-        error.status = 400;
-        throw error;
+        throw createHttpError('El carrito está vacío');
     }
 
     if (requestItems.length > 30) {
-        const error = new Error('El carrito contiene demasiados productos');
-        error.status = 400;
-        throw error;
+        throw createHttpError('El carrito contiene demasiados productos');
     }
 
     const consolidated = new Map();
 
     requestItems.forEach((item) => {
-        const id = normalizeText(item?.id, 50);
+        const id = Number(item?.id);
         const quantity = Number(item?.quantity);
 
-        if (!SERVER_CATALOG[id]) {
-            const error = new Error(`Producto no válido: ${id || 'sin ID'}`);
-            error.status = 400;
-            throw error;
+        if (!Number.isInteger(id) || id <= 0) {
+            throw createHttpError(
+                `Producto no válido: ${normalizeText(item?.id, 50) || 'sin ID'}`
+            );
         }
 
         if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
-            const error = new Error(
-                `Cantidad no válida para ${SERVER_CATALOG[id].title}`
-            );
-            error.status = 400;
-            throw error;
+            throw createHttpError(`Cantidad no válida para el producto ${id}`);
         }
 
-        const previousQuantity = consolidated.get(id) || 0;
-        const newQuantity = previousQuantity + quantity;
+        const newQuantity = (consolidated.get(id) || 0) + quantity;
 
         if (newQuantity > 20) {
-            const error = new Error(
-                `La cantidad máxima para ${SERVER_CATALOG[id].title} es 20`
+            throw createHttpError(
+                `La cantidad máxima para el producto ${id} es 20`
             );
-            error.status = 400;
-            throw error;
         }
 
         consolidated.set(id, newQuantity);
     });
 
-    return Array.from(consolidated.entries()).map(([id, quantity]) => {
-        const product = SERVER_CATALOG[id];
+    return Array.from(consolidated.entries()).map(([id, quantity]) => ({
+        id,
+        quantity
+    }));
+}
+
+async function buildPreferenceItems(requestItems) {
+    const normalizedItems = normalizeRequestItems(requestItems);
+    const productIds = normalizedItems.map((item) => item.id);
+    const primaryKey = Producto.primaryKeyAttribute || 'id';
+
+    const databaseProducts = await Producto.findAll({
+        where: {
+            [primaryKey]: {
+                [Op.in]: productIds
+            }
+        }
+    });
+
+    const productMap = new Map();
+
+    databaseProducts.forEach((productInstance) => {
+        const product = getPlainProduct(productInstance);
+        const productId = Number(product[primaryKey]);
+
+        if (Number.isInteger(productId)) {
+            productMap.set(productId, product);
+        }
+    });
+
+    const missingIds = productIds.filter((id) => !productMap.has(id));
+
+    if (missingIds.length > 0) {
+        throw createHttpError(
+            `No se encontraron productos con ID: ${missingIds.join(', ')}`
+        );
+    }
+
+    return normalizedItems.map(({ id, quantity }) => {
+        const product = productMap.get(id);
+
+        if (isInactiveProduct(product)) {
+            throw createHttpError(`El producto ${id} no está disponible`);
+        }
+
+        const title = normalizeText(
+            getFirstDefined(product, ['nombre', 'name', 'titulo', 'title']),
+            120
+        );
+
+        const description = normalizeText(
+            getFirstDefined(product, [
+                'descripcion',
+                'description',
+                'detalle',
+                'details'
+            ]),
+            250
+        );
+
+        const unitPrice = Number(
+            getFirstDefined(product, [
+                'precio',
+                'price',
+                'precio_unitario',
+                'unit_price'
+            ])
+        );
+
+        const stockValue = getFirstDefined(product, [
+            'stock',
+            'existencia',
+            'inventario'
+        ]);
+
+        if (!title) {
+            throw configurationError(
+                `El producto ${id} no tiene nombre en la base de datos`
+            );
+        }
+
+        if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+            throw configurationError(
+                `El producto ${id} tiene un precio inválido en la base de datos`
+            );
+        }
+
+        if (
+            stockValue !== undefined &&
+            Number.isFinite(Number(stockValue)) &&
+            Number(stockValue) < quantity
+        ) {
+            throw createHttpError(
+                `No hay suficiente existencia de ${title}`
+            );
+        }
 
         return {
-            id,
-            title: product.title,
-            description: product.description,
+            id: String(id),
+            title,
+            description: description || 'Arreglo floral',
             category_id: 'flowers',
             currency_id: 'MXN',
             quantity,
-            unit_price: product.unitPrice
+            unit_price: unitPrice
         };
     });
 }
@@ -239,7 +304,7 @@ function chooseRedirectUrl(preferenceResponse) {
 
 async function crearPreferencia(req, res, next) {
     try {
-        const items = buildPreferenceItems(req.body?.items);
+        const items = await buildPreferenceItems(req.body?.items);
         const delivery = validateDelivery(req.body?.delivery);
         const frontendUrl = getAbsoluteUrl('FRONTEND_PUBLIC_URL');
         const publicApiUrl = getAbsoluteUrl('PUBLIC_API_URL');
@@ -296,14 +361,20 @@ async function crearPreferencia(req, res, next) {
             );
         }
 
-        res.status(201).json({
+        return res.status(201).json({
             ok: true,
             preferenceId: preferenceResponse.id,
             externalReference,
             redirectUrl
         });
     } catch (error) {
-        next(error);
+        console.error('Error creando preferencia de Mercado Pago:', {
+            message: error.message,
+            status: error.status,
+            cause: error.cause
+        });
+
+        return next(error);
     }
 }
 
@@ -321,7 +392,7 @@ async function obtenerPago(req, res, next) {
         const paymentClient = new Payment(getClient());
         const payment = await paymentClient.get({ id: paymentId });
 
-        res.status(200).json({
+        return res.status(200).json({
             ok: true,
             data: {
                 id: payment.id,
@@ -334,7 +405,7 @@ async function obtenerPago(req, res, next) {
             }
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
 
@@ -372,12 +443,7 @@ async function recibirWebhook(req, res, next) {
         const paymentClient = new Payment(getClient());
         const payment = await paymentClient.get({ id: paymentId });
 
-        /*
-         * Aquí puedes actualizar pedidos.estado en MySQL usando
-         * payment.external_reference. Por ahora se registra el resultado
-         * verificado para que el pago ya pueda probarse de extremo a extremo.
-         */
-        console.log('✅ Webhook Mercado Pago verificado:', {
+        console.log('Webhook Mercado Pago verificado:', {
             paymentId: payment.id,
             status: payment.status,
             statusDetail: payment.status_detail,
