@@ -113,8 +113,9 @@
               </div>
             </div>
             <div class="home-card-small">
-              <img src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=900&q=85"
-                alt="Tulipán rosa">
+              <img id="homeSecondaryImage"
+                src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=900&q=85"
+                alt="Arreglo floral" loading="lazy">
             </div>
             <div class="home-card-label">
               <div class="eyebrow mb-2">Compra floral</div>
@@ -142,46 +143,12 @@
               disculpa o simplemente un detalle que no se esperaba.</p>
           </div>
         </div>
-        <div class="row g-4">
-          <div class="col-md-6 col-lg-3 reveal">
-            <article class="mood-card">
-              <img src="https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=900&q=85"
-                alt="Ramo romántico">
-              <div class="mood-content">
-                <h3>Para enamorar</h3>
-                <p class="mb-0">Ramos románticos, elegantes y memorables.</p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-6 col-lg-3 reveal">
-            <article class="mood-card">
-              <img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=900&q=85"
-                alt="Flores para cumpleaños">
-              <div class="mood-content">
-                <h3>Para celebrar</h3>
-                <p class="mb-0">Cumpleaños, logros, graduaciones y fechas especiales.</p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-6 col-lg-3 reveal">
-            <article class="mood-card">
-              <img src="https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?auto=format&fit=crop&w=900&q=85"
-                alt="Bouquet elegante">
-              <div class="mood-content">
-                <h3>Para agradecer</h3>
-                <p class="mb-0">Detalles finos para decir gracias con estilo.</p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-6 col-lg-3 reveal">
-            <article class="mood-card">
-              <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=85"
-                alt="Decoración floral para evento">
-              <div class="mood-content">
-                <h3>Para eventos</h3>
-                <p class="mb-0">Centros de mesa, ambientación y montaje floral.</p>
-              </div>
-            </article>
+        <div class="row g-4" id="momentsGalleryGrid">
+          <div class="col-12 text-center py-5">
+            <div class="gallery-loading-spinner"></div>
+            <p class="text-muted-custom mt-3">
+              Cargando momentos...
+            </p>
           </div>
         </div>
       </div>
@@ -239,26 +206,15 @@
           <div class="col-lg-7 reveal">
             <div id="heroArtCarousel" class="carousel slide carousel-fade hero-art-carousel editorial-card"
               data-bs-ride="carousel" data-bs-interval="4200" data-bs-pause="false">
-              <div class="carousel-inner">
+              <div class="carousel-inner" id="collectionsCarouselInner">
                 <div class="carousel-item active">
-                  <img
-                    src="https://images.unsplash.com/photo-1487070183336-b863922373d4?auto=format&fit=crop&w=1200&q=85"
-                    alt="Ramo floral artístico en tonos suaves">
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?auto=format&fit=crop&w=1200&q=85"
-                    alt="Bouquet floral elegante">
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=1200&q=85"
-                    alt="Arreglo floral boutique">
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=1200&q=85"
-                    alt="Diseño floral contemporáneo">
+                  <div class="gallery-loading-state">
+                    <div class="gallery-loading-spinner"></div>
+
+                    <span>
+                      Cargando colecciones...
+                    </span>
+                  </div>
                 </div>
               </div>
               <button class="carousel-control-prev" type="button" data-bs-target="#heroArtCarousel"
@@ -282,7 +238,7 @@
         <div class="row align-items-end mb-5 reveal">
           <div class="col-lg-8">
             <div class="eyebrow mb-2">Producto estrella</div>
-            <h2 class="section-title mb-0">Vista rápida de arreglos destacados.</h2>
+            <h2 class="section-title mb-0">Arreglos destacados.</h2>
           </div>
           <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
             <a href="catalogo.html" class="btn-secondary-hero"
@@ -290,60 +246,12 @@
               completo</a>
           </div>
         </div>
-        <div class="row g-4" id="productGrid">
-          <div class="col-md-4 reveal">
-            <article class="product-card" data-product-id="detalle" data-product-name="Detalle Sorpresa"
-              data-product-price="350">
-              <div class="product-img-wrap">
-                <span class="product-badge">Favorito</span>
-                <img src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=900&q=85"
-                  alt="Ramo detalle sorpresa">
-              </div>
-              <div class="product-body">
-                <h3>Detalle Sorpresa</h3>
-                <p class="text-muted-custom">Ramo chico/mediano con empaque premium y tarjeta personalizada.</p>
-                <div class="d-flex justify-content-between align-items-center gap-3">
-                  <span class="price">$350</span>
-                  <button class="btn-main btn-sm add-to-cart">Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4 reveal">
-            <article class="product-card" data-product-id="premium" data-product-name="Ramo Premium"
-              data-product-price="750">
-              <div class="product-img-wrap">
-                <span class="product-badge">Producto estrella</span>
-                <img src="https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=900&q=85"
-                  alt="Ramo premium floral">
-              </div>
-              <div class="product-body">
-                <h3>Ramo Premium</h3>
-                <p class="text-muted-custom">Diseño protagonista con flores seleccionadas para un regalo especial.</p>
-                <div class="d-flex justify-content-between align-items-center gap-3">
-                  <span class="price">$750</span>
-                  <button class="btn-main btn-sm add-to-cart">Agregar</button>
-                </div>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4 reveal">
-            <article class="product-card" data-product-id="evento" data-product-name="Evento Floral"
-              data-product-price="1200">
-              <div class="product-img-wrap">
-                <span class="product-badge">Eventos</span>
-                <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=85"
-                  alt="Decoración para evento floral">
-              </div>
-              <div class="product-body">
-                <h3>Evento Floral</h3>
-                <p class="text-muted-custom">Centros de mesa, decoración y propuesta visual personalizada.</p>
-                <div class="d-flex justify-content-between align-items-center gap-3">
-                  <span class="price">$1,200</span>
-                  <button class="btn-main btn-sm add-to-cart">Agregar</button>
-                </div>
-              </div>
-            </article>
+        <div class="row g-4" id="featuredProductGrid">
+          <div class="col-12 text-center py-5">
+            <div class="gallery-loading-spinner"></div>
+            <p class="text-muted-custom mt-3">
+              Cargando productos destacados...
+            </p>
           </div>
         </div>
       </div>
@@ -355,25 +263,12 @@
           <div class="flower-photo-card">
             <div id="flowerStoryCarousel" class="carousel slide carousel-fade flower-story-carousel"
               data-bs-ride="carousel" data-bs-interval="3600" data-bs-pause="false">
-              <div class="carousel-inner">
+              <div class="carousel-inner" id="storiesCarouselInner">
                 <div class="carousel-item active">
-                  <img
-                    src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=1100&q=85"
-                    alt="Rosas protagonistas en arreglo floral">
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=1100&q=85"
-                    alt="Tulipanes rosas con estilo delicado">
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://images.unsplash.com/photo-1470509037663-253afd7f0f51?auto=format&fit=crop&w=1100&q=85"
-                    alt="Girasoles brillantes y cálidos">
-                </div>
-                <div class="carousel-item">
-                  <img src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=1100&q=85"
-                    alt="Flores blancas elegantes">
+                  <div class="gallery-loading-state">
+                    <div class="gallery-loading-spinner"></div>
+                    <span>Cargando historias...</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -560,39 +455,12 @@
             </p>
           </div>
         </div>
-        <div class="row g-4">
-          <div class="col-md-4 reveal">
-            <article class="flower-card">
-              <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=900&q=85"
-                alt="Ramo de novia clásico">
-              <div class="flower-card-body">
-                <h3>Novia clásico</h3>
-                <p class="text-muted-custom mb-0">Tonos blancos, crema y follaje delicado para un estilo elegante y
-                  atemporal.</p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4 reveal">
-            <article class="flower-card">
-              <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=85"
-                alt="Ramo de novia romántico">
-              <div class="flower-card-body">
-                <h3>Novia romántico</h3>
-                <p class="text-muted-custom mb-0">Flores suaves, movimiento natural y detalles pensados para fotografía.
-                </p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4 reveal">
-            <article class="flower-card">
-              <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=900&q=85"
-                alt="Decoración floral para boda">
-              <div class="flower-card-body">
-                <h3>Boda y evento</h3>
-                <p class="text-muted-custom mb-0">Complementos florales para mesa, ceremonia, sesión y ambientación
-                  especial.</p>
-              </div>
-            </article>
+        <div class="row g-4" id="bridalGalleryGrid">
+          <div class="col-12 text-center py-5">
+            <div class="gallery-loading-spinner"></div>
+            <p class="text-muted-custom mt-3">
+              Cargando diseños para novia...
+            </p>
           </div>
         </div>
       </div>
@@ -657,54 +525,10 @@
       <div class="floral-carousel-wrap reveal">
         <div class="floral-carousel" id="floralCarousel" aria-label="Carrusel de inspiración floral">
           <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&w=900&q=85"
-              alt="Tulipán rosa de inspiración floral">
-            <span>Tulipanes</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=900&q=85"
-              alt="Ramo floral colorido en florero">
-            <span>Ramos vivos</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1494972308805-463bc619d34e?auto=format&fit=crop&w=900&q=85"
-              alt="Rosas rojas elegantes">
-            <span>Rosas</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?auto=format&fit=crop&w=900&q=85"
-              alt="Flores rojas abundantes">
-            <span>Color intenso</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?auto=format&fit=crop&w=900&q=85"
-              alt="Flores blancas elegantes">
-            <span>Elegancia</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=900&q=85"
-              alt="Flores de temporada en tonos cálidos">
-            <span>Temporada</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=900&q=85"
-              alt="Flores rosas delicadas">
-            <span>Romance</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=85"
-              alt="Flores naturales con textura botánica">
-            <span>Texturas</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=900&q=85"
-              alt="Bouquet floral elegante">
-            <span>Bouquet</span>
-          </article>
-          <article class="floral-slide">
-            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=900&q=85"
-              alt="Arreglo floral con flores suaves">
-            <span>Detalle</span>
+            <div class="gallery-loading-state">
+              <div class="gallery-loading-spinner"></div>
+              <span>Cargando inspiración...</span>
+            </div>
           </article>
         </div>
       </div>
@@ -962,6 +786,514 @@
       return 'winter';
     }
 
+    async function fetchPublicData(path) {
+      const response = await fetch(
+        `${API_BASE_URL}${path}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json"
+          }
+        }
+      );
+
+      let result;
+
+      try {
+        result = await response.json();
+      } catch {
+        throw new Error(
+          "La API devolvió una respuesta inválida"
+        );
+      }
+
+      if (!response.ok || !result.ok) {
+        throw new Error(
+          result.message ||
+          `Error HTTP ${response.status}`
+        );
+      }
+
+      return Array.isArray(result.data)
+        ? result.data
+        : [];
+    }
+
+    async function getGallerySection(section) {
+      const items = await fetchPublicData(
+        `/galeria?seccion=${encodeURIComponent(section)}`
+      );
+
+      return items
+        .filter(item => Number(item.activo) === 1)
+        .sort(
+          (a, b) =>
+            Number(a.orden ?? 999) -
+            Number(b.orden ?? 999)
+        );
+    }
+
+    function getGalleryImageUrl(item) {
+      return convertDriveImageUrl(
+        item?.imagenUrl || ""
+      );
+    }
+
+    function getGalleryAlt(item) {
+      return (
+        item?.textoAlternativo ||
+        item?.titulo ||
+        "Imagen floral de Floristería Juan H Magno"
+      );
+    }
+
+    async function loadSecondaryHeroImage() {
+      const imageElement = document.getElementById(
+        "homeSecondaryImage"
+      );
+
+      if (!imageElement) {
+        return;
+      }
+
+      try {
+        const items = await getGallerySection(
+          "hero-secundaria"
+        );
+
+        if (!items.length) {
+          return;
+        }
+
+        imageElement.src =
+          getGalleryImageUrl(items[0]);
+
+        imageElement.alt =
+          getGalleryAlt(items[0]);
+      } catch (error) {
+        console.error(
+          "Error cargando imagen secundaria:",
+          error
+        );
+      }
+    }
+
+    async function loadMomentsGallery() {
+      const container = document.getElementById(
+        "momentsGalleryGrid"
+      );
+
+      if (!container) {
+        return;
+      }
+
+      try {
+        const items = await getGallerySection(
+          "momentos"
+        );
+
+        if (!items.length) {
+          container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted-custom">
+                        No hay imágenes de momentos disponibles.
+                    </p>
+                </div>
+            `;
+
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+            <div class="col-md-6 col-lg-3 reveal visible">
+                <article class="mood-card">
+                    <img
+                        src="${escapeHtml(getGalleryImageUrl(item))}"
+                        alt="${escapeHtml(getGalleryAlt(item))}"
+                        loading="lazy"
+                        onerror="handlePublicImageError(this)"
+                    >
+
+                    <div class="mood-content">
+                        <h3>
+                            ${escapeHtml(item.titulo)}
+                        </h3>
+
+                        <p class="mb-0">
+                            ${escapeHtml(item.descripcion || "")}
+                        </p>
+                    </div>
+                </article>
+            </div>
+        `).join("");
+      } catch (error) {
+        console.error(
+          "Error cargando momentos:",
+          error
+        );
+
+        container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <p class="text-muted-custom">
+                    No fue posible cargar los momentos.
+                </p>
+            </div>
+        `;
+      }
+    }
+
+    function renderBootstrapCarousel(
+      carouselId,
+      innerId,
+      items,
+      interval
+    ) {
+      const carouselElement =
+        document.getElementById(carouselId);
+
+      const carouselInner =
+        document.getElementById(innerId);
+
+      if (!carouselElement || !carouselInner) {
+        return;
+      }
+
+      if (!items.length) {
+        carouselInner.innerHTML = `
+            <div class="carousel-item active">
+                <div class="gallery-loading-state">
+                    <span>No hay imágenes disponibles.</span>
+                </div>
+            </div>
+        `;
+
+        return;
+      }
+
+      carouselInner.innerHTML = items.map(
+        (item, index) => `
+            <div class="carousel-item ${index === 0 ? "active" : ""}">
+                <img
+                    src="${escapeHtml(getGalleryImageUrl(item))}"
+                    alt="${escapeHtml(getGalleryAlt(item))}"
+                    loading="${index === 0 ? "eager" : "lazy"}"
+                    decoding="async"
+                    onerror="handlePublicImageError(this)"
+                >
+            </div>
+        `
+      ).join("");
+
+      const previousInstance =
+        bootstrap.Carousel.getInstance(
+          carouselElement
+        );
+
+      if (previousInstance) {
+        previousInstance.dispose();
+      }
+
+      if (items.length > 1) {
+        new bootstrap.Carousel(
+          carouselElement,
+          {
+            interval,
+            ride: "carousel",
+            pause: false,
+            wrap: true,
+            touch: true
+          }
+        );
+      }
+    }
+
+    async function loadCollectionsGallery() {
+      try {
+        const items = await getGallerySection(
+          "colecciones"
+        );
+
+        renderBootstrapCarousel(
+          "heroArtCarousel",
+          "collectionsCarouselInner",
+          items,
+          4200
+        );
+      } catch (error) {
+        console.error(
+          "Error cargando colecciones:",
+          error
+        );
+      }
+    }
+
+    async function loadStoriesGallery() {
+      try {
+        const items = await getGallerySection(
+          "historias"
+        );
+
+        renderBootstrapCarousel(
+          "flowerStoryCarousel",
+          "storiesCarouselInner",
+          items,
+          3600
+        );
+      } catch (error) {
+        console.error(
+          "Error cargando historias:",
+          error
+        );
+      }
+    }
+
+    async function loadBridalGallery() {
+      const container = document.getElementById(
+        "bridalGalleryGrid"
+      );
+
+      if (!container) {
+        return;
+      }
+
+      try {
+        const items = await getGallerySection(
+          "novias"
+        );
+
+        if (!items.length) {
+          container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted-custom">
+                        No hay diseños para novia disponibles.
+                    </p>
+                </div>
+            `;
+
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+            <div class="col-md-4 reveal visible">
+                <article class="flower-card">
+                    <img
+                        src="${escapeHtml(getGalleryImageUrl(item))}"
+                        alt="${escapeHtml(getGalleryAlt(item))}"
+                        loading="lazy"
+                        onerror="handlePublicImageError(this)"
+                    >
+
+                    <div class="flower-card-body">
+                        <h3>
+                            ${escapeHtml(item.titulo)}
+                        </h3>
+
+                        <p class="text-muted-custom mb-0">
+                            ${escapeHtml(item.descripcion || "")}
+                        </p>
+                    </div>
+                </article>
+            </div>
+        `).join("");
+      } catch (error) {
+        console.error(
+          "Error cargando diseños de novia:",
+          error
+        );
+      }
+    }
+
+    async function loadInspirationGallery() {
+      const container = document.getElementById(
+        "floralCarousel"
+      );
+
+      if (!container) {
+        return;
+      }
+
+      try {
+        const items = await getGallerySection(
+          "inspiracion"
+        );
+
+        if (!items.length) {
+          container.innerHTML = `
+                <article class="floral-slide">
+                    <span>
+                        No hay imágenes de inspiración.
+                    </span>
+                </article>
+            `;
+
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+            <article class="floral-slide">
+                <img
+                    src="${escapeHtml(getGalleryImageUrl(item))}"
+                    alt="${escapeHtml(getGalleryAlt(item))}"
+                    loading="lazy"
+                    onerror="handlePublicImageError(this)"
+                >
+
+                <span>
+                    ${escapeHtml(
+          item.titulo ||
+          item.categoria ||
+          "Inspiración"
+        )}
+                </span>
+            </article>
+        `).join("");
+      } catch (error) {
+        console.error(
+          "Error cargando inspiración:",
+          error
+        );
+      }
+    }
+
+    async function loadFeaturedProducts() {
+      const container = document.getElementById(
+        "featuredProductGrid"
+      );
+
+      if (!container) {
+        return;
+      }
+
+      try {
+        const products = await fetchPublicData(
+          "/productos?disponibles=true"
+        );
+
+        const featuredProducts = products
+          .filter(product => product.destacado)
+          .sort(
+            (a, b) =>
+              Number(a.orden ?? 999) -
+              Number(b.orden ?? 999)
+          )
+          .slice(0, 3);
+
+        if (!featuredProducts.length) {
+          container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted-custom">
+                        No hay productos destacados.
+                    </p>
+                </div>
+            `;
+
+          return;
+        }
+
+        container.innerHTML = featuredProducts.map(product => {
+          const imageUrl =
+            product.imagenUrl ||
+            "https://placehold.co/900x900?text=Sin+imagen";
+
+          const price = Number(
+            product.precio || 0
+          ).toLocaleString(
+            "es-MX",
+            {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2
+            }
+          );
+
+          const badge =
+            product.etiqueta ||
+            product.categoria ||
+            "Destacado";
+
+          return `
+                <div class="col-md-4 reveal visible">
+                    <article
+                        class="product-card"
+                        data-product-id="${product.id}"
+                        data-product-name="${escapeHtml(product.nombre)}"
+                        data-product-price="${Number(product.precio)}"
+                    >
+                        <div class="product-img-wrap">
+                            <span class="product-badge">
+                                ${escapeHtml(badge)}
+                            </span>
+
+                            <img
+                                src="${escapeHtml(imageUrl)}"
+                                alt="${escapeHtml(product.nombre)}"
+                                loading="lazy"
+                                onerror="handlePublicImageError(this)"
+                            >
+                        </div>
+
+                        <div class="product-body">
+                            <h3>
+                                ${escapeHtml(product.nombre)}
+                            </h3>
+
+                            <p class="text-muted-custom">
+                                ${escapeHtml(
+            product.descripcion || ""
+          )}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center gap-3">
+                                <span class="price">
+                                    $${price}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    class="btn-main btn-sm add-to-cart"
+                                >
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            `;
+        }).join("");
+      } catch (error) {
+        console.error(
+          "Error cargando productos destacados:",
+          error
+        );
+      }
+    }
+
+    function handlePublicImageError(imageElement) {
+      if (!imageElement) {
+        return;
+      }
+
+      imageElement.onerror = null;
+
+      imageElement.src =
+        "https://placehold.co/900x900?text=Imagen+no+disponible";
+
+      imageElement.alt =
+        "Imagen no disponible";
+    }
+
+    async function loadDynamicHomeContent() {
+      await Promise.all([
+        loadHeroGallery(),
+        loadSecondaryHeroImage(),
+        loadMomentsGallery(),
+        loadCollectionsGallery(),
+        loadFeaturedProducts(),
+        loadStoriesGallery(),
+        loadBridalGallery(),
+        loadInspirationGallery()
+      ]);
+    }
+
     async function loadHeroGallery() {
       const carouselElement =
         document.getElementById("homeHeroCarousel");
@@ -1123,43 +1455,64 @@
         "Imagen floral temporal";
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.classList.add('loaded');
-      loadHeroGallery();
+    document.addEventListener(
+      'DOMContentLoaded',
+      async () => {
+        document.body.classList.add('loaded');
 
-      const currentSeason = getSeasonByDate();
+        await loadDynamicHomeContent();
 
-      setSeason(currentSeason);
+        const currentSeason = getSeasonByDate();
 
-      document.querySelectorAll('.season-btn').forEach(btn => {
-        btn.classList.toggle(
-          'active',
-          btn.dataset.season === currentSeason
-        );
-      });
+        setSeason(currentSeason);
 
-      const hero = document.querySelector('.hero');
-      const mouseLight = document.getElementById('mouseLight');
+        document
+          .querySelectorAll('.season-btn')
+          .forEach(btn => {
+            btn.classList.toggle(
+              'active',
+              btn.dataset.season === currentSeason
+            );
+          });
 
+        const hero =
+          document.querySelector('.hero');
 
-      hero.addEventListener('mousemove', (event) => {
-        const rect = hero.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const mouseLight =
+          document.getElementById('mouseLight');
 
-        mouseLight.style.left = `${x}px`;
-        mouseLight.style.top = `${y}px`;
-      });
+        if (hero && mouseLight) {
+          hero.addEventListener(
+            'mousemove',
+            event => {
+              const rect =
+                hero.getBoundingClientRect();
 
-      createFloatingPetals();
-      initSeasonButtons();
-      initReveal();
-      initQuiz();
-      initCart();
-      initFloralCarousel();
-      initSoftPageTransitions();
-      initNavbarScrollSpy();
-    });
+              mouseLight.style.left =
+                `${event.clientX - rect.left}px`;
+
+              mouseLight.style.top =
+                `${event.clientY - rect.top}px`;
+            }
+          );
+        }
+
+        createFloatingPetals();
+        initSeasonButtons();
+        initReveal();
+        initQuiz();
+
+        /*
+         * Deben ejecutarse después de cargar
+         * productos e imágenes dinámicas.
+         */
+        initCart();
+        initFloralCarousel();
+
+        initSoftPageTransitions();
+        initNavbarScrollSpy();
+      }
+    );
 
     function createFloatingPetals() {
       const hero = document.querySelector('.hero');

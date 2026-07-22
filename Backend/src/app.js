@@ -13,7 +13,12 @@ const detallesPedidoRoutes = require(
     './routes/detalles-pedido.routes'
 );
 const galeriaRoutes = require('./routes/galeria.routes');
+const uploadsRoutes = require('./routes/uploads.routes');
 const mercadoPagoRoutes = require('./routes/mercadopago.routes');
+
+const {
+    uploadsRoot
+} = require('./config/uploads');
 
 const app = express();
 
@@ -88,6 +93,21 @@ app.use(
     express.urlencoded({
         extended: true,
         limit: '1mb'
+    })
+);
+
+/*
+ * Publica las imágenes subidas con Multer.
+ *
+ * Ejemplo:
+ * /uploads/productos/imagen.jpg
+ * /uploads/galeria/imagen.jpg
+ */
+app.use(
+    '/uploads',
+    express.static(uploadsRoot, {
+        fallthrough: false,
+        maxAge: '7d'
     })
 );
 
@@ -176,6 +196,11 @@ app.use(
 app.use(
     '/api/floristeria-magno/galeria',
     galeriaRoutes
+);
+
+app.use(
+    '/api/floristeria-magno/uploads',
+    uploadsRoutes
 );
 
 /*
