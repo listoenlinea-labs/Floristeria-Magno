@@ -8,6 +8,7 @@
     <link rel="icon" href="assets/img/icon/fav-mago-2.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/mobile-nav.css">
 </head>
@@ -73,6 +74,10 @@
                 <button class="tab-btn active" onclick="setTab('products', this)">
                     <i class="bi bi-flower1"></i> Catálogo
                 </button>
+                <button class="tab-btn" onclick="setTab('orders', this)">
+                    <i class="bi bi-calendar2-heart"></i>
+                    Historial de pedidos
+                </button>
                 <button class="tab-btn" onclick="setTab('gallery', this)">
                     <i class="bi bi-images"></i> Galería
                 </button>
@@ -137,6 +142,123 @@
                     </div>
 
                     <div id="productsTable" class="admin-products-list"></div>
+                </div>
+            </section>
+
+            <section id="tabOrders" class="hidden">
+
+                <div class="orders-kpi-grid">
+                    <div class="kpi">
+                        <span>Pedidos del día</span>
+                        <strong id="ordersKpiTotal">0</strong>
+                    </div>
+
+                    <div class="kpi">
+                        <span>En preparación</span>
+                        <strong id="ordersKpiPreparation">0</strong>
+                    </div>
+
+                    <div class="kpi">
+                        <span>En camino</span>
+                        <strong id="ordersKpiOnRoute">0</strong>
+                    </div>
+
+                    <div class="kpi">
+                        <span>Entregados</span>
+                        <strong id="ordersKpiDelivered">0</strong>
+                    </div>
+                </div>
+
+                <div class="content-card glass">
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
+                        <div>
+                            <div class="eyebrow">
+                                Administración de entregas
+                            </div>
+
+                            <h2 class="mb-1">
+                                Historial de pedidos
+                            </h2>
+
+                            <p class="small-muted mb-0">
+                                Selecciona una fecha para consultar,
+                                administrar y actualizar sus pedidos.
+                            </p>
+                        </div>
+
+                        <button type="button" class="btn-soft" onclick="loadOrders()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Actualizar pedidos
+                        </button>
+                    </div>
+
+                    <div class="orders-calendar-toolbar">
+
+                        <button type="button" class="orders-date-nav" onclick="changeOrdersDate(-1)"
+                            aria-label="Día anterior">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+
+                        <div class="orders-datepicker-wrap">
+                            <i class="bi bi-calendar3"></i>
+
+                            <input id="ordersDatePicker" class="form-control" type="text"
+                                placeholder="Seleccionar fecha" autocomplete="off">
+                        </div>
+
+                        <button type="button" class="orders-date-nav" onclick="changeOrdersDate(1)"
+                            aria-label="Día siguiente">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                        <button type="button" class="btn-soft" onclick="goToTodayOrders()">
+                            Hoy
+                        </button>
+                    </div>
+
+                    <div class="orders-toolbar mt-4">
+                        <input id="ordersSearchInput" class="form-control"
+                            placeholder="Buscar código, cliente, destinatario, teléfono o producto..."
+                            oninput="renderOrders()">
+
+                        <select id="ordersStatusFilter" class="form-select" onchange="renderOrders()">
+                            <option value="">
+                                Todos los estados
+                            </option>
+
+                            <option value="PENDIENTE">
+                                Pendiente
+                            </option>
+
+                            <option value="RECIBIDO">
+                                Pedido recibido
+                            </option>
+
+                            <option value="EN_DISENO">
+                                En diseño floral
+                            </option>
+
+                            <option value="LISTO_ENTREGA">
+                                Listo para entrega
+                            </option>
+
+                            <option value="EN_CAMINO">
+                                En camino
+                            </option>
+
+                            <option value="ENTREGADO">
+                                Entregado
+                            </option>
+
+                            <option value="CANCELADO">
+                                Cancelado
+                            </option>
+                        </select>
+                    </div>
+
+                    <div id="ordersSelectedDate" class="orders-selected-date"></div>
+
+                    <div id="ordersList" class="admin-orders-list"></div>
                 </div>
             </section>
 
@@ -600,8 +722,61 @@
         </div>
     </div>
 
+    <div class="modal fade" id="paymentReceiptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h3 class="mb-1">
+                            Pago y comprobante
+                        </h3>
+
+                        <p id="paymentModalOrderCode" class="small-muted mb-0"></p>
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="payment-info-grid">
+                        <div class="payment-info-card">
+                            <small>Método de pago</small>
+                            <strong id="paymentModalMethod">
+                                Por confirmar
+                            </strong>
+                        </div>
+
+                        <div class="payment-info-card">
+                            <small>Estado del pago</small>
+                            <strong id="paymentModalStatus">
+                                Pendiente
+                            </strong>
+                        </div>
+
+                        <div class="payment-info-card">
+                            <small>Referencia</small>
+                            <strong id="paymentModalReference">
+                                Sin referencia
+                            </strong>
+                        </div>
+
+                        <div class="payment-info-card">
+                            <small>Total</small>
+                            <strong id="paymentModalTotal">
+                                $0.00
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div id="paymentReceiptContainer" class="payment-receipt-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
     <script>
 
         const API_BASE_URL =
@@ -609,11 +784,22 @@
                 window.location.hostname === "127.0.0.1"
                 ? "http://localhost:3000/api/floristeria-magno"
                 : "https://api.listoenlinea.host/api/floristeria-magno";
+        const MEXICO_TIME_ZONE =
+            'America/Mexico_City';
 
+        const MEXICO_LOCALE =
+            'es-MX';
         let products = [];
         let sections = [];
         let gallery = [];
+        let orders = [];
         let settings = {};
+        let ordersCalendarDays = {};
+
+        let selectedOrdersDate = '';
+        let ordersDatePicker = null;
+        let paymentReceiptModal = null;
+
 
         let currentTab = "products";
 
@@ -642,6 +828,138 @@
                     document.getElementById(
                         "galleryModal"
                     )
+                );
+
+                paymentReceiptModal =
+                    new bootstrap.Modal(
+                        document.getElementById(
+                            'paymentReceiptModal'
+                        )
+                    );
+
+                selectedOrdersDate =
+                    getMexicoDateString(new Date());
+
+                ordersDatePicker = flatpickr(
+                    '#ordersDatePicker',
+                    {
+                        locale: 'es',
+                        dateFormat: 'Y-m-d',
+                        altInput: true,
+                        altFormat: 'l, j \\de F \\de Y',
+                        defaultDate: selectedOrdersDate,
+                        allowInput: false,
+                        disableMobile: true,
+                        monthSelectorType: 'static',
+                        showMonths: 1,
+
+                        prevArrow: `
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <path d="m15 18-6-6 6-6"></path>
+            </svg>
+        `,
+
+                        nextArrow: `
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <path d="m9 18 6-6-6-6"></path>
+            </svg>
+        `,
+
+                        onReady(
+                            selectedDates,
+                            dateString,
+                            instance
+                        ) {
+                            loadOrdersCalendar(
+                                instance.currentYear,
+                                instance.currentMonth + 1
+                            );
+                        },
+
+                        onMonthChange(
+                            selectedDates,
+                            dateString,
+                            instance
+                        ) {
+                            loadOrdersCalendar(
+                                instance.currentYear,
+                                instance.currentMonth + 1
+                            );
+                        },
+
+                        onYearChange(
+                            selectedDates,
+                            dateString,
+                            instance
+                        ) {
+                            loadOrdersCalendar(
+                                instance.currentYear,
+                                instance.currentMonth + 1
+                            );
+                        },
+
+                        onDayCreate(
+                            selectedDates,
+                            dateString,
+                            instance,
+                            dayElement
+                        ) {
+                            const dateKey =
+                                getDateStringFromCalendarDate(
+                                    dayElement.dateObj
+                                );
+
+                            const orderCount = Number(
+                                ordersCalendarDays[dateKey] || 0
+                            );
+
+                            if (orderCount > 0) {
+                                dayElement.classList.add(
+                                    'has-orders'
+                                );
+
+                                dayElement.title =
+                                    `${orderCount} ${orderCount === 1
+                                        ? 'pedido'
+                                        : 'pedidos'
+                                    }`;
+                            }
+                        },
+
+                        onChange(
+                            selectedDates,
+                            dateString
+                        ) {
+                            if (!dateString) {
+                                return;
+                            }
+
+                            selectedOrdersDate =
+                                dateString;
+
+                            loadOrders();
+                        }
+                    }
                 );
 
                 await restoreAdminSession();
@@ -1021,6 +1339,7 @@
                 };
 
                 renderAll();
+                await loadOrders();
             } catch (error) {
                 console.error(error);
                 alert(error.message);
@@ -1077,10 +1396,30 @@
 
             clickedButton.classList.add("active");
 
-            document.getElementById("tabProducts").classList.toggle("hidden", tab !== "products");
-            document.getElementById("tabSections").classList.toggle("hidden", tab !== "sections");
-            document.getElementById("tabGallery").classList.toggle("hidden", tab !== "gallery");
-            document.getElementById("tabSettings").classList.toggle("hidden", tab !== "settings");
+            document
+                .getElementById('tabProducts')
+                .classList
+                .toggle('hidden', tab !== 'products');
+
+            document
+                .getElementById('tabOrders')
+                .classList
+                .toggle('hidden', tab !== 'orders');
+
+            document
+                .getElementById('tabSections')
+                .classList
+                .toggle('hidden', tab !== 'sections');
+
+            document
+                .getElementById('tabGallery')
+                .classList
+                .toggle('hidden', tab !== 'gallery');
+
+            document
+                .getElementById('tabSettings')
+                .classList
+                .toggle('hidden', tab !== 'settings');
 
             const mainBtn = document.getElementById("mainActionBtn");
 
@@ -1088,6 +1427,16 @@
                 mainBtn.innerHTML = '<i class="bi bi-plus-lg"></i> Nuevo producto';
                 mainBtn.onclick = openProductModal;
                 mainBtn.classList.remove("hidden");
+            }
+
+            if (tab === 'orders') {
+                mainBtn.innerHTML =
+                    '<i class="bi bi-arrow-clockwise"></i> Actualizar pedidos';
+
+                mainBtn.onclick = loadOrders;
+                mainBtn.classList.remove('hidden');
+
+                loadOrders();
             }
 
             if (tab === "sections") {
@@ -1105,6 +1454,1047 @@
             if (tab === "settings") {
                 mainBtn.classList.add("hidden");
             }
+        }
+
+        const ORDER_STATUS_INFO = {
+            PENDIENTE: {
+                label: 'Pendiente de pago',
+                icon: 'bi-hourglass-split',
+                next: null,
+                action: 'Esperando confirmación'
+            },
+
+            RECIBIDO: {
+                label: 'Pedido recibido',
+                icon: 'bi-receipt',
+                next: 'EN_DISENO',
+                action: 'Comenzar preparación'
+            },
+
+            EN_DISENO: {
+                label: 'En diseño floral',
+                icon: 'bi-flower1',
+                next: 'LISTO_ENTREGA',
+                action: 'Marcar como listo'
+            },
+
+            LISTO_ENTREGA: {
+                label: 'Listo para entrega',
+                icon: 'bi-gift',
+                next: 'EN_CAMINO',
+                action: 'Iniciar entrega'
+            },
+
+            EN_CAMINO: {
+                label: 'En camino',
+                icon: 'bi-truck',
+                next: 'ENTREGADO',
+                action: 'Confirmar entrega'
+            },
+
+            ENTREGADO: {
+                label: 'Entregado',
+                icon: 'bi-check-circle',
+                next: null,
+                action: 'Pedido finalizado'
+            },
+
+            CANCELADO: {
+                label: 'Cancelado',
+                icon: 'bi-x-circle',
+                next: null,
+                action: 'Pedido cancelado'
+            }
+        };
+
+        function getMexicoDateString(date = new Date()) {
+            const parts = new Intl.DateTimeFormat(
+                'en-CA',
+                {
+                    timeZone: MEXICO_TIME_ZONE,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }
+            ).formatToParts(date);
+
+            const values = {};
+
+            parts.forEach((part) => {
+                if (part.type !== 'literal') {
+                    values[part.type] = part.value;
+                }
+            });
+
+            return `${values.year}-${values.month}-${values.day}`;
+        }
+
+        function getDateStringFromCalendarDate(date) {
+            if (!(date instanceof Date)) {
+                return '';
+            }
+
+            const year = date.getFullYear();
+
+            const month = String(
+                date.getMonth() + 1
+            ).padStart(2, '0');
+
+            const day = String(
+                date.getDate()
+            ).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+        function parseLocalDate(value) {
+            const parts = String(value || '')
+                .split('-')
+                .map(Number);
+
+            if (
+                parts.length !== 3 ||
+                !parts.every(Number.isInteger)
+            ) {
+                return new Date();
+            }
+
+            return new Date(
+                parts[0],
+                parts[1] - 1,
+                parts[2],
+                12,
+                0,
+                0
+            );
+        }
+
+        function formatOrderDate(value) {
+            if (!value) {
+                return 'Sin fecha programada';
+            }
+
+            const date = new Date(
+                `${value}T12:00:00-06:00`
+            );
+
+            if (Number.isNaN(date.getTime())) {
+                return value;
+            }
+
+            return new Intl.DateTimeFormat(
+                MEXICO_LOCALE,
+                {
+                    timeZone: MEXICO_TIME_ZONE,
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }
+            ).format(date);
+        }
+
+        function formatDateTime(value) {
+            if (!value) {
+                return 'Sin información';
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return value;
+            }
+
+            return new Intl.DateTimeFormat(
+                MEXICO_LOCALE,
+                {
+                    timeZone: MEXICO_TIME_ZONE,
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                    hour12: true
+                }
+            ).format(date);
+        }
+
+        function formatCurrency(value) {
+            return Number(value || 0)
+                .toLocaleString(
+                    'es-MX',
+                    {
+                        style: 'currency',
+                        currency: 'MXN'
+                    }
+                );
+        }
+
+        function normalizeOrderStatus(value) {
+            return String(value || 'PENDIENTE')
+                .trim()
+                .toUpperCase()
+                .replaceAll(' ', '_')
+                .replaceAll('-', '_');
+        }
+
+        async function loadOrdersCalendar(
+            year,
+            month
+        ) {
+            try {
+                const result = await apiFetch(
+                    `/pedidos/calendario?anio=${encodeURIComponent(
+                        year
+                    )}&mes=${encodeURIComponent(
+                        month
+                    )}`
+                );
+
+                ordersCalendarDays =
+                    result.data?.dias || {};
+
+                /*
+                 * Obliga a Flatpickr a volver a crear
+                 * las celdas para pintar los marcadores.
+                 */
+                if (
+                    ordersDatePicker &&
+                    typeof ordersDatePicker.redraw ===
+                    'function'
+                ) {
+                    ordersDatePicker.redraw();
+                }
+            } catch (error) {
+                console.error(
+                    'No fue posible cargar el calendario de pedidos:',
+                    error
+                );
+
+                ordersCalendarDays = {};
+            }
+        }
+
+        async function loadOrders() {
+            const container =
+                document.getElementById('ordersList');
+
+            if (!selectedOrdersDate) {
+                selectedOrdersDate =
+                    getMexicoDateString();
+            }
+
+            container.innerHTML = `
+        <div class="admin-orders-loading">
+            <span
+                class="spinner-border spinner-border-sm"
+            ></span>
+            Consultando pedidos...
+        </div>
+    `;
+
+            try {
+                const result = await apiFetch(
+                    `/pedidos?fechaEntrega=${encodeURIComponent(
+                        selectedOrdersDate
+                    )}`
+                );
+
+                orders = Array.isArray(result.data)
+                    ? result.data
+                    : [];
+
+                document
+                    .getElementById('ordersSelectedDate')
+                    .textContent =
+                    `Pedidos para ${formatOrderDate(
+                        selectedOrdersDate
+                    )}`;
+
+                renderOrders();
+            } catch (error) {
+                console.error(error);
+
+                container.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="bi bi-exclamation-triangle"></i>
+                <h4>No pudimos cargar los pedidos</h4>
+                <p>${escapeHtml(error.message)}</p>
+            </div>
+        `;
+            }
+        }
+
+        function changeOrdersDate(days) {
+            const [
+                year,
+                month,
+                day
+            ] = String(selectedOrdersDate)
+                .split('-')
+                .map(Number);
+
+            if (
+                !Number.isInteger(year) ||
+                !Number.isInteger(month) ||
+                !Number.isInteger(day)
+            ) {
+                selectedOrdersDate =
+                    getMexicoDateString();
+            } else {
+                const utcDate = new Date(
+                    Date.UTC(
+                        year,
+                        month - 1,
+                        day + Number(days)
+                    )
+                );
+
+                selectedOrdersDate =
+                    utcDate
+                        .toISOString()
+                        .slice(0, 10);
+            }
+
+            if (
+                ordersDatePicker &&
+                typeof ordersDatePicker.setDate ===
+                'function'
+            ) {
+                ordersDatePicker.setDate(
+                    selectedOrdersDate,
+                    false
+                );
+            }
+
+            loadOrders();
+        }
+
+        function goToTodayOrders() {
+            selectedOrdersDate =
+                getMexicoDateString();
+
+            if (
+                ordersDatePicker &&
+                typeof ordersDatePicker.setDate ===
+                'function'
+            ) {
+                ordersDatePicker.setDate(
+                    selectedOrdersDate,
+                    false
+                );
+            }
+
+            loadOrders();
+        }
+
+        function updateOrderKpis(filteredOrders) {
+            const total = filteredOrders.length;
+
+            const preparation =
+                filteredOrders.filter(order => {
+                    const state =
+                        normalizeOrderStatus(order.estado);
+
+                    return [
+                        'RECIBIDO',
+                        'EN_DISENO',
+                        'LISTO_ENTREGA'
+                    ].includes(state);
+                }).length;
+
+            const onRoute =
+                filteredOrders.filter(
+                    order =>
+                        normalizeOrderStatus(
+                            order.estado
+                        ) === 'EN_CAMINO'
+                ).length;
+
+            const delivered =
+                filteredOrders.filter(
+                    order =>
+                        normalizeOrderStatus(
+                            order.estado
+                        ) === 'ENTREGADO'
+                ).length;
+
+            document.getElementById(
+                'ordersKpiTotal'
+            ).textContent = total;
+
+            document.getElementById(
+                'ordersKpiPreparation'
+            ).textContent = preparation;
+
+            document.getElementById(
+                'ordersKpiOnRoute'
+            ).textContent = onRoute;
+
+            document.getElementById(
+                'ordersKpiDelivered'
+            ).textContent = delivered;
+        }
+
+        function orderMatchesSearch(order, search) {
+            if (!search) {
+                return true;
+            }
+
+            const productNames =
+                (order.detalles || [])
+                    .map(detail =>
+                        detail.producto?.nombre || ''
+                    )
+                    .join(' ');
+
+            const searchable = [
+                order.codigoRastreo,
+                order.cliente?.nombre,
+                order.cliente?.telefono,
+                order.nombreDestinatario,
+                order.telefonoDestinatario,
+                order.direccionEntrega,
+                productNames
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+
+            return searchable.includes(search);
+        }
+
+        function renderOrderProducts(order) {
+            const details =
+                Array.isArray(order.detalles)
+                    ? order.detalles
+                    : [];
+
+            if (!details.length) {
+                return `
+            <div class="order-no-products">
+                No hay productos registrados.
+            </div>
+        `;
+            }
+
+            return details.map(detail => {
+                const product = detail.producto || {};
+
+                const image =
+                    product.imagenUrl ||
+                    'https://via.placeholder.com/100?text=Flor';
+
+                return `
+            <div class="order-product-row">
+                <img
+                    src="${escapeHtml(image)}"
+                    alt="${escapeHtml(
+                    product.nombre ||
+                    'Producto floral'
+                )}"
+                    onerror="
+                        this.onerror = null;
+                        this.src =
+                        'https://via.placeholder.com/100?text=Flor';
+                    "
+                >
+
+                <div>
+                    <strong>
+                        ${escapeHtml(
+                    product.nombre ||
+                    'Producto'
+                )}
+                    </strong>
+
+                    <small>
+                        ${Number(
+                    detail.cantidad || 0
+                )} ×
+                        ${formatCurrency(
+                    detail.precioUnitario
+                )}
+                    </small>
+                </div>
+
+                <strong>
+                    ${formatCurrency(
+                    detail.subtotal
+                )}
+                </strong>
+            </div>
+        `;
+            }).join('');
+        }
+
+        function renderOrderHistory(order) {
+            const history =
+                Array.isArray(order.historial)
+                    ? order.historial
+                    : [];
+
+            if (!history.length) {
+                return `
+            <p class="small-muted mb-0">
+                Este pedido todavía no tiene historial.
+            </p>
+        `;
+            }
+
+            return history.map(item => {
+                const status =
+                    normalizeOrderStatus(item.estado);
+
+                const info =
+                    ORDER_STATUS_INFO[status] ||
+                    ORDER_STATUS_INFO.PENDIENTE;
+
+                return `
+            <div class="order-history-item">
+                <span class="order-history-dot"></span>
+
+                <div>
+                    <strong>
+                        ${escapeHtml(info.label)}
+                    </strong>
+
+                    <p>
+                        ${escapeHtml(
+                    item.descripcion ||
+                    'Estado actualizado'
+                )}
+                    </p>
+
+                    <small>
+                        ${escapeHtml(
+                    formatDateTime(
+                        item.creadoEn
+                    )
+                )}
+                    </small>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        function renderOrders() {
+            const container =
+                document.getElementById('ordersList');
+
+            const search =
+                document
+                    .getElementById('ordersSearchInput')
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            const statusFilter =
+                document
+                    .getElementById('ordersStatusFilter')
+                    .value;
+
+            const filtered = orders.filter(order => {
+                const state =
+                    normalizeOrderStatus(order.estado);
+
+                const matchesStatus =
+                    !statusFilter ||
+                    state === statusFilter;
+
+                return (
+                    matchesStatus &&
+                    orderMatchesSearch(order, search)
+                );
+            });
+
+            updateOrderKpis(filtered);
+
+            if (!filtered.length) {
+                container.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="bi bi-calendar2-heart"></i>
+                <h4>No hay pedidos para mostrar</h4>
+                <p>
+                    Cambia la fecha o los filtros
+                    para consultar otros pedidos.
+                </p>
+            </div>
+        `;
+
+                return;
+            }
+
+            container.innerHTML = filtered.map(order => {
+                const state =
+                    normalizeOrderStatus(order.estado);
+
+                const info =
+                    ORDER_STATUS_INFO[state] ||
+                    ORDER_STATUS_INFO.PENDIENTE;
+
+                const customer =
+                    order.cliente || {};
+
+                const recipient =
+                    order.nombreDestinatario ||
+                    customer.nombre ||
+                    'Sin destinatario';
+
+                const address =
+                    order.direccionEntrega ||
+                    customer.direccion ||
+                    'Dirección pendiente';
+
+                const nextButton =
+                    info.next
+                        ? `
+                    <button
+                        type="button"
+                        class="btn-gold"
+                        onclick="advanceOrderStatus(
+                            ${Number(order.id)},
+                            '${info.next}'
+                        )"
+                    >
+                        <i class="bi ${info.icon}"></i>
+                        ${escapeHtml(info.action)}
+                    </button>
+                `
+                        : `
+                    <button
+                        type="button"
+                        class="btn-soft"
+                        disabled
+                    >
+                        <i class="bi ${info.icon}"></i>
+                        ${escapeHtml(info.action)}
+                    </button>
+                `;
+
+                return `
+            <article class="admin-order-card">
+
+                <header class="admin-order-header">
+                    <div>
+                        <span class="order-code">
+                            ${escapeHtml(
+                    order.codigoRastreo ||
+                    `Pedido #${order.id}`
+                )}
+                        </span>
+
+                        <h3>
+                            ${escapeHtml(recipient)}
+                        </h3>
+
+                        <p>
+                            Entrega:
+                            ${escapeHtml(
+                    order.ventanaEntrega ||
+                    'Horario por confirmar'
+                )}
+                        </p>
+                    </div>
+
+                    <span
+                        class="order-status-badge status-${state.toLowerCase()}"
+                    >
+                        <i class="bi ${info.icon}"></i>
+                        ${escapeHtml(info.label)}
+                    </span>
+                </header>
+
+                <div class="admin-order-body">
+
+                    <div class="order-main-column">
+
+                        <section class="order-data-section">
+                            <h4>
+                                <i class="bi bi-person"></i>
+                                Cliente y entrega
+                            </h4>
+
+                            <div class="order-data-grid">
+                                <div>
+                                    <small>Comprador</small>
+                                    <strong>
+                                        ${escapeHtml(
+                    customer.nombre ||
+                    'Sin nombre'
+                )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Teléfono</small>
+                                    <strong>
+                                        ${escapeHtml(
+                    customer.telefono ||
+                    'Sin teléfono'
+                )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Destinatario</small>
+                                    <strong>
+                                        ${escapeHtml(recipient)}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Teléfono destinatario</small>
+                                    <strong>
+                                        ${escapeHtml(
+                    order.telefonoDestinatario ||
+                    'Sin teléfono'
+                )}
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div class="order-address">
+                                <small>
+                                    Dirección de entrega
+                                </small>
+
+                                <strong>
+                                    ${escapeHtml(address)}
+                                </strong>
+
+                                ${order.referenciasEntrega
+                        ? `
+                                            <p>
+                                                ${escapeHtml(
+                            order.referenciasEntrega
+                        )}
+                                            </p>
+                                        `
+                        : ''
+                    }
+                            </div>
+                        </section>
+
+                        <section class="order-data-section">
+                            <h4>
+                                <i class="bi bi-flower1"></i>
+                                Productos
+                            </h4>
+
+                            ${renderOrderProducts(order)}
+                        </section>
+
+                        ${order.mensajeTarjeta
+                        ? `
+                                    <section class="order-message-card">
+                                        <small>
+                                            Mensaje de tarjeta
+                                        </small>
+
+                                        <p>
+                                            “${escapeHtml(
+                            order.mensajeTarjeta
+                        )}”
+                                        </p>
+                                    </section>
+                                `
+                        : ''
+                    }
+
+                    </div>
+
+                    <aside class="order-side-column">
+
+                        <div class="order-total-card">
+                            <small>Total del pedido</small>
+                            <strong>
+                                ${formatCurrency(order.total)}
+                            </strong>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-soft w-100"
+                            onclick="openPaymentReceipt(
+                                ${Number(order.id)}
+                            )"
+                        >
+                            <i class="bi bi-receipt-cutoff"></i>
+                            Ver pago y comprobante
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-soft w-100"
+                            onclick="copyTrackingLink(
+                                '${escapeHtml(
+                        order.codigoRastreo || ''
+                    )}'
+                            )"
+                        >
+                            <i class="bi bi-link-45deg"></i>
+                            Copiar enlace de rastreo
+                        </button>
+
+                        <div class="order-status-editor">
+                            <label>
+                                Corregir estado
+                            </label>
+
+                            <div class="input-group">
+                                <select
+                                    id="orderStatus-${Number(order.id)}"
+                                    class="form-select"
+                                >
+                                    ${Object
+                        .entries(ORDER_STATUS_INFO)
+                        .map(([value, statusInfo]) => `
+                                            <option
+                                                value="${value}"
+                                                ${value === state
+                                ? 'selected'
+                                : ''}
+                                            >
+                                                ${escapeHtml(
+                                    statusInfo.label
+                                )}
+                                            </option>
+                                        `)
+                        .join('')}
+                                </select>
+
+                                <button
+                                    type="button"
+                                    class="btn-soft"
+                                    onclick="saveManualOrderStatus(
+                                        ${Number(order.id)}
+                                    )"
+                                >
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+
+                        ${nextButton}
+
+                    </aside>
+                </div>
+
+                <details class="order-history">
+                    <summary>
+                        <i class="bi bi-clock-history"></i>
+                        Ver historial del pedido
+                    </summary>
+
+                    <div class="order-history-list">
+                        ${renderOrderHistory(order)}
+                    </div>
+                </details>
+
+            </article>
+        `;
+            }).join('');
+        }
+
+        async function advanceOrderStatus(
+            orderId,
+            nextStatus
+        ) {
+            const statusInfo =
+                ORDER_STATUS_INFO[nextStatus];
+
+            const confirmed = window.confirm(
+                `¿Confirmas cambiar el pedido a "${statusInfo?.label || nextStatus}"?`
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            await updateOrderStatus(
+                orderId,
+                nextStatus
+            );
+        }
+
+        async function saveManualOrderStatus(orderId) {
+            const select =
+                document.getElementById(
+                    `orderStatus-${orderId}`
+                );
+
+            const status = select.value;
+
+            const confirmed = window.confirm(
+                'Esta acción corregirá manualmente el estado del pedido. ¿Deseas continuar?'
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            await updateOrderStatus(
+                orderId,
+                status,
+                'Estado corregido manualmente desde el panel administrativo.'
+            );
+        }
+
+        async function updateOrderStatus(
+            orderId,
+            status,
+            description = ''
+        ) {
+            try {
+                await apiFetch(
+                    `/pedidos/${orderId}/estado`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            estado: status,
+                            descripcion: description
+                        })
+                    }
+                );
+
+                await loadOrders();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        function copyTrackingLink(code) {
+            if (!code) {
+                alert(
+                    'Este pedido no tiene código de rastreo.'
+                );
+
+                return;
+            }
+
+            const trackingUrl =
+                `${window.location.origin}/rastreo.html?pedido=${encodeURIComponent(
+                    code
+                )}`;
+
+            navigator.clipboard
+                .writeText(trackingUrl)
+                .then(() => {
+                    alert(
+                        'Enlace de rastreo copiado.'
+                    );
+                })
+                .catch(() => {
+                    window.prompt(
+                        'Copia el enlace:',
+                        trackingUrl
+                    );
+                });
+        }
+
+        function openPaymentReceipt(orderId) {
+            const order = orders.find(
+                item => Number(item.id) === Number(orderId)
+            );
+
+            if (!order) {
+                return;
+            }
+
+            document.getElementById(
+                'paymentModalOrderCode'
+            ).textContent =
+                order.codigoRastreo ||
+                `Pedido #${order.id}`;
+
+            document.getElementById(
+                'paymentModalMethod'
+            ).textContent =
+                order.metodoPago ||
+                'Por confirmar';
+
+            document.getElementById(
+                'paymentModalStatus'
+            ).textContent =
+                order.estadoPago ||
+                'PENDIENTE';
+
+            document.getElementById(
+                'paymentModalReference'
+            ).textContent =
+                order.referenciaPago ||
+                'Sin referencia';
+
+            document.getElementById(
+                'paymentModalTotal'
+            ).textContent =
+                formatCurrency(order.total);
+
+            const container =
+                document.getElementById(
+                    'paymentReceiptContainer'
+                );
+
+            const receiptUrl =
+                String(order.comprobanteUrl || '')
+                    .trim();
+
+            if (!receiptUrl) {
+                container.innerHTML = `
+            <div class="payment-empty-receipt">
+                <i class="bi bi-file-earmark-x"></i>
+
+                <h4>
+                    No hay comprobante disponible
+                </h4>
+
+                <p>
+                    El proveedor de pago todavía no
+                    ha proporcionado un comprobante.
+                </p>
+            </div>
+        `;
+            } else if (
+                receiptUrl.toLowerCase().includes('.pdf')
+            ) {
+                container.innerHTML = `
+            <iframe
+                class="payment-receipt-frame"
+                src="${escapeHtml(receiptUrl)}"
+                title="Comprobante de pago"
+            ></iframe>
+
+            <a
+                class="btn-gold mt-3"
+                href="${escapeHtml(receiptUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <i class="bi bi-box-arrow-up-right"></i>
+                Abrir comprobante
+            </a>
+        `;
+            } else {
+                container.innerHTML = `
+            <img
+                class="payment-receipt-image"
+                src="${escapeHtml(receiptUrl)}"
+                alt="Comprobante de pago"
+            >
+
+            <a
+                class="btn-gold mt-3"
+                href="${escapeHtml(receiptUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <i class="bi bi-box-arrow-up-right"></i>
+                Abrir comprobante
+            </a>
+        `;
+            }
+
+            paymentReceiptModal.show();
         }
 
         function renderProducts() {

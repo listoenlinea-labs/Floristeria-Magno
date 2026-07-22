@@ -2,6 +2,7 @@ const Cliente = require('./Cliente');
 const Producto = require('./Producto');
 const Pedido = require('./Pedido');
 const DetallePedido = require('./DetallePedido');
+const HistorialPedido = require('./HistorialPedido');
 const Galeria = require('./Galeria');
 const Configuracion = require('./Configuracion');
 
@@ -44,11 +45,25 @@ DetallePedido.belongsTo(Producto, {
     as: 'producto'
 });
 
+/*
+ * pedidos 1 ─── N historial_pedido
+ */
+Pedido.hasMany(HistorialPedido, {
+    foreignKey: 'pedidoId',
+    as: 'historial'
+});
+
+HistorialPedido.belongsTo(Pedido, {
+    foreignKey: 'pedidoId',
+    as: 'pedido'
+});
+
 module.exports = {
     Cliente,
     Producto,
     Pedido,
     DetallePedido,
+    HistorialPedido,
     Galeria,
     Configuracion
 };

@@ -12467,3 +12467,703 @@ body.page-index .gallery-loading-spinner {
 .page-rastreo #trackingResult[hidden] {
     display: none !important;
 }
+
+/* =========================================
+   ADMIN - HISTORIAL DE PEDIDOS
+========================================= */
+
+.page-admin .orders-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.page-admin .orders-calendar-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.page-admin .orders-datepicker-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+}
+
+.page-admin .orders-datepicker-wrap>i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    z-index: 3;
+    transform: translateY(-50%);
+    color: #a76878;
+}
+
+.page-admin .orders-datepicker-wrap input {
+    padding-left: 45px;
+}
+
+.page-admin .orders-date-nav {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 24px rgba(63, 25, 38, 0.08);
+}
+
+.page-admin .orders-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 14px;
+}
+
+.page-admin .orders-selected-date {
+    margin: 24px 0 16px;
+    color: #6f4450;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.page-admin .admin-orders-list {
+    display: grid;
+    gap: 24px;
+}
+
+.page-admin .admin-orders-loading {
+    padding: 50px 20px;
+    text-align: center;
+    color: #815766;
+}
+
+.page-admin .admin-order-card {
+    overflow: hidden;
+    border: 1px solid rgba(111, 68, 80, 0.12);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 50px rgba(70, 34, 44, 0.08);
+}
+
+.page-admin .admin-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px;
+    border-bottom: 1px solid rgba(111, 68, 80, 0.1);
+}
+
+.page-admin .order-code {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: #a76878;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.page-admin .admin-order-header h3 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    color: #32151e;
+}
+
+.page-admin .admin-order-header p {
+    margin: 6px 0 0;
+    color: #85616b;
+}
+
+.page-admin .order-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: #f7e9ed;
+    color: #7e4354;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.page-admin .status-en_camino {
+    background: #fff1cf;
+    color: #76540c;
+}
+
+.page-admin .status-entregado {
+    background: #e3f7eb;
+    color: #277447;
+}
+
+.page-admin .status-cancelado {
+    background: #fbe4e4;
+    color: #a03838;
+}
+
+.page-admin .admin-order-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+    padding: 24px;
+}
+
+.page-admin .order-main-column {
+    display: grid;
+    gap: 18px;
+}
+
+.page-admin .order-side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.page-admin .order-data-section {
+    padding: 20px;
+    border: 1px solid rgba(111, 68, 80, 0.1);
+    border-radius: 20px;
+    background: #fffaf8;
+}
+
+.page-admin .order-data-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 18px;
+    font-size: 1rem;
+    color: #4f2733;
+}
+
+.page-admin .order-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.page-admin .order-data-grid div,
+.page-admin .order-address {
+    display: grid;
+    gap: 4px;
+}
+
+.page-admin .order-data-grid small,
+.page-admin .order-address small {
+    color: #95717b;
+}
+
+.page-admin .order-address {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(111, 68, 80, 0.1);
+}
+
+.page-admin .order-address p {
+    margin: 6px 0 0;
+    color: #85616b;
+}
+
+.page-admin .order-product-row {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(111, 68, 80, 0.08);
+}
+
+.page-admin .order-product-row:last-child {
+    border-bottom: 0;
+}
+
+.page-admin .order-product-row img {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.page-admin .order-product-row div {
+    display: grid;
+    gap: 4px;
+}
+
+.page-admin .order-product-row small {
+    color: #896772;
+}
+
+.page-admin .order-message-card {
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg,
+            #fff2f5,
+            #fff9ed);
+}
+
+.page-admin .order-message-card small {
+    color: #916671;
+    font-weight: 700;
+}
+
+.page-admin .order-message-card p {
+    margin: 8px 0 0;
+    color: #57313c;
+    font-family: "Playfair Display", serif;
+    font-size: 1.05rem;
+}
+
+.page-admin .order-total-card {
+    padding: 20px;
+    border-radius: 20px;
+    background: #32151e;
+    color: #fff;
+}
+
+.page-admin .order-total-card {
+    display: grid;
+    gap: 6px;
+}
+
+.page-admin .order-total-card small {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.page-admin .order-total-card strong {
+    font-size: 1.8rem;
+}
+
+.page-admin .order-status-editor {
+    padding: 16px;
+    border-radius: 18px;
+    background: #fffaf8;
+}
+
+.page-admin .order-status-editor label {
+    display: block;
+    margin-bottom: 8px;
+    color: #69404b;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.page-admin .order-history {
+    border-top: 1px solid rgba(111, 68, 80, 0.1);
+    padding: 0 24px 24px;
+}
+
+.page-admin .order-history summary {
+    padding: 20px 0;
+    color: #704653;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.page-admin .order-history-list {
+    display: grid;
+    gap: 14px;
+}
+
+.page-admin .order-history-item {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    gap: 12px;
+}
+
+.page-admin .order-history-dot {
+    width: 12px;
+    height: 12px;
+    margin-top: 5px;
+    border-radius: 50%;
+    background: #c98296;
+    box-shadow: 0 0 0 5px rgba(201, 130, 150, 0.16);
+}
+
+.page-admin .order-history-item p {
+    margin: 4px 0;
+    color: #76535d;
+}
+
+.page-admin .order-history-item small {
+    color: #a07c85;
+}
+
+.page-admin .payment-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.page-admin .payment-info-card {
+    display: grid;
+    gap: 6px;
+    padding: 18px;
+    border-radius: 18px;
+    background: #fff6f3;
+}
+
+.page-admin .payment-info-card small {
+    color: #906c76;
+}
+
+.page-admin .payment-receipt-container {
+    min-height: 320px;
+    text-align: center;
+}
+
+.page-admin .payment-receipt-frame {
+    width: 100%;
+    min-height: 650px;
+    border: 0;
+    border-radius: 18px;
+    background: #f5f5f5;
+}
+
+.page-admin .payment-receipt-image {
+    display: block;
+    max-width: 100%;
+    max-height: 700px;
+    margin: 0 auto;
+    border-radius: 18px;
+    object-fit: contain;
+}
+
+.page-admin .payment-empty-receipt {
+    display: grid;
+    place-items: center;
+    min-height: 320px;
+    padding: 30px;
+    border: 2px dashed rgba(111, 68, 80, 0.18);
+    border-radius: 22px;
+    color: #896772;
+}
+
+.page-admin .payment-empty-receipt i {
+    font-size: 3rem;
+}
+
+@media (max-width: 992px) {
+    .page-admin .orders-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .page-admin .admin-order-body {
+        grid-template-columns: 1fr;
+    }
+
+    .page-admin .payment-info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+
+    .page-admin .orders-kpi-grid,
+    .page-admin .order-data-grid,
+    .page-admin .payment-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-admin .orders-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .page-admin .admin-order-header {
+        flex-direction: column;
+    }
+
+    .page-admin .order-status-badge {
+        white-space: normal;
+    }
+
+    .page-admin .order-product-row {
+        grid-template-columns: 50px minmax(0, 1fr);
+    }
+
+    .page-admin .order-product-row>strong {
+        grid-column: 2;
+    }
+}
+
+/* =========================================
+   CALENDARIO ADMIN ESTILO APPLE
+========================================= */
+
+.page-admin .flatpickr-calendar {
+    width: 340px;
+    padding: 12px;
+    border: 1px solid rgba(20, 20, 20, 0.08);
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.12),
+        0 4px 14px rgba(0, 0, 0, 0.06);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Inter",
+        sans-serif;
+}
+
+.page-admin .flatpickr-calendar::before,
+.page-admin .flatpickr-calendar::after {
+    display: none;
+}
+
+/*
+ * Encabezado del mes.
+ */
+.page-admin .flatpickr-months {
+    align-items: center;
+    padding: 4px 2px 12px;
+}
+
+.page-admin .flatpickr-month {
+    height: 42px;
+    background: transparent;
+    color: #1d1d1f;
+    fill: #1d1d1f;
+}
+
+.page-admin .flatpickr-current-month {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    height: 42px;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.page-admin .flatpickr-current-month .flatpickr-monthDropdown-months {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #1d1d1f;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.page-admin .flatpickr-current-month input.cur-year {
+    width: 60px;
+    padding: 0;
+    color: #1d1d1f;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/*
+ * Flechas de navegación.
+ */
+.page-admin .flatpickr-prev-month,
+.page-admin .flatpickr-next-month {
+    top: 13px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    color: #3a3a3c;
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.page-admin .flatpickr-prev-month {
+    left: 13px;
+}
+
+.page-admin .flatpickr-next-month {
+    right: 13px;
+}
+
+.page-admin .flatpickr-prev-month:hover,
+.page-admin .flatpickr-next-month:hover {
+    background: #f2f2f7;
+    color: #007aff;
+}
+
+.page-admin .flatpickr-prev-month svg,
+.page-admin .flatpickr-next-month svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+}
+
+/*
+ * Nombres de los días.
+ */
+.page-admin .flatpickr-weekdays {
+    height: 34px;
+    margin-bottom: 3px;
+    background: transparent;
+}
+
+.page-admin .flatpickr-weekdaycontainer {
+    background: transparent;
+}
+
+.page-admin span.flatpickr-weekday {
+    background: transparent;
+    color: #8e8e93;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/*
+ * Área de días.
+ */
+.page-admin .flatpickr-innerContainer,
+.page-admin .flatpickr-rContainer,
+.page-admin .flatpickr-days {
+    width: 100%;
+    border: 0;
+}
+
+.page-admin .dayContainer {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    gap: 0;
+}
+
+/*
+ * Día normal.
+ */
+.page-admin .flatpickr-day {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    max-width: 42px;
+    height: 42px;
+    margin: 2px 3px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #1d1d1f;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 42px;
+    transition:
+        background-color 0.16s ease,
+        color 0.16s ease,
+        transform 0.16s ease;
+}
+
+.page-admin .flatpickr-day:hover {
+    border: 0;
+    background: #f2f2f7;
+    color: #1d1d1f;
+}
+
+/*
+ * Día seleccionado: azul Apple.
+ */
+.page-admin .flatpickr-day.selected,
+.page-admin .flatpickr-day.selected:hover,
+.page-admin .flatpickr-day.startRange,
+.page-admin .flatpickr-day.endRange {
+    border: 0;
+    background: #007aff;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+/*
+ * Día de hoy.
+ */
+.page-admin .flatpickr-day.today {
+    border: 1.5px solid #007aff;
+    color: #007aff;
+}
+
+.page-admin .flatpickr-day.today:hover {
+    background: #eaf3ff;
+}
+
+.page-admin .flatpickr-day.today.selected {
+    border-color: #007aff;
+    background: #007aff;
+    color: #ffffff;
+}
+
+/*
+ * Días de otros meses.
+ */
+.page-admin .flatpickr-day.prevMonthDay,
+.page-admin .flatpickr-day.nextMonthDay {
+    color: #c7c7cc;
+}
+
+/*
+ * Marcador azul para días con pedidos.
+ */
+.page-admin .flatpickr-day.has-orders::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #007aff;
+    transform: translateX(-50%);
+}
+
+/*
+ * El marcador se vuelve blanco cuando el día
+ * está seleccionado.
+ */
+.page-admin .flatpickr-day.has-orders.selected::after {
+    background: #ffffff;
+}
+
+/*
+ * Campo visual del selector.
+ */
+.page-admin .orders-datepicker-wrap .form-control,
+.page-admin .orders-datepicker-wrap .flatpickr-input {
+    height: 48px;
+    border: 1px solid #d2d2d7;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #1d1d1f;
+    box-shadow: none;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Text",
+        "Inter",
+        sans-serif;
+}
+
+.page-admin .orders-datepicker-wrap .form-control:focus,
+.page-admin .orders-datepicker-wrap .flatpickr-input:focus {
+    border-color: #007aff;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+}
+
+.page-admin .orders-datepicker-wrap>i {
+    color: #007aff;
+}
+
+@media (max-width: 480px) {
+    .page-admin .flatpickr-calendar {
+        width: min(340px, calc(100vw - 24px));
+    }
+
+    .page-admin .flatpickr-day {
+        width: 39px;
+        max-width: 39px;
+        height: 39px;
+        margin: 1px 2px;
+        line-height: 39px;
+    }
+}
