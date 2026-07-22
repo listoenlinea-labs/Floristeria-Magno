@@ -2,19 +2,40 @@ const express = require('express');
 
 const {
     listarPedidos,
-    obtenerPedido
+    obtenerPedido,
+    obtenerCalendarioPedidos
 } = require('../controllers/pedidos.controller');
 
-const basicAuth = require('../middleware/basic-auth.middleware');
+const {
+    actualizarEstadoPedido
+} = require('../controllers/estado-pedido.controller');
+
+const basicAuth = require(
+    '../middleware/basic-auth.middleware'
+);
 
 const router = express.Router();
 
 /*
- * Protege todas las rutas de pedidos.
+ * Todas estas rutas son administrativas.
  */
 router.use(basicAuth);
 
 router.get('/', listarPedidos);
+
+/*
+ * Esta ruta debe ir antes de /:id.
+ */
+router.get(
+    '/calendario',
+    obtenerCalendarioPedidos
+);
+
+router.patch(
+    '/:id/estado',
+    actualizarEstadoPedido
+);
+
 router.get('/:id', obtenerPedido);
 
 module.exports = router;

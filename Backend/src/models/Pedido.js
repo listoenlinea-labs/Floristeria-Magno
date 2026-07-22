@@ -10,10 +10,41 @@ const Pedido = sequelize.define(
             autoIncrement: true
         },
 
+        codigoRastreo: {
+            type: DataTypes.STRING(30),
+            allowNull: false,
+            unique: true,
+            field: 'codigo_rastreo'
+        },
+
         clienteId: {
             type: DataTypes.INTEGER,
             allowNull: true,
             field: 'cliente_id'
+        },
+
+        nombreDestinatario: {
+            type: DataTypes.STRING(150),
+            allowNull: true,
+            field: 'nombre_destinatario'
+        },
+
+        telefonoDestinatario: {
+            type: DataTypes.STRING(30),
+            allowNull: true,
+            field: 'telefono_destinatario'
+        },
+
+        direccionEntrega: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            field: 'direccion_entrega'
+        },
+
+        referenciasEntrega: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            field: 'referencias_entrega'
         },
 
         total: {
@@ -24,8 +55,14 @@ const Pedido = sequelize.define(
 
         estado: {
             type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: 'PENDIENTE'
+        },
+
+        tipoPedido: {
+            type: DataTypes.STRING(100),
             allowNull: true,
-            defaultValue: 'pendiente'
+            field: 'tipo_pedido'
         },
 
         fechaEntrega: {
@@ -34,16 +71,54 @@ const Pedido = sequelize.define(
             field: 'fecha_entrega'
         },
 
+        ventanaEntrega: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+            field: 'ventana_entrega'
+        },
+
         mensajeTarjeta: {
             type: DataTypes.TEXT,
             allowNull: true,
             field: 'mensaje_tarjeta'
         },
 
+        metodoPago: {
+            type: DataTypes.STRING(50),
+            allowNull: true,
+            field: 'metodo_pago'
+        },
+
+        estadoPago: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: 'PENDIENTE',
+            field: 'estado_pago'
+        },
+
+        referenciaPago: {
+            type: DataTypes.STRING(150),
+            allowNull: true,
+            field: 'referencia_pago'
+        },
+
+        comprobanteUrl: {
+            type: DataTypes.STRING(500),
+            allowNull: true,
+            field: 'comprobante_url'
+        },
+
         creadoEn: {
             type: DataTypes.DATE,
-            allowNull: true,
+            allowNull: false,
             field: 'creado_en',
+            defaultValue: DataTypes.NOW
+        },
+
+        actualizadoEn: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            field: 'actualizado_en',
             defaultValue: DataTypes.NOW
         }
     },

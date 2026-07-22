@@ -16,6 +16,7 @@ const galeriaRoutes = require('./routes/galeria.routes');
 const uploadsRoutes = require('./routes/uploads.routes');
 const mercadoPagoRoutes = require('./routes/mercadopago.routes');
 const configuracionRoutes = require('./routes/configuracion.routes');
+const rastreoRoutes = require('./routes/rastreo.routes');
 const {
     uploadsRoot
 } = require('./config/uploads');
@@ -186,6 +187,14 @@ app.use(
 app.use(
     '/api/floristeria-magno/pedidos',
     pedidosRoutes
+);
+
+/*
+ * Rastreo público de pedidos.
+ */
+app.use(
+    '/api/floristeria-magno/rastreo',
+    rastreoRoutes
 );
 
 app.use(
