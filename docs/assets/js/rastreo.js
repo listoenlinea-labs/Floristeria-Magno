@@ -18,7 +18,7 @@ const SOCKET_BASE_URL = [
  * Sustituye este valor por tu token público de Mapbox.
  */
 const MAPBOX_PUBLIC_TOKEN =
-    'PEGA_AQUI_TU_TOKEN_PUBLICO_PK';
+    'pk.eyJ1IjoibGlzdG9lbmxpbmVhIiwiYSI6ImNtcndyMWNsbjA5d2MyeHBzcGg4NzFvaW0ifQ.vULMsQ5RoM8r8JANfJobow';
 
 const GUADALAJARA_CENTER = {
     longitude: -103.3496,

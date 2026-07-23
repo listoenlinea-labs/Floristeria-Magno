@@ -18,6 +18,9 @@ const mercadoPagoRoutes = require('./routes/mercadopago.routes');
 const configuracionRoutes = require('./routes/configuracion.routes');
 const rastreoRoutes = require('./routes/rastreo.routes');
 const rastreoUbicacionRoutes = require('./routes/rastreo-ubicacion.routes');
+const repartidorEntregasRoutes = require(
+    './routes/repartidor-entregas.routes'
+);
 const {
     uploadsRoot
 } = require('./config/uploads');
@@ -226,6 +229,17 @@ app.use(
     configuracionRoutes
 );
 
+/*
+ * Panel operativo del repartidor.
+ */
+app.use(
+    '/api/floristeria-magno/repartidor/entregas',
+    repartidorEntregasRoutes
+);
+
+/*
+ * Rastreo público de pedidos.
+ */
 app.use(
     '/api/floristeria-magno/rastreo-ubicacion',
     rastreoUbicacionRoutes

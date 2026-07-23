@@ -19,8 +19,11 @@
         <section id="loginView" class="login-card glass">
             <div class="mb-4">
                 <div class="brand">Juan H <span>Magno</span></div>
-                <p class="small-muted mt-2 mb-0">Panel privado para administrar página, catálogo, secciones, fotos y
-                    datos generales.</p>
+                <p class="small-muted mt-2 mb-0">
+                    Acceso privado para administración y reparto.
+                    El panel mostrará únicamente las funciones autorizadas
+                    para cada usuario.
+                </p>
             </div>
 
             <div class="mb-3">
@@ -44,10 +47,13 @@
                 </div>
             </div>
 
-            <button class="btn-gold w-100" onclick="loginAdmin()">Entrar al panel</button>
+            <button class="btn-gold w-100" id="loginButton" onclick="loginPanel()">
+                Entrar al panel
+            </button>
 
             <p class="small-muted mt-3 mb-0">
-                Acceso exclusivo para administración.
+                Las funciones disponibles dependen de las
+                credenciales utilizadas.
             </p>
         </section>
 
@@ -77,18 +83,22 @@
                 </div>
             </div>
 
-            <div class="tabs-card glass">
-                <button class="tab-btn active" onclick="setTab('products', this)">
+            <div class="tabs-card glass" id="panelTabs">
+                <button class="tab-btn active" id="productsTabButton" onclick="setTab('products', this)">
                     <i class="bi bi-flower1"></i> Catálogo
                 </button>
-                <button class="tab-btn" onclick="setTab('orders', this)">
+                <button class="tab-btn" id="ordersTabButton" onclick="setTab('orders', this)">
                     <i class="bi bi-calendar2-heart"></i>
                     Historial de pedidos
                 </button>
-                <button class="tab-btn" onclick="setTab('gallery', this)">
+                <button class="tab-btn" id="deliveryTabButton" onclick="openDeliveryTab(this)">
+                    <i class="bi bi-truck"></i>
+                    Repartidor
+                </button>
+                <button class="tab-btn" id="galleryTabButton" onclick="setTab('gallery', this)">
                     <i class="bi bi-images"></i> Galería
                 </button>
-                <button class="tab-btn" onclick="setTab('settings', this)">
+                <button class="tab-btn" id="settingsTabButton" onclick="setTab('settings', this)">
                     <i class="bi bi-gear"></i> Configuración
                 </button>
             </div>
@@ -266,6 +276,65 @@
                     <div id="ordersSelectedDate" class="orders-selected-date"></div>
 
                     <div id="ordersList" class="admin-orders-list"></div>
+                </div>
+            </section>
+
+            <section id="tabDelivery" class="hidden">
+                <div class="delivery-hero-card glass">
+                    <div>
+                        <div class="eyebrow">
+                            Operación de entregas
+                        </div>
+
+                        <h2>
+                            Pedidos del repartidor
+                        </h2>
+
+                        <p class="small-muted mb-0">
+                            Consulta las entregas del día, abre la
+                            dirección y comparte tu ubicación mientras
+                            el pedido está en camino.
+                        </p>
+                    </div>
+
+                    <div id="deliveryGpsGlobalStatus" class="delivery-gps-global-status">
+                        <span class="delivery-gps-dot"></span>
+                        <span>GPS sin iniciar</span>
+                    </div>
+                </div>
+
+                <div class="content-card glass">
+                    <div class="delivery-toolbar">
+                        <button type="button" class="orders-date-nav" onclick="changeDeliveryDate(-1)"
+                            aria-label="Día anterior">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+
+                        <div class="orders-datepicker-wrap">
+                            <i class="bi bi-calendar3"></i>
+
+                            <input id="deliveryDatePicker" class="form-control" type="text"
+                                placeholder="Seleccionar fecha" autocomplete="off">
+                        </div>
+
+                        <button type="button" class="orders-date-nav" onclick="changeDeliveryDate(1)"
+                            aria-label="Día siguiente">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                        <button type="button" class="btn-soft" onclick="goToTodayDeliveries()">
+                            Hoy
+                        </button>
+
+                        <button type="button" class="btn-soft" onclick="loadDeliveryOrders()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Actualizar
+                        </button>
+                    </div>
+
+                    <div id="deliverySelectedDate" class="orders-selected-date"></div>
+
+                    <div id="deliveryOrdersList" class="delivery-orders-list"></div>
                 </div>
             </section>
 
@@ -791,6 +860,13 @@
                 window.location.hostname === "127.0.0.1"
                 ? "http://localhost:3000/api/floristeria-magno"
                 : "https://api.listoenlinea.host/api/floristeria-magno";
+        const API_AUTH_URL =
+            window.location.hostname ===
+                'localhost' ||
+                window.location.hostname ===
+                '127.0.0.1'
+                ? 'http://localhost:3000/api/auth'
+                : 'https://api.listoenlinea.host/api/auth';
         const MEXICO_TIME_ZONE =
             'America/Mexico_City';
 
@@ -806,6 +882,23 @@
         let selectedOrdersDate = '';
         let ordersDatePicker = null;
         let paymentReceiptModal = null;
+        let panelRole = null;
+
+        let deliveryOrders = [];
+        let selectedDeliveryDate = '';
+        let deliveryDatePicker = null;
+
+        let activeGpsWatchId = null;
+        let activeGpsOrderId = null;
+        let activeGpsOrderCode = null;
+
+        let lastGpsSentAt = 0;
+        let lastSentLatitude = null;
+        let lastSentLongitude = null;
+
+        const GPS_SEND_INTERVAL_MS = 5000;
+        const GPS_MINIMUM_DISTANCE_METERS = 8;
+        const GPS_MAXIMUM_ACCURACY_METERS = 100;
 
 
         let currentTab = "products";
@@ -969,6 +1062,39 @@
                     }
                 );
 
+                selectedDeliveryDate =
+                    getMexicoDateString();
+
+                deliveryDatePicker = flatpickr(
+                    '#deliveryDatePicker',
+                    {
+                        locale: 'es',
+                        dateFormat: 'Y-m-d',
+                        altInput: true,
+                        altFormat:
+                            'l, j \\de F \\de Y',
+                        defaultDate:
+                            selectedDeliveryDate,
+                        allowInput: false,
+                        disableMobile: true,
+                        monthSelectorType: 'static',
+
+                        onChange(
+                            selectedDates,
+                            dateString
+                        ) {
+                            if (!dateString) {
+                                return;
+                            }
+
+                            selectedDeliveryDate =
+                                dateString;
+
+                            loadDeliveryOrders();
+                        }
+                    }
+                );
+
                 await restoreAdminSession();
             }
         );
@@ -976,12 +1102,12 @@
         function getBasicAuthorization() {
             const encodedCredentials =
                 sessionStorage.getItem(
-                    "flor_admin_basic_auth"
+                    'flor_panel_basic_auth'
                 );
 
             return encodedCredentials
                 ? `Basic ${encodedCredentials}`
-                : "";
+                : '';
         }
 
         async function apiFetch(path, options = {}) {
@@ -1032,6 +1158,49 @@
                 throw new Error(
                     result.message ||
                     `Error HTTP ${response.status}`
+                );
+            }
+
+            return result;
+        }
+
+        async function verifyPanelCredentials(
+            encodedCredentials,
+            role
+        ) {
+            const response = await fetch(
+                `${API_AUTH_URL}/${role}/verificar`,
+                {
+                    method: 'GET',
+
+                    headers: {
+                        Accept:
+                            'application/json',
+
+                        Authorization:
+                            `Basic ${encodedCredentials}`
+                    },
+
+                    cache: 'no-store'
+                }
+            );
+
+            let result;
+
+            try {
+                result = await response.json();
+            } catch {
+                result = {
+                    ok: false,
+                    message:
+                        'La API devolvió una respuesta inválida.'
+                };
+            }
+
+            if (!response.ok || !result.ok) {
+                throw new Error(
+                    result.message ||
+                    'Credenciales incorrectas.'
                 );
             }
 
@@ -1122,58 +1291,179 @@
                 .remove("hidden");
         }
 
+        function setElementVisible(
+            elementId,
+            visible
+        ) {
+            const element =
+                document.getElementById(
+                    elementId
+                );
+
+            if (!element) {
+                return;
+            }
+
+            element.classList.toggle(
+                'hidden',
+                !visible
+            );
+        }
+
+        async function configurePanelByRole() {
+            const isAdmin =
+                panelRole === 'admin';
+
+            const isDelivery =
+                panelRole === 'repartidor';
+
+            setElementVisible(
+                'productsTabButton',
+                isAdmin
+            );
+
+            setElementVisible(
+                'ordersTabButton',
+                isAdmin
+            );
+
+            setElementVisible(
+                'galleryTabButton',
+                isAdmin
+            );
+
+            setElementVisible(
+                'settingsTabButton',
+                isAdmin
+            );
+
+            /*
+             * El administrador y el repartidor pueden
+             * ver la pestaña operativa de reparto.
+             */
+            setElementVisible(
+                'deliveryTabButton',
+                isAdmin || isDelivery
+            );
+
+            const mainActionButton =
+                document.getElementById(
+                    'mainActionBtn'
+                );
+
+            if (isDelivery) {
+                mainActionButton.classList.add(
+                    'hidden'
+                );
+
+                const deliveryButton =
+                    document.getElementById(
+                        'deliveryTabButton'
+                    );
+
+                setTab(
+                    'delivery',
+                    deliveryButton
+                );
+
+                /*
+                 * Una sola carga de entregas.
+                 */
+                await loadDeliveryOrders();
+
+                return;
+            }
+
+            if (isAdmin) {
+                const productsButton =
+                    document.getElementById(
+                        'productsTabButton'
+                    );
+
+                setTab(
+                    'products',
+                    productsButton
+                );
+
+                await loadAllData();
+
+                return;
+            }
+
+            throw new Error(
+                'El rol del panel no es válido.'
+            );
+        }
+
         async function restoreAdminSession() {
             const savedCredentials =
                 sessionStorage.getItem(
-                    "flor_admin_basic_auth"
+                    'flor_panel_basic_auth'
                 );
 
-            if (!savedCredentials) {
+            const savedRole =
+                sessionStorage.getItem(
+                    'flor_panel_role'
+                );
+
+            if (
+                !savedCredentials ||
+                !['admin', 'repartidor']
+                    .includes(savedRole)
+            ) {
+                clearPanelSession();
                 showLoginView();
                 return;
             }
 
             try {
-                /*
-                 * Esta ruta está protegida con Basic Auth.
-                 * Si responde correctamente, la sesión
-                 * almacenada todavía es válida.
-                 */
-                await apiFetch(
-                    "/productos/admin/todos"
+                await verifyPanelCredentials(
+                    savedCredentials,
+                    savedRole
                 );
+
+                panelRole = savedRole;
 
                 showAdminView();
 
-                await loadAllData();
+                await configurePanelByRole();
             } catch (error) {
                 console.warn(
-                    "La sesión guardada ya no es válida:",
+                    'La sesión guardada ya no es válida:',
                     error
                 );
 
-                sessionStorage.removeItem(
-                    "flor_admin_basic_auth"
-                );
-
+                clearPanelSession();
                 showLoginView();
             }
         }
 
-        async function loginAdmin() {
+        async function loginPanel() {
             const email = document
-                .getElementById("loginUser")
+                .getElementById('loginUser')
                 .value
                 .trim();
 
             const password = document
-                .getElementById("loginPass")
+                .getElementById('loginPass')
                 .value;
 
             if (!email || !password) {
-                alert("Ingresa usuario y contraseña.");
+                alert(
+                    'Ingresa usuario y contraseña.'
+                );
+
                 return;
             }
+
+            const loginButton =
+                document.getElementById(
+                    'loginButton'
+                );
+
+            loginButton.disabled = true;
+            loginButton.textContent =
+                'Verificando acceso...';
 
             const encodedCredentials = btoa(
                 unescape(
@@ -1183,52 +1473,142 @@
                 )
             );
 
+            let detectedRole = null;
+
+            /*
+             * PRIMERA ETAPA:
+             * únicamente verificar las credenciales.
+             */
+            try {
+                try {
+                    await verifyPanelCredentials(
+                        encodedCredentials,
+                        'admin'
+                    );
+
+                    detectedRole = 'admin';
+                } catch (adminError) {
+                    console.info(
+                        'Las credenciales no corresponden al administrador.'
+                    );
+
+                    await verifyPanelCredentials(
+                        encodedCredentials,
+                        'repartidor'
+                    );
+
+                    detectedRole = 'repartidor';
+                }
+            } catch (authenticationError) {
+                console.error(
+                    'Error de autenticación:',
+                    authenticationError
+                );
+
+                clearPanelSession();
+                showLoginView();
+
+                alert(
+                    authenticationError.message ||
+                    'Usuario o contraseña incorrectos.'
+                );
+
+                loginButton.disabled = false;
+                loginButton.textContent =
+                    'Entrar al panel';
+
+                return;
+            }
+
+            /*
+             * En este punto las credenciales YA SON VÁLIDAS.
+             */
             sessionStorage.setItem(
-                "flor_admin_basic_auth",
+                'flor_panel_basic_auth',
                 encodedCredentials
             );
 
+            sessionStorage.setItem(
+                'flor_panel_role',
+                detectedRole
+            );
+
+            panelRole = detectedRole;
+
+            showAdminView();
+
+            /*
+             * SEGUNDA ETAPA:
+             * cargar la información correspondiente al rol.
+             *
+             * Un error aquí ya no se reporta como contraseña
+             * incorrecta ni elimina una sesión válida.
+             */
             try {
-                await apiFetch(
-                    "/productos/admin/todos"
+                await configurePanelByRole();
+            } catch (panelError) {
+                console.error(
+                    'Las credenciales son correctas, pero ocurrió un error cargando el panel:',
+                    panelError
                 );
 
-                showAdminView();
-
-                await loadAllData();
-            } catch (error) {
-                sessionStorage.removeItem(
-                    "flor_admin_basic_auth"
+                alert(
+                    `El acceso fue correcto, pero no se pudo cargar el panel: ${panelError.message ||
+                    'Error desconocido'
+                    }`
                 );
-
-                alert(error.message);
+            } finally {
+                loginButton.disabled = false;
+                loginButton.textContent =
+                    'Entrar al panel';
             }
         }
 
-        function logoutAdmin() {
+        function clearPanelSession() {
             sessionStorage.removeItem(
-                "flor_admin_basic_auth"
+                'flor_panel_basic_auth'
             );
 
-            document.getElementById(
-                "loginUser"
-            ).value = "";
+            sessionStorage.removeItem(
+                'flor_panel_role'
+            );
+
+            /*
+             * Limpia la clave vieja de sesiones
+             * anteriores.
+             */
+            sessionStorage.removeItem(
+                'flor_admin_basic_auth'
+            );
+
+            panelRole = null;
+        }
+
+        function logoutAdmin() {
+            stopGpsTracking();
+
+            clearPanelSession();
 
             document.getElementById(
-                "loginPass"
-            ).value = "";
+                'loginUser'
+            ).value = '';
 
             document.getElementById(
-                "loginPass"
-            ).type = "password";
+                'loginPass'
+            ).value = '';
+
+            document.getElementById(
+                'loginPass'
+            ).type = 'password';
 
             const icon =
                 document.getElementById(
-                    "toggleLoginPasswordIcon"
+                    'toggleLoginPasswordIcon'
                 );
 
             if (icon) {
-                icon.className = "bi bi-eye";
+                icon.className =
+                    'bi bi-eye';
             }
 
             showLoginView();
@@ -1392,6 +1772,17 @@
             fillProductOptions();
         }
 
+        async function openDeliveryTab(
+            clickedButton
+        ) {
+            setTab(
+                'delivery',
+                clickedButton
+            );
+
+            await loadDeliveryOrders();
+        }
+
         function setTab(tab, clickedButton) {
             currentTab = tab;
 
@@ -1412,6 +1803,14 @@
                 .getElementById('tabOrders')
                 .classList
                 .toggle('hidden', tab !== 'orders');
+
+            document
+                .getElementById('tabDelivery')
+                .classList
+                .toggle(
+                    'hidden',
+                    tab !== 'delivery'
+                );
 
             document
                 .getElementById('tabSections')
@@ -1460,6 +1859,12 @@
 
             if (tab === "settings") {
                 mainBtn.classList.add("hidden");
+            }
+
+            if (tab === 'delivery') {
+                mainBtn.classList.add(
+                    'hidden'
+                );
             }
         }
 
@@ -2502,6 +2907,899 @@
             }
 
             paymentReceiptModal.show();
+        }
+
+        function getDeliveryApiPath(path = '') {
+            return `/repartidor/entregas${path}`;
+        }
+
+        async function loadDeliveryOrders() {
+            const container =
+                document.getElementById(
+                    'deliveryOrdersList'
+                );
+
+            if (!selectedDeliveryDate) {
+                selectedDeliveryDate =
+                    getMexicoDateString();
+            }
+
+            container.innerHTML = `
+        <div class="admin-orders-loading">
+            <span
+                class="spinner-border spinner-border-sm"
+            ></span>
+            Consultando entregas...
+        </div>
+    `;
+
+            try {
+                const result = await apiFetch(
+                    getDeliveryApiPath(
+                        `?fecha=${encodeURIComponent(
+                            selectedDeliveryDate
+                        )}`
+                    )
+                );
+
+                deliveryOrders =
+                    Array.isArray(result.data)
+                        ? result.data
+                        : [];
+
+                document
+                    .getElementById(
+                        'deliverySelectedDate'
+                    )
+                    .textContent =
+                    `Entregas para ${formatOrderDate(
+                        selectedDeliveryDate
+                    )}`;
+
+                renderDeliveryOrders();
+            } catch (error) {
+                console.error(error);
+
+                container.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="bi bi-exclamation-triangle"></i>
+                <h4>
+                    No pudimos cargar las entregas
+                </h4>
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+            </div>
+        `;
+            }
+        }
+
+        function changeDeliveryDate(days) {
+            const [
+                year,
+                month,
+                day
+            ] = String(selectedDeliveryDate)
+                .split('-')
+                .map(Number);
+
+            const utcDate = new Date(
+                Date.UTC(
+                    year,
+                    month - 1,
+                    day + Number(days)
+                )
+            );
+
+            selectedDeliveryDate =
+                utcDate
+                    .toISOString()
+                    .slice(0, 10);
+
+            if (
+                deliveryDatePicker &&
+                typeof deliveryDatePicker.setDate ===
+                'function'
+            ) {
+                deliveryDatePicker.setDate(
+                    selectedDeliveryDate,
+                    false
+                );
+            }
+
+            loadDeliveryOrders();
+        }
+
+        function goToTodayDeliveries() {
+            selectedDeliveryDate =
+                getMexicoDateString();
+
+            if (
+                deliveryDatePicker &&
+                typeof deliveryDatePicker.setDate ===
+                'function'
+            ) {
+                deliveryDatePicker.setDate(
+                    selectedDeliveryDate,
+                    false
+                );
+            }
+
+            loadDeliveryOrders();
+        }
+
+        function renderDeliveryProducts(order) {
+            const details =
+                Array.isArray(order.detalles)
+                    ? order.detalles
+                    : [];
+
+            if (!details.length) {
+                return `
+            <p class="small-muted mb-0">
+                Sin productos registrados.
+            </p>
+        `;
+            }
+
+            return details.map(detail => {
+                const product =
+                    detail.producto || {};
+
+                return `
+            <div class="delivery-product">
+                ${product.imagenUrl
+                        ? `
+                            <img
+                                src="${escapeHtml(
+                            product.imagenUrl
+                        )}"
+                                alt="${escapeHtml(
+                            product.nombre ||
+                            'Producto'
+                        )}"
+                            >
+                        `
+                        : `
+                            <div class="delivery-product-placeholder">
+                                <i class="bi bi-flower1"></i>
+                            </div>
+                        `
+                    }
+
+                <div>
+                    <strong>
+                        ${escapeHtml(
+                        product.nombre ||
+                        'Producto'
+                    )}
+                    </strong>
+
+                    <small>
+                        Cantidad:
+                        ${Number(
+                        detail.cantidad || 0
+                    )}
+                    </small>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        function buildMapsUrl(order) {
+            const address =
+                String(
+                    order.direccionEntrega || ''
+                ).trim();
+
+            if (!address) {
+                return '';
+            }
+
+            return (
+                'https://www.google.com/maps/search/?api=1&query=' +
+                encodeURIComponent(address)
+            );
+        }
+
+        function renderDeliveryProgress(state) {
+            const states = [
+                {
+                    value: 'LISTO_ENTREGA',
+                    label: 'Listo'
+                },
+                {
+                    value: 'EN_CAMINO',
+                    label: 'En camino'
+                },
+                {
+                    value: 'ENTREGADO',
+                    label: 'Entregado'
+                }
+            ];
+
+            const currentIndex =
+                states.findIndex(
+                    item =>
+                        item.value === state
+                );
+
+            return `
+        <div class="delivery-progress">
+            ${states.map(
+                (item, index) => `
+                    <div
+                        class="delivery-progress-step
+                        ${index < currentIndex
+                        ? 'completed'
+                        : ''
+                    }
+                        ${index === currentIndex
+                        ? 'active'
+                        : ''
+                    }"
+                    >
+                        <span>
+                            ${index < currentIndex
+                        ? '<i class="bi bi-check-lg"></i>'
+                        : index + 1
+                    }
+                        </span>
+
+                        <small>
+                            ${item.label}
+                        </small>
+                    </div>
+                `
+            ).join('')}
+        </div>
+    `;
+        }
+
+        function renderDeliveryOrders() {
+            const container =
+                document.getElementById(
+                    'deliveryOrdersList'
+                );
+
+            if (!deliveryOrders.length) {
+                container.innerHTML = `
+            <div class="admin-empty-state">
+                <i class="bi bi-truck"></i>
+                <h4>
+                    No hay entregas para este día
+                </h4>
+                <p>
+                    Solo aparecen pedidos listos,
+                    en camino o entregados.
+                </p>
+            </div>
+        `;
+
+                return;
+            }
+
+            container.innerHTML =
+                deliveryOrders
+                    .map(order => {
+                        const state =
+                            normalizeOrderStatus(
+                                order.estado
+                            );
+
+                        const customer =
+                            order.cliente || {};
+
+                        const recipient =
+                            order.nombreDestinatario ||
+                            customer.nombre ||
+                            'Sin destinatario';
+
+                        const phone =
+                            order.telefonoDestinatario ||
+                            customer.telefono ||
+                            '';
+
+                        const mapsUrl =
+                            buildMapsUrl(order);
+
+                        const isActiveGps =
+                            Number(activeGpsOrderId) ===
+                            Number(order.id);
+
+                        let primaryAction = '';
+
+                        if (
+                            state ===
+                            'LISTO_ENTREGA'
+                        ) {
+                            primaryAction = `
+                        <button
+                            type="button"
+                            class="btn-gold delivery-main-action"
+                            onclick="startDeliveryTracking(
+                                ${Number(order.id)},
+                                '${escapeHtml(
+                                order.codigoRastreo ||
+                                ''
+                            )}'
+                            )"
+                        >
+                            <i class="bi bi-broadcast-pin"></i>
+                            Iniciar entrega y compartir ubicación
+                        </button>
+                    `;
+                        }
+
+                        if (state === 'EN_CAMINO') {
+                            primaryAction = `
+                        <button
+                            type="button"
+                            class="btn-gold delivery-main-action"
+                            onclick="resumeDeliveryTracking(
+                                ${Number(order.id)},
+                                '${escapeHtml(
+                                order.codigoRastreo ||
+                                ''
+                            )}'
+                            )"
+                            ${isActiveGps
+                                    ? 'disabled'
+                                    : ''}
+                        >
+                            <i class="bi bi-geo-alt-fill"></i>
+                            ${isActiveGps
+                                    ? 'Ubicación compartiéndose'
+                                    : 'Reanudar ubicación'
+                                }
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-soft delivery-finish-action"
+                            onclick="finishDeliveryTracking(
+                                ${Number(order.id)}
+                            )"
+                        >
+                            <i class="bi bi-house-check"></i>
+                            Confirmar entrega
+                        </button>
+                    `;
+                        }
+
+                        if (state === 'ENTREGADO') {
+                            primaryAction = `
+                        <div class="delivery-completed-message">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Pedido entregado
+                        </div>
+                    `;
+                        }
+
+                        return `
+                    <article class="delivery-order-card">
+                        <header class="delivery-order-header">
+                            <div>
+                                <span class="order-code">
+                                    ${escapeHtml(
+                            order.codigoRastreo ||
+                            `Pedido #${order.id}`
+                        )}
+                                </span>
+
+                                <h3>
+                                    ${escapeHtml(recipient)}
+                                </h3>
+
+                                <p>
+                                    <i class="bi bi-clock"></i>
+                                    ${escapeHtml(
+                            order.ventanaEntrega ||
+                            'Horario por confirmar'
+                        )
+                            }
+                                </p>
+                            </div>
+
+                            <span class="order-status-badge status-${state.toLowerCase()}">
+                                ${escapeHtml(
+                                ORDER_STATUS_INFO[state]
+                                    ?.label ||
+                                state
+                            )
+                            }
+                            </span>
+                        </header>
+
+                        ${renderDeliveryProgress(
+                                state
+                            )}
+
+                        <div class="delivery-order-content">
+                            <div class="delivery-address-box">
+                                <small>
+                                    Dirección de entrega
+                                </small>
+
+                                <strong>
+                                    ${escapeHtml(
+                                order.direccionEntrega ||
+                                'Dirección pendiente'
+                            )}
+                                </strong>
+
+                                ${order.referenciasEntrega
+                                ? `
+                                            <p>
+                                                ${escapeHtml(
+                                    order.referenciasEntrega
+                                )}
+                                            </p>
+                                        `
+                                : ''
+                            }
+                            </div>
+
+                            <div class="delivery-contact-grid">
+                                <div>
+                                    <small>Destinatario</small>
+                                    <strong>
+                                        ${escapeHtml(recipient)}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <small>Teléfono</small>
+                                    <strong>
+                                        ${escapeHtml(
+                                phone ||
+                                'Sin teléfono'
+                            )}
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <div class="delivery-products">
+                                <h4>Productos</h4>
+                                ${renderDeliveryProducts(
+                                order
+                            )}
+                            </div>
+
+                            <div class="delivery-order-actions">
+                                ${mapsUrl
+                                ? `
+                                            <a
+                                                class="btn-soft"
+                                                href="${escapeHtml(
+                                    mapsUrl
+                                )}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i class="bi bi-map"></i>
+                                                Abrir dirección
+                                            </a>
+                                        `
+                                : ''
+                            }
+
+                                ${phone
+                                ? `
+                                            <a
+                                                class="btn-soft"
+                                                href="tel:${escapeHtml(
+                                    phone.replace(
+                                        /\s+/g,
+                                        ''
+                                    )
+                                )}"
+                                            >
+                                                <i class="bi bi-telephone"></i>
+                                                Llamar
+                                            </a>
+                                        `
+                                : ''
+                            }
+                            </div>
+
+                            <div class="delivery-primary-actions">
+                                ${primaryAction}
+                            </div>
+                        </div>
+                    </article>
+                `;
+                    })
+                    .join('');
+        }
+
+        function setGlobalGpsStatus(
+            active,
+            message
+        ) {
+            const element =
+                document.getElementById(
+                    'deliveryGpsGlobalStatus'
+                );
+
+            if (!element) {
+                return;
+            }
+
+            element.classList.toggle(
+                'active',
+                active
+            );
+
+            const text =
+                element.querySelector('span:last-child');
+
+            if (text) {
+                text.textContent = message;
+            }
+        }
+
+        function calculateDistanceMeters(
+            latitude1,
+            longitude1,
+            latitude2,
+            longitude2
+        ) {
+            const earthRadius = 6371000;
+
+            const toRadians =
+                value =>
+                    value *
+                    Math.PI /
+                    180;
+
+            const deltaLatitude =
+                toRadians(
+                    latitude2 - latitude1
+                );
+
+            const deltaLongitude =
+                toRadians(
+                    longitude2 - longitude1
+                );
+
+            const value =
+                Math.sin(
+                    deltaLatitude / 2
+                ) ** 2 +
+                Math.cos(
+                    toRadians(latitude1)
+                ) *
+                Math.cos(
+                    toRadians(latitude2)
+                ) *
+                Math.sin(
+                    deltaLongitude / 2
+                ) ** 2;
+
+            return (
+                earthRadius *
+                2 *
+                Math.atan2(
+                    Math.sqrt(value),
+                    Math.sqrt(1 - value)
+                )
+            );
+        }
+
+        async function startDeliveryTracking(
+            orderId,
+            orderCode
+        ) {
+            if (
+                !navigator.geolocation
+            ) {
+                alert(
+                    'Este dispositivo no permite obtener la ubicación.'
+                );
+
+                return;
+            }
+
+            if (
+                activeGpsOrderId &&
+                Number(activeGpsOrderId) !==
+                Number(orderId)
+            ) {
+                alert(
+                    'Ya estás compartiendo la ubicación de otro pedido. Finaliza esa entrega antes de comenzar una nueva.'
+                );
+
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    `/rastreo-ubicacion/repartidor/${orderId}/iniciar`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({})
+                    }
+                );
+
+                beginGpsWatch(
+                    orderId,
+                    orderCode
+                );
+
+                await loadDeliveryOrders();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        function resumeDeliveryTracking(
+            orderId,
+            orderCode
+        ) {
+            if (
+                activeGpsOrderId &&
+                Number(activeGpsOrderId) !==
+                Number(orderId)
+            ) {
+                alert(
+                    'Ya estás compartiendo la ubicación de otro pedido.'
+                );
+
+                return;
+            }
+
+            beginGpsWatch(
+                orderId,
+                orderCode
+            );
+        }
+
+        function beginGpsWatch(
+            orderId,
+            orderCode
+        ) {
+            stopGpsTracking();
+
+            activeGpsOrderId =
+                Number(orderId);
+
+            activeGpsOrderCode =
+                orderCode;
+
+            lastGpsSentAt = 0;
+            lastSentLatitude = null;
+            lastSentLongitude = null;
+
+            setGlobalGpsStatus(
+                true,
+                `Compartiendo ${orderCode}`
+            );
+
+            activeGpsWatchId =
+                navigator.geolocation
+                    .watchPosition(
+                        handleGpsPosition,
+                        handleGpsError,
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 15000,
+                            maximumAge: 3000
+                        }
+                    );
+
+            renderDeliveryOrders();
+        }
+
+        async function handleGpsPosition(
+            position
+        ) {
+            if (!activeGpsOrderId) {
+                return;
+            }
+
+            const now = Date.now();
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+            const accuracy =
+                position.coords.accuracy;
+
+            if (
+                Number.isFinite(accuracy) &&
+                accuracy >
+                GPS_MAXIMUM_ACCURACY_METERS
+            ) {
+                setGlobalGpsStatus(
+                    true,
+                    `Buscando mejor señal GPS (±${Math.round(
+                        accuracy
+                    )} m)`
+                );
+
+                return;
+            }
+
+            const enoughTimePassed =
+                now - lastGpsSentAt >=
+                GPS_SEND_INTERVAL_MS;
+
+            let enoughDistanceMoved = true;
+
+            if (
+                lastSentLatitude !== null &&
+                lastSentLongitude !== null
+            ) {
+                const distance =
+                    calculateDistanceMeters(
+                        lastSentLatitude,
+                        lastSentLongitude,
+                        latitude,
+                        longitude
+                    );
+
+                enoughDistanceMoved =
+                    distance >=
+                    GPS_MINIMUM_DISTANCE_METERS;
+            }
+
+            /*
+             * La primera posición siempre se envía.
+             * Después, debe cumplirse tiempo o distancia.
+             */
+            if (
+                lastGpsSentAt !== 0 &&
+                !enoughTimePassed &&
+                !enoughDistanceMoved
+            ) {
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    `/rastreo-ubicacion/repartidor/${activeGpsOrderId}/ubicacion`,
+                    {
+                        method: 'POST',
+
+                        body: JSON.stringify({
+                            latitud:
+                                latitude,
+
+                            longitud:
+                                longitude,
+
+                            precisionMetros:
+                                accuracy,
+
+                            velocidadMps:
+                                Number.isFinite(
+                                    position.coords.speed
+                                )
+                                    ? position.coords.speed
+                                    : null,
+
+                            rumboGrados:
+                                Number.isFinite(
+                                    position.coords.heading
+                                )
+                                    ? position.coords.heading
+                                    : null
+                        })
+                    }
+                );
+
+                lastGpsSentAt = now;
+                lastSentLatitude =
+                    latitude;
+                lastSentLongitude =
+                    longitude;
+
+                setGlobalGpsStatus(
+                    true,
+                    `Ubicación activa · ±${Math.round(
+                        accuracy
+                    )} m`
+                );
+            } catch (error) {
+                console.error(
+                    'Error enviando ubicación:',
+                    error
+                );
+
+                setGlobalGpsStatus(
+                    true,
+                    'Sin conexión; reintentando GPS'
+                );
+            }
+        }
+
+        function handleGpsError(error) {
+            const messages = {
+                1:
+                    'Permiso de ubicación rechazado.',
+                2:
+                    'No fue posible obtener la ubicación.',
+                3:
+                    'El GPS tardó demasiado en responder.'
+            };
+
+            const message =
+                messages[error.code] ||
+                'Ocurrió un error con el GPS.';
+
+            setGlobalGpsStatus(
+                false,
+                message
+            );
+
+            alert(
+                `${message} Revisa los permisos de ubicación del navegador.`
+            );
+        }
+
+        function stopGpsTracking() {
+            if (
+                activeGpsWatchId !== null &&
+                navigator.geolocation
+            ) {
+                navigator.geolocation.clearWatch(
+                    activeGpsWatchId
+                );
+            }
+
+            activeGpsWatchId = null;
+            activeGpsOrderId = null;
+            activeGpsOrderCode = null;
+
+            lastGpsSentAt = 0;
+            lastSentLatitude = null;
+            lastSentLongitude = null;
+
+            setGlobalGpsStatus(
+                false,
+                'GPS sin iniciar'
+            );
+        }
+
+        async function finishDeliveryTracking(
+            orderId
+        ) {
+            const confirmed =
+                window.confirm(
+                    '¿Confirmas que este pedido ya fue entregado? Esta acción detendrá el rastreo.'
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    `/rastreo-ubicacion/repartidor/${orderId}/finalizar`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({})
+                    }
+                );
+
+                if (
+                    Number(activeGpsOrderId) ===
+                    Number(orderId)
+                ) {
+                    stopGpsTracking();
+                }
+
+                await loadDeliveryOrders();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
         }
 
         function renderProducts() {
@@ -3872,6 +5170,17 @@
                 .replaceAll('"', "&quot;")
                 .replaceAll("'", "&#039;");
         }
+        window.addEventListener(
+            'beforeunload',
+            (event) => {
+                if (!activeGpsOrderId) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        );
     </script>
     <script src="assets/js/mobile-nav.js"></script>
 </body>

@@ -14,6 +14,10 @@ const basicAuth = require(
     '../middleware/basic-auth.middleware'
 );
 
+const repartidorAuth = require(
+    '../middleware/repartidor-auth.middleware'
+);
+
 const router = express.Router();
 
 /*
@@ -25,32 +29,34 @@ router.get(
 );
 
 /*
- * Acciones del repartidor validadas
- * mediante token privado.
- */
-router.post(
-    '/repartidor/:id/iniciar',
-    iniciarRastreo
-);
-
-router.post(
-    '/repartidor/:id/ubicacion',
-    actualizarUbicacion
-);
-
-router.post(
-    '/repartidor/:id/finalizar',
-    finalizarRastreo
-);
-
-/*
- * Solo el administrador puede generar
- * el acceso privado del repartidor.
+ * Se conserva por compatibilidad administrativa,
+ * aunque el panel nuevo ya no necesita usar el token.
  */
 router.post(
     '/admin/:id/generar-acceso',
     basicAuth,
     generarAccesoRepartidor
+);
+
+/*
+ * Acciones exclusivas del repartidor.
+ */
+router.post(
+    '/repartidor/:id/iniciar',
+    repartidorAuth,
+    iniciarRastreo
+);
+
+router.post(
+    '/repartidor/:id/ubicacion',
+    repartidorAuth,
+    actualizarUbicacion
+);
+
+router.post(
+    '/repartidor/:id/finalizar',
+    repartidorAuth,
+    finalizarRastreo
 );
 
 module.exports = router;

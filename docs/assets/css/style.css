@@ -14184,3 +14184,290 @@ body.page-rastreo .mapboxgl-ctrl-attrib {
         white-space: normal;
     }
 }
+
+/* ==================================================
+   ADMIN - PANEL DEL REPARTIDOR
+================================================== */
+
+.page-admin .delivery-hero-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 22px;
+    padding: 26px;
+    border-radius: 26px;
+}
+
+.page-admin .delivery-hero-card h2 {
+    margin-bottom: 8px;
+    font-family: "Playfair Display", serif;
+}
+
+.page-admin .delivery-gps-global-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 15px;
+    border-radius: 999px;
+    background: #f2f2f7;
+    color: #6e6e73;
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.page-admin .delivery-gps-global-status.active {
+    background: #e6f7ed;
+    color: #267447;
+}
+
+.page-admin .delivery-gps-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #8e8e93;
+}
+
+.page-admin .delivery-gps-global-status.active .delivery-gps-dot {
+    background: #34c759;
+    box-shadow:
+        0 0 0 6px rgba(52, 199, 89, 0.14);
+}
+
+.page-admin .delivery-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.page-admin .delivery-toolbar .orders-datepicker-wrap {
+    flex: 1;
+    min-width: 260px;
+}
+
+.page-admin .delivery-orders-list {
+    display: grid;
+    gap: 22px;
+}
+
+.page-admin .delivery-order-card {
+    overflow: hidden;
+    border: 1px solid rgba(39, 21, 27, 0.1);
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow:
+        0 20px 65px rgba(39, 21, 27, 0.09);
+}
+
+.page-admin .delivery-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 22px;
+    border-bottom: 1px solid rgba(39, 21, 27, 0.08);
+}
+
+.page-admin .delivery-order-header h3 {
+    margin: 5px 0;
+    font-family: "Playfair Display", serif;
+}
+
+.page-admin .delivery-order-header p {
+    margin: 0;
+    color: #785b65;
+}
+
+.page-admin .delivery-progress {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 0;
+    padding: 22px;
+    background: #fffafa;
+}
+
+.page-admin .delivery-progress-step {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    color: #aaa0a4;
+}
+
+.page-admin .delivery-progress-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 17px;
+    left: calc(50% + 20px);
+    width: calc(100% - 40px);
+    height: 2px;
+    background: #e5dfe1;
+}
+
+.page-admin .delivery-progress-step span {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #f1edef;
+    font-weight: 800;
+}
+
+.page-admin .delivery-progress-step.active,
+.page-admin .delivery-progress-step.completed {
+    color: #8e4560;
+}
+
+.page-admin .delivery-progress-step.active span {
+    color: #ffffff;
+    background: #c76f8b;
+    box-shadow:
+        0 0 0 6px rgba(199, 111, 139, 0.14);
+}
+
+.page-admin .delivery-progress-step.completed span {
+    color: #ffffff;
+    background: #34c759;
+}
+
+.page-admin .delivery-progress-step.completed:not(:last-child)::after {
+    background: #34c759;
+}
+
+.page-admin .delivery-order-content {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+}
+
+.page-admin .delivery-address-box {
+    display: grid;
+    gap: 5px;
+    padding: 18px;
+    border-radius: 18px;
+    background: #fff5f5;
+}
+
+.page-admin .delivery-address-box small,
+.page-admin .delivery-contact-grid small {
+    color: #987984;
+}
+
+.page-admin .delivery-address-box p {
+    margin: 6px 0 0;
+    color: #795963;
+}
+
+.page-admin .delivery-contact-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.page-admin .delivery-contact-grid>div {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid rgba(39, 21, 27, 0.08);
+    border-radius: 16px;
+}
+
+.page-admin .delivery-products {
+    display: grid;
+    gap: 10px;
+}
+
+.page-admin .delivery-products h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.page-admin .delivery-product {
+    display: grid;
+    grid-template-columns:
+        52px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom:
+        1px solid rgba(39, 21, 27, 0.07);
+}
+
+.page-admin .delivery-product img,
+.page-admin .delivery-product-placeholder {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.page-admin .delivery-product-placeholder {
+    display: grid;
+    place-items: center;
+    color: #9c6174;
+    background: #ffe8e8;
+}
+
+.page-admin .delivery-product div {
+    display: grid;
+    gap: 3px;
+}
+
+.page-admin .delivery-product small {
+    color: #8c747c;
+}
+
+.page-admin .delivery-order-actions,
+.page-admin .delivery-primary-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.page-admin .delivery-main-action,
+.page-admin .delivery-finish-action {
+    flex: 1;
+    min-width: 220px;
+}
+
+.page-admin .delivery-completed-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 16px;
+    color: #267447;
+    background: #e8f7ee;
+    font-weight: 800;
+}
+
+@media (max-width: 768px) {
+
+    .page-admin .delivery-hero-card,
+    .page-admin .delivery-order-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-admin .delivery-contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-admin .delivery-toolbar {
+        display: grid;
+        grid-template-columns:
+            auto minmax(0, 1fr) auto;
+    }
+
+    .page-admin .delivery-toolbar .btn-soft {
+        grid-column: span 3;
+    }
+}

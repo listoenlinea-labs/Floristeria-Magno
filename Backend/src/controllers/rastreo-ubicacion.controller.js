@@ -88,63 +88,100 @@ async function iniciarRastreo(
         const pedidoId =
             Number(req.params.id);
 
-        const token =
-            String(req.body.token || '')
-                .trim();
+        if (
+            !Number.isInteger(pedidoId) ||
+            pedidoId <= 0
+        ) {
+            await transaction.rollback();
+
+            return res.status(400).json({
+                ok: false,
+                message:
+                    'El ID del pedido no es válido.'
+            });
+        }
 
         const pedido =
-            await Pedido.findOne({
-                where: {
-                    id: pedidoId,
-                    tokenRepartidor: token
-                },
-                transaction,
-                lock:
-                    transaction.LOCK.UPDATE
-            });
+            await Pedido.findByPk(
+                pedidoId,
+                {
+                    transaction,
+                    lock:
+                        transaction.LOCK.UPDATE
+                }
+            );
 
         if (!pedido) {
             await transaction.rollback();
 
-            return res.status(403).json({
+            return res.status(404).json({
                 ok: false,
                 message:
-                    'El acceso de repartidor no es válido.'
+                    'Pedido no encontrado.'
             });
         }
 
+        const estadoActual =
+            String(pedido.estado || '')
+                .trim()
+                .toUpperCase();
+
+        if (
+            estadoActual !==
+            'LISTO_ENTREGA' &&
+            estadoActual !==
+            'EN_CAMINO'
+        ) {
+            await transaction.rollback();
+
+            return res.status(409).json({
+                ok: false,
+                message:
+                    'Solo se puede iniciar una entrega que esté lista para entrega.'
+            });
+        }
+
+        const yaEstabaEnCamino =
+            estadoActual === 'EN_CAMINO' &&
+            pedido.rastreoActivo === true;
+
         pedido.rastreoActivo = true;
-        pedido.rastreoIniciadoEn =
-            new Date();
-        pedido.rastreoFinalizadoEn =
-            null;
+
+        if (!pedido.rastreoIniciadoEn) {
+            pedido.rastreoIniciadoEn =
+                new Date();
+        }
+
+        pedido.rastreoFinalizadoEn = null;
         pedido.estado = 'EN_CAMINO';
 
         await pedido.save({
             transaction
         });
 
-        await HistorialPedido.create(
-            {
-                pedidoId: pedido.id,
-                estado: 'EN_CAMINO',
-                descripcion:
-                    'El repartidor inició la entrega y el rastreo en vivo.'
-            },
-            {
-                transaction
-            }
-        );
+        if (!yaEstabaEnCamino) {
+            await HistorialPedido.create(
+                {
+                    pedidoId: pedido.id,
+                    estado: 'EN_CAMINO',
+                    descripcion:
+                        'El repartidor inició la entrega y el rastreo en vivo.'
+                },
+                {
+                    transaction
+                }
+            );
+        }
 
         await transaction.commit();
 
         return res.status(200).json({
             ok: true,
             data: {
+                id: pedido.id,
                 codigoRastreo:
                     pedido.codigoRastreo,
-                estado:
-                    pedido.estado,
+                estado: pedido.estado,
                 rastreoActivo: true
             }
         });
@@ -163,9 +200,16 @@ async function actualizarUbicacion(
         const pedidoId =
             Number(req.params.id);
 
-        const token =
-            String(req.body.token || '')
-                .trim();
+        if (
+            !Number.isInteger(pedidoId) ||
+            pedidoId <= 0
+        ) {
+            return res.status(400).json({
+                ok: false,
+                message:
+                    'El ID del pedido no es válido.'
+            });
+        }
 
         const latitud =
             validarCoordenada(
@@ -211,16 +255,16 @@ async function actualizarUbicacion(
             await Pedido.findOne({
                 where: {
                     id: pedidoId,
-                    tokenRepartidor: token,
+                    estado: 'EN_CAMINO',
                     rastreoActivo: true
                 }
             });
 
         if (!pedido) {
-            return res.status(403).json({
+            return res.status(409).json({
                 ok: false,
                 message:
-                    'El rastreo no está activo o el token no es válido.'
+                    'El pedido no está en camino o el rastreo no está activo.'
             });
         }
 
@@ -228,26 +272,21 @@ async function actualizarUbicacion(
 
         await Promise.all([
             RastreoUbicacion.create({
-                pedidoId:
-                    pedido.id,
+                pedidoId: pedido.id,
                 latitud,
                 longitud,
                 precisionMetros,
                 velocidadMps,
                 rumboGrados,
-                registradoEn:
-                    ahora
+                registradoEn: ahora
             }),
 
             pedido.update({
-                ultimaLatitud:
-                    latitud,
-                ultimaLongitud:
-                    longitud,
+                ultimaLatitud: latitud,
+                ultimaLongitud: longitud,
                 ultimaPrecisionMetros:
                     precisionMetros,
-                ultimaUbicacionEn:
-                    ahora
+                ultimaUbicacionEn: ahora
             })
         ]);
 
@@ -263,19 +302,22 @@ async function actualizarUbicacion(
                     {
                         codigoRastreo:
                             pedido.codigoRastreo,
+
                         latitud,
                         longitud,
                         precisionMetros,
                         velocidadMps,
                         rumboGrados,
-                        registradoEn:
-                            ahora
+                        registradoEn: ahora
                     }
                 );
         }
 
         return res.status(200).json({
-            ok: true
+            ok: true,
+            data: {
+                registradoEn: ahora
+            }
         });
     } catch (error) {
         next(error);
@@ -294,28 +336,51 @@ async function finalizarRastreo(
         const pedidoId =
             Number(req.params.id);
 
-        const token =
-            String(req.body.token || '')
-                .trim();
+        if (
+            !Number.isInteger(pedidoId) ||
+            pedidoId <= 0
+        ) {
+            await transaction.rollback();
+
+            return res.status(400).json({
+                ok: false,
+                message:
+                    'El ID del pedido no es válido.'
+            });
+        }
 
         const pedido =
-            await Pedido.findOne({
-                where: {
-                    id: pedidoId,
-                    tokenRepartidor: token
-                },
-                transaction,
-                lock:
-                    transaction.LOCK.UPDATE
-            });
+            await Pedido.findByPk(
+                pedidoId,
+                {
+                    transaction,
+                    lock:
+                        transaction.LOCK.UPDATE
+                }
+            );
 
         if (!pedido) {
             await transaction.rollback();
 
-            return res.status(403).json({
+            return res.status(404).json({
                 ok: false,
                 message:
-                    'El acceso de repartidor no es válido.'
+                    'Pedido no encontrado.'
+            });
+        }
+
+        const estadoActual =
+            String(pedido.estado || '')
+                .trim()
+                .toUpperCase();
+
+        if (estadoActual !== 'EN_CAMINO') {
+            await transaction.rollback();
+
+            return res.status(409).json({
+                ok: false,
+                message:
+                    'Solo se puede finalizar un pedido que esté en camino.'
             });
         }
 
@@ -354,8 +419,7 @@ async function finalizarRastreo(
                     {
                         codigoRastreo:
                             pedido.codigoRastreo,
-                        estado:
-                            'ENTREGADO'
+                        estado: 'ENTREGADO'
                     }
                 );
         }
@@ -363,10 +427,8 @@ async function finalizarRastreo(
         return res.status(200).json({
             ok: true,
             data: {
-                estado:
-                    'ENTREGADO',
-                rastreoActivo:
-                    false
+                estado: 'ENTREGADO',
+                rastreoActivo: false
             }
         });
     } catch (error) {

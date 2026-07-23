@@ -73,25 +73,6 @@ async function basicAuth(req, res, next) {
             adminPasswordHash
         );
 
-        console.log(
-            'Configuración Basic Auth:',
-            JSON.stringify({
-                adminEmail,
-                hashLength: adminPasswordHash.length,
-                hashPrefix: adminPasswordHash.slice(0, 7)
-            })
-        );
-
-        console.log(
-            'Resultado Basic Auth:',
-            JSON.stringify({
-                receivedEmail,
-                validEmail,
-                validPassword,
-                passwordLength: receivedPassword.length
-            })
-        );
-
         if (!validEmail || !validPassword) {
             res.setHeader(
                 'WWW-Authenticate',
@@ -103,6 +84,11 @@ async function basicAuth(req, res, next) {
                 message: 'Usuario o contraseña incorrectos'
             });
         }
+
+        req.auth = {
+            role: 'admin',
+            email: adminEmail
+        };
 
         return next();
     } catch (error) {
