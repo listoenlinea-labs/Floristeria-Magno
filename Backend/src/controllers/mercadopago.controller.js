@@ -682,33 +682,40 @@ async function crearPreferencia(req, res, next) {
         let emailWarning = null;
 
         try {
+
+            console.log('------------------------------------');
+            console.log('Intentando enviar correo...');
+            console.log('Cliente:', cliente.nombre);
+            console.log('Correo:', delivery.customerEmail);
+            console.log('Código:', codigoRastreo);
+            console.log('------------------------------------');
+
             await enviarCorreoCodigoRastreo({
-                email:
-                    delivery.customerEmail,
-
-                nombreCliente:
-                    cliente.nombre,
-
+                email: delivery.customerEmail,
+                nombreCliente: cliente.nombre,
                 codigoRastreo,
-
                 total,
-
-                fechaEntrega:
-                    delivery.date,
-
-                ventanaEntrega:
-                    delivery.slot
+                fechaEntrega: delivery.date,
+                ventanaEntrega: delivery.slot
             });
+
+            console.log('Correo enviado correctamente.');
+
         } catch (emailError) {
+
+            console.error('====================================');
+            console.error('ERROR ENVIANDO CORREO');
+            console.error('Mensaje:', emailError.message);
+            console.error('Código:', emailError.code);
+            console.error('Comando:', emailError.command);
+            console.error('Respuesta:', emailError.response);
+            console.error('Stack:', emailError.stack);
+            console.error('====================================');
+
             emailSent = false;
 
             emailWarning =
                 'El pedido fue creado, pero no se pudo enviar el correo.';
-
-            console.error(
-                'Error enviando correo de rastreo:',
-                emailError
-            );
         }
 
         return res.status(201).json({

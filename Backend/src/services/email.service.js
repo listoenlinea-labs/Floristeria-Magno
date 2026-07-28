@@ -27,8 +27,15 @@ async function enviarCorreoCodigoRastreo({
     fechaEntrega,
     ventanaEntrega
 }) {
+    console.log('====================================');
+    console.log('INICIANDO ENVÍO DE CORREO');
+    console.log('Destino:', email);
+    console.log('Nombre:', nombreCliente);
+    console.log('Código:', codigoRastreo);
+    console.log('====================================');
     const transporter =
         createMailerTransporter();
+    console.log('Transporter SMTP creado correctamente.');
 
     const fromEmail =
         getRequiredEnvironmentVariable(
@@ -76,7 +83,8 @@ async function enviarCorreoCodigoRastreo({
         `
         : '';
 
-    await transporter.sendMail({
+    console.log('Enviando correo...');
+    const info = await transporter.sendMail({
         from: `"Floristería Juan H Magno" <${fromEmail}>`,
         to: email,
 
@@ -186,6 +194,11 @@ async function enviarCorreoCodigoRastreo({
             </div>
         `
     });
+    console.log('====================================');
+    console.log('CORREO ENVIADO EXITOSAMENTE');
+    console.log('Message ID:', info.messageId);
+    console.log('Respuesta SMTP:', info.response);
+    console.log('====================================');
 }
 
 module.exports = {
