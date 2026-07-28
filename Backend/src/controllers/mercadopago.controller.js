@@ -1,4 +1,11 @@
-const { Op } = require('sequelize');
+const crypto = require('crypto');
+
+const {
+    Op
+} = require('sequelize');
+
+const sequelize = require('../config/database');
+
 const {
     MercadoPagoConfig,
     Preference,
@@ -7,7 +14,17 @@ const {
     InvalidWebhookSignatureError
 } = require('mercadopago');
 
-const { Producto } = require('../models');
+const {
+    Cliente,
+    Producto,
+    Pedido,
+    DetallePedido,
+    HistorialPedido
+} = require('../models');
+
+const {
+    enviarCorreoCodigoRastreo
+} = require('../services/email.service');
 
 const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
 
@@ -75,32 +92,215 @@ function normalizeText(value, maxLength) {
 }
 
 function validateDelivery(delivery) {
-    const receiverName = normalizeText(delivery?.receiverName, 150);
-    const address = normalizeText(delivery?.address, 300);
-    const date = normalizeText(delivery?.date, 10);
-    const slot = normalizeText(delivery?.slot, 40);
+    const receiverName = normalizeText(
+        delivery?.receiverName,
+        150
+    );
+
+    const customerEmail = normalizeText(
+        delivery?.customerEmail,
+        150
+    ).toLowerCase();
+
+    const address = normalizeText(
+        delivery?.address,
+        300
+    );
+
+    const date = normalizeText(
+        delivery?.date,
+        10
+    );
+
+    const slot = normalizeText(
+        delivery?.slot,
+        40
+    );
 
     if (receiverName.length < 2) {
-        throw createHttpError('Escribe el nombre de quien recibe');
+        throw createHttpError(
+            'Escribe el nombre de quien recibe'
+        );
+    }
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(customerEmail)) {
+        throw createHttpError(
+            'Escribe un correo electrónico válido'
+        );
     }
 
     if (address.length < 5) {
-        throw createHttpError('Escribe una dirección de entrega válida');
+        throw createHttpError(
+            'Escribe una dirección de entrega válida'
+        );
     }
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        throw createHttpError('Selecciona una fecha de entrega válida');
+        throw createHttpError(
+            'Selecciona una fecha de entrega válida'
+        );
     }
 
     if (!ALLOWED_DELIVERY_SLOTS.has(slot)) {
-        throw createHttpError('Selecciona un horario de entrega válido');
+        throw createHttpError(
+            'Selecciona un horario de entrega válido'
+        );
     }
 
     return {
         receiverName,
+        customerEmail,
         address,
         date,
         slot
+    };
+}
+
+function generarCodigoRastreo() {
+    const datePart = new Date()
+        .toISOString()
+        .slice(2, 10)
+        .replaceAll('-', '');
+
+    const randomPart = crypto
+        .randomBytes(4)
+        .toString('hex')
+        .toUpperCase();
+
+    return `JHM-${datePart}-${randomPart}`;
+}
+
+async function generarCodigoRastreoUnico(
+    transaction
+) {
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+        const codigoRastreo =
+            generarCodigoRastreo();
+
+        const existingOrder =
+            await Pedido.findOne({
+                where: {
+                    codigoRastreo
+                },
+                transaction
+            });
+
+        if (!existingOrder) {
+            return codigoRastreo;
+        }
+    }
+
+    throw configurationError(
+        'No fue posible generar un código de rastreo único'
+    );
+}
+
+function calcularSubtotalProductos(items) {
+    return items.reduce(
+        (total, item) =>
+            total +
+            (
+                Number(item.unit_price) *
+                Number(item.quantity)
+            ),
+        0
+    );
+}
+
+async function crearClientePedidoYDetalles({
+    items,
+    delivery,
+    codigoRastreo,
+    total,
+    transaction
+}) {
+    let cliente = await Cliente.findOne({
+        where: {
+            email: delivery.customerEmail
+        },
+        transaction
+    });
+
+    if (cliente) {
+        await cliente.update(
+            {
+                nombre: delivery.receiverName,
+                direccion: delivery.address
+            },
+            {
+                transaction
+            }
+        );
+    } else {
+        cliente = await Cliente.create(
+            {
+                nombre: delivery.receiverName,
+                email: delivery.customerEmail,
+                direccion: delivery.address
+            },
+            {
+                transaction
+            }
+        );
+    }
+
+    const pedido = await Pedido.create(
+        {
+            codigoRastreo,
+            clienteId: cliente.id,
+            nombreDestinatario:
+                delivery.receiverName,
+            direccionEntrega:
+                delivery.address,
+            total,
+            estado: 'PENDIENTE',
+            tipoPedido: 'CATALOGO_WEB',
+            fechaEntrega: delivery.date,
+            ventanaEntrega: delivery.slot,
+            metodoPago: 'MERCADO_PAGO',
+            estadoPago: 'PENDIENTE'
+        },
+        {
+            transaction
+        }
+    );
+
+    const detailRows = items.map(item => ({
+        pedidoId: pedido.id,
+        productoId: Number(item.id),
+        cantidad: Number(item.quantity),
+        precioUnitario:
+            Number(item.unit_price),
+        subtotal:
+            Number(item.unit_price) *
+            Number(item.quantity)
+    }));
+
+    await DetallePedido.bulkCreate(
+        detailRows,
+        {
+            transaction
+        }
+    );
+
+    await HistorialPedido.create(
+        {
+            pedidoId: pedido.id,
+            estado: 'PENDIENTE',
+            descripcion:
+                'Pedido creado desde el carrito web'
+        },
+        {
+            transaction
+        }
+    );
+
+    return {
+        cliente,
+        pedido
     };
 }
 
@@ -303,21 +503,81 @@ function chooseRedirectUrl(preferenceResponse) {
 }
 
 async function crearPreferencia(req, res, next) {
-    try {
-        const items = await buildPreferenceItems(req.body?.items);
-        const delivery = validateDelivery(req.body?.delivery);
-        const frontendUrl = getAbsoluteUrl('FRONTEND_PUBLIC_URL');
-        const publicApiUrl = getAbsoluteUrl('PUBLIC_API_URL');
+    let transaction;
 
-        if (!Number.isFinite(DELIVERY_COST) || DELIVERY_COST < 0) {
-            throw configurationError('DELIVERY_COST no es un número válido');
+    try {
+        const productItems =
+            await buildPreferenceItems(
+                req.body?.items
+            );
+
+        const delivery =
+            validateDelivery(
+                req.body?.delivery
+            );
+
+        const frontendUrl =
+            getAbsoluteUrl(
+                'FRONTEND_PUBLIC_URL'
+            );
+
+        const publicApiUrl =
+            getAbsoluteUrl(
+                'PUBLIC_API_URL'
+            );
+
+        if (
+            !Number.isFinite(DELIVERY_COST) ||
+            DELIVERY_COST < 0
+        ) {
+            throw configurationError(
+                'DELIVERY_COST no es un número válido'
+            );
         }
 
+        const subtotal =
+            calcularSubtotalProductos(
+                productItems
+            );
+
+        const total =
+            subtotal + DELIVERY_COST;
+
+        transaction =
+            await sequelize.transaction();
+
+        const codigoRastreo =
+            await generarCodigoRastreoUnico(
+                transaction
+            );
+
+        const {
+            cliente,
+            pedido
+        } =
+            await crearClientePedidoYDetalles({
+                items: productItems,
+                delivery,
+                codigoRastreo,
+                total,
+                transaction
+            });
+
+        /*
+         * Mercado Pago recibirá una copia porque
+         * después agregaremos el concepto de envío.
+         */
+        const preferenceItems =
+            productItems.map(item => ({
+                ...item
+            }));
+
         if (DELIVERY_COST > 0) {
-            items.push({
+            preferenceItems.push({
                 id: 'delivery',
                 title: 'Entrega local',
-                description: `${delivery.date} · ${delivery.slot}`,
+                description:
+                    `${delivery.date} · ${delivery.slot}`,
                 category_id: 'shipping',
                 currency_id: 'MXN',
                 quantity: 1,
@@ -325,54 +585,163 @@ async function crearPreferencia(req, res, next) {
             });
         }
 
-        const externalReference = [
-            'JHM',
-            Date.now(),
-            Math.random().toString(36).slice(2, 10).toUpperCase()
-        ].join('-');
+        /*
+         * Usamos el código de rastreo como
+         * external_reference de Mercado Pago.
+         */
+        const externalReference =
+            codigoRastreo;
 
-        const preferenceClient = new Preference(getClient());
-        const preferenceResponse = await preferenceClient.create({
-            body: {
-                items,
-                external_reference: externalReference,
-                statement_descriptor: 'JUAN H MAGNO',
-                back_urls: {
-                    success: `${frontendUrl}/pago.html?resultado=success`,
-                    failure: `${frontendUrl}/pago.html?resultado=failure`,
-                    pending: `${frontendUrl}/pago.html?resultado=pending`
-                },
-                auto_return: 'approved',
-                notification_url: `${publicApiUrl}/api/mercadopago/webhook`,
-                metadata: {
-                    receiver_name: delivery.receiverName,
-                    delivery_address: delivery.address,
-                    delivery_date: delivery.date,
-                    delivery_slot: delivery.slot
+        const preferenceClient =
+            new Preference(getClient());
+
+        const preferenceResponse =
+            await preferenceClient.create({
+                body: {
+                    items: preferenceItems,
+
+                    payer: {
+                        name: delivery.receiverName,
+                        email: delivery.customerEmail
+                    },
+
+                    external_reference:
+                        externalReference,
+
+                    statement_descriptor:
+                        'JUAN H MAGNO',
+
+                    back_urls: {
+                        success:
+                            `${frontendUrl}/pago.html?resultado=success&codigo=${encodeURIComponent(
+                                codigoRastreo
+                            )}`,
+
+                        failure:
+                            `${frontendUrl}/pago.html?resultado=failure&codigo=${encodeURIComponent(
+                                codigoRastreo
+                            )}`,
+
+                        pending:
+                            `${frontendUrl}/pago.html?resultado=pending&codigo=${encodeURIComponent(
+                                codigoRastreo
+                            )}`
+                    },
+
+                    auto_return: 'approved',
+
+                    notification_url:
+                        `${publicApiUrl}/api/mercadopago/webhook`,
+
+                    metadata: {
+                        pedido_id: pedido.id,
+                        codigo_rastreo:
+                            codigoRastreo,
+                        customer_email:
+                            delivery.customerEmail,
+                        receiver_name:
+                            delivery.receiverName,
+                        delivery_address:
+                            delivery.address,
+                        delivery_date:
+                            delivery.date,
+                        delivery_slot:
+                            delivery.slot
+                    }
                 }
+            });
+
+        const redirectUrl =
+            chooseRedirectUrl(
+                preferenceResponse
+            );
+
+        await pedido.update(
+            {
+                referenciaPago:
+                    String(
+                        preferenceResponse.id || ''
+                    )
+            },
+            {
+                transaction
             }
-        });
+        );
 
-        const redirectUrl = chooseRedirectUrl(preferenceResponse);
+        await transaction.commit();
+        transaction = null;
 
-        if (!redirectUrl) {
-            throw configurationError(
-                'Mercado Pago no devolvió una URL para iniciar el pago'
+        /*
+         * Implementación temporal:
+         * envía el correo antes de confirmar el pago.
+         *
+         * Después moveremos esta llamada al webhook
+         * cuando payment.status sea approved.
+         */
+        let emailSent = true;
+        let emailWarning = null;
+
+        try {
+            await enviarCorreoCodigoRastreo({
+                email:
+                    delivery.customerEmail,
+
+                nombreCliente:
+                    cliente.nombre,
+
+                codigoRastreo,
+
+                total,
+
+                fechaEntrega:
+                    delivery.date,
+
+                ventanaEntrega:
+                    delivery.slot
+            });
+        } catch (emailError) {
+            emailSent = false;
+
+            emailWarning =
+                'El pedido fue creado, pero no se pudo enviar el correo.';
+
+            console.error(
+                'Error enviando correo de rastreo:',
+                emailError
             );
         }
 
         return res.status(201).json({
             ok: true,
-            preferenceId: preferenceResponse.id,
+            preferenceId:
+                preferenceResponse.id,
             externalReference,
+            codigoRastreo,
+            pedidoId: pedido.id,
+            emailSent,
+            emailWarning,
             redirectUrl
         });
     } catch (error) {
-        console.error('Error creando preferencia de Mercado Pago:', {
-            message: error.message,
-            status: error.status,
-            cause: error.cause
-        });
+        if (transaction) {
+            try {
+                await transaction.rollback();
+            } catch (rollbackError) {
+                console.error(
+                    'Error revirtiendo pedido:',
+                    rollbackError
+                );
+            }
+        }
+
+        console.error(
+            'Error creando preferencia de Mercado Pago:',
+            {
+                message: error.message,
+                status: error.status,
+                cause: error.cause
+            }
+        );
 
         return next(error);
     }

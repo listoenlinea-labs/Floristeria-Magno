@@ -19,8 +19,8 @@
 </head>
 
 <body class="page-carrito">
-<!-- Encabezado compartido -->
-<site-header></site-header>
+  <!-- Encabezado compartido -->
+  <site-header></site-header>
 
   <!-- Navegación móvil compartida -->
   <div id="mobile-nav-container"></div>
@@ -137,6 +137,19 @@
             </div>
 
             <div class="mb-3">
+              <label class="form-label" for="customerEmail">
+                Correo electrónico
+              </label>
+
+              <input class="form-control" id="customerEmail" type="email" placeholder="correo@ejemplo.com"
+                autocomplete="email">
+
+              <small class="form-text text-muted">
+                Enviaremos a este correo el código de rastreo del pedido.
+              </small>
+            </div>
+
+            <div class="mb-3">
               <label class="form-label">Dirección de entrega</label>
               <input class="form-control" id="deliveryAddress" placeholder="Calle, número, colonia">
             </div>
@@ -188,6 +201,7 @@
     const whatsappConfirm = document.getElementById('whatsappConfirm');
     const mercadoPagoBtn = document.getElementById('mercadoPagoBtn');
     const receiverName = document.getElementById('receiverName');
+    const customerEmail = document.getElementById('customerEmail');
     const deliveryAddress = document.getElementById('deliveryAddress');
     const deliveryDate = document.getElementById('deliveryDate');
     const deliverySlot = document.getElementById('deliverySlot');
@@ -346,9 +360,21 @@
       }
     });
 
-    [receiverName, deliveryAddress, deliveryDate].forEach(input => {
-      input.addEventListener('input', renderCart);
-      input.addEventListener('change', renderCart);
+    [
+      receiverName,
+      customerEmail,
+      deliveryAddress,
+      deliveryDate
+    ].forEach(input => {
+      input.addEventListener(
+        'input',
+        renderCart
+      );
+
+      input.addEventListener(
+        'change',
+        renderCart
+      );
     });
 
     function setCheckoutMessage(message, type = 'error') {
@@ -364,6 +390,20 @@
       if (receiverName.value.trim().length < 2) {
         receiverName.focus();
         return 'Escribe el nombre de quien recibirá el pedido.';
+      }
+
+      const email = customerEmail
+        .value
+        .trim()
+        .toLowerCase();
+
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(email)) {
+        customerEmail.focus();
+
+        return 'Escribe un correo electrónico válido.';
       }
 
       if (deliveryAddress.value.trim().length < 5) {
@@ -419,10 +459,22 @@
               quantity: Number(item.qty || 0)
             })),
             delivery: {
-              receiverName: receiverName.value.trim(),
-              address: deliveryAddress.value.trim(),
-              date: deliveryDate.value,
-              slot: deliverySlot.value
+              receiverName:
+                receiverName.value.trim(),
+
+              customerEmail:
+                customerEmail.value
+                  .trim()
+                  .toLowerCase(),
+
+              address:
+                deliveryAddress.value.trim(),
+
+              date:
+                deliveryDate.value,
+
+              slot:
+                deliverySlot.value
             }
           })
         });
@@ -454,7 +506,7 @@
 
     renderCart();
   </script>
-<script type="module" src="components/site-header.js"></script>
+  <script type="module" src="components/site-header.js"></script>
   <script src="assets/js/mobile-nav.js"></script>
 
 </body>
