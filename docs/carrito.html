@@ -401,6 +401,34 @@
         return;
       }
 
+      /*
+       * La pestaña se abre antes del fetch para que el navegador no la bloquee
+       * como una ventana emergente creada después de una operación asíncrona.
+       */
+      const mercadoPagoWindow = window.open('about:blank', '_blank');
+
+      if (!mercadoPagoWindow) {
+        setCheckoutMessage(
+          'El navegador bloqueó la nueva pestaña. Permite ventanas emergentes para este sitio e inténtalo nuevamente.'
+        );
+        return;
+      }
+
+      try {
+        mercadoPagoWindow.opener = null;
+        mercadoPagoWindow.document.title = 'Preparando Mercado Pago';
+        mercadoPagoWindow.document.body.innerHTML = `
+          <main style="font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;background:#f7f7f7;color:#222;">
+            <div>
+              <h1 style="font-size:1.35rem;margin-bottom:10px;">Preparando tu pago…</h1>
+              <p style="margin:0;color:#666;">En un momento abrirá Mercado Pago.</p>
+            </div>
+          </main>
+        `;
+      } catch (error) {
+        console.warn('No fue posible personalizar la pestaña de espera:', error);
+      }
+
       const originalContent = mercadoPagoBtn.innerHTML;
       mercadoPagoBtn.disabled = true;
       mercadoPagoBtn.innerHTML =
@@ -435,10 +463,21 @@
           );
         }
 
-        setCheckoutMessage('Redirigiendo a Mercado Pago...', 'success');
-        window.location.assign(result.redirectUrl);
+        setCheckoutMessage(
+          'Mercado Pago se abrió en una pestaña nueva. Conserva esta pestaña para revisar tu carrito.',
+          'success'
+        );
+
+        mercadoPagoWindow.location.replace(result.redirectUrl);
+        mercadoPagoBtn.disabled = false;
+        mercadoPagoBtn.innerHTML = originalContent;
       } catch (error) {
         console.error('Error iniciando Checkout Pro:', error);
+
+        if (!mercadoPagoWindow.closed) {
+          mercadoPagoWindow.close();
+        }
+
         setCheckoutMessage(
           error.message || 'Ocurrió un error al preparar el pago.'
         );

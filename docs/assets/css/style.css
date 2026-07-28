@@ -8395,6 +8395,7 @@ body.page-rastreo .cart-float {
     border: 0;
     font-size: 1.25rem;
     font-weight: 900;
+    text-decoration: none;
     box-shadow: 0 18px 45px color-mix(in srgb, var(--season-accent) 35%, transparent);
 }
 
