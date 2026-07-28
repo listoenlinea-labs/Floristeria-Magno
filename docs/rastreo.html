@@ -338,10 +338,10 @@
     </section>
   </main>
 
-  <button class="cart-float" type="button" aria-label="Ver carrito">
+  <a class="cart-float" href="carrito.html" aria-label="Ver carrito">
     <i class="bi bi-bag-heart"></i>
-    <span>2</span>
-  </button>
+    <span id="cartCount">0</span>
+  </a>
 
   <a class="whatsapp-float" href="https://wa.me/520000000000" target="_blank" aria-label="WhatsApp">
     <i class="bi bi-whatsapp"></i>
@@ -395,6 +395,27 @@
 
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
+  <script>
+    (() => {
+      const CART_KEY = 'jhmagno_cart';
+      const cartCount = document.getElementById('cartCount');
+
+      if (!cartCount) return;
+
+      try {
+        const cart = JSON.parse(localStorage.getItem(CART_KEY)) || {};
+        const count = Object.values(cart).reduce(
+          (total, item) => total + Number(item?.qty || 0),
+          0
+        );
+
+        cartCount.textContent = count;
+      } catch (error) {
+        console.warn('No fue posible leer el carrito:', error);
+        cartCount.textContent = '0';
+      }
+    })();
+  </script>
   <script type="module" src="components/site-header.js"></script>
   <script src="assets/js/mobile-nav.js"></script>
   <script src="assets/js/rastreo.js"></script>
