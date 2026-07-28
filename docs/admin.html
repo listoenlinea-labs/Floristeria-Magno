@@ -476,8 +476,8 @@
                                 </div>
                             </div>
 
-                            <input id="productImageFile" type="file" accept="image/*" class="d-none"
-                                onchange="handleImageFile(event, 'product')">
+                            <input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+                                class="d-none" onchange="handleImageFile(event, 'product')">
 
                             <div class="mt-3">
                                 <label>O pegar URL de Google Drive</label>
@@ -690,8 +690,8 @@
                         </div>
                     </div>
 
-                    <input id="galleryImageFile" type="file" accept="image/*" class="d-none"
-                        onchange="handleImageFile(event, 'gallery')">
+                    <input id="galleryImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+                        class="d-none" onchange="handleImageFile(event, 'gallery')">
 
                     <div class="mb-3">
                         <label>O pegar URL de imagen</label>
@@ -4570,32 +4570,123 @@
                 '#productModal .modal-footer .btn-gold'
             );
 
+            const id = document
+                .getElementById('productId')
+                .value;
+
+            const name = document
+                .getElementById('productName')
+                .value
+                .trim();
+
+            const description = document
+                .getElementById('productDescription')
+                .value
+                .trim();
+
+            const category = document
+                .getElementById('productCategory')
+                .value;
+
+            const tag = document
+                .getElementById('productTag')
+                .value
+                .trim();
+
+            const priceValue = document
+                .getElementById('productPrice')
+                .value;
+
+            const stockValue = document
+                .getElementById('productStock')
+                .value;
+
+            const orderValue = document
+                .getElementById('productSortOrder')
+                .value;
+
+            const selectedFile = document
+                .getElementById('productImageFile')
+                .files[0];
+
+            const writtenImageUrl = document
+                .getElementById('productImageUrl')
+                .value
+                .trim();
+
+            const currentProduct = products.find(
+                item => item.id === id
+            );
+
+            const currentImageUrl =
+                currentProduct?.imageUrl || '';
+
+            /*
+             * Validaciones antes de subir el archivo.
+             */
+            if (!name) {
+                alert('Escribe el nombre del producto.');
+                document.getElementById('productName').focus();
+                return;
+            }
+
+            if (
+                priceValue === '' ||
+                !Number.isFinite(Number(priceValue)) ||
+                Number(priceValue) < 0
+            ) {
+                alert('Escribe un precio válido.');
+                document.getElementById('productPrice').focus();
+                return;
+            }
+
+            if (
+                stockValue === '' ||
+                !Number.isInteger(Number(stockValue)) ||
+                Number(stockValue) < 0
+            ) {
+                alert('Escribe un stock válido.');
+                document.getElementById('productStock').focus();
+                return;
+            }
+
+            if (
+                orderValue !== '' &&
+                (
+                    !Number.isInteger(Number(orderValue)) ||
+                    Number(orderValue) < 0
+                )
+            ) {
+                alert('El orden debe ser un número entero igual o mayor que cero.');
+                document.getElementById('productSortOrder').focus();
+                return;
+            }
+
+            if (
+                !selectedFile &&
+                !writtenImageUrl &&
+                !currentImageUrl
+            ) {
+                alert(
+                    'Selecciona una imagen desde tu dispositivo o pega una URL.'
+                );
+
+                return;
+            }
+
             try {
                 button.disabled = true;
                 button.innerHTML =
-                    '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+                    '<span class="spinner-border spinner-border-sm"></span> Subiendo y guardando...';
 
-                const id = document
-                    .getElementById('productId')
-                    .value;
+                let imageUrl =
+                    writtenImageUrl ||
+                    currentImageUrl;
 
-                const currentProduct = products.find(
-                    item => item.id === id
-                );
-
-                const selectedFile = document
-                    .getElementById('productImageFile')
-                    .files[0];
-
-                let imageUrl = document
-                    .getElementById('productImageUrl')
-                    .value
-                    .trim();
-
-                if (!imageUrl && currentProduct) {
-                    imageUrl = currentProduct.imageUrl;
-                }
-
+                /*
+                 * Si seleccionaron un archivo nuevo,
+                 * primero se sube al backend.
+                 */
                 if (selectedFile) {
                     imageUrl = await uploadSelectedImage(
                         selectedFile,
@@ -4603,38 +4694,19 @@
                     );
                 }
 
+                if (!imageUrl) {
+                    throw new Error(
+                        'No fue posible obtener la URL de la imagen.'
+                    );
+                }
+
                 const payload = {
-                    nombre: document
-                        .getElementById('productName')
-                        .value
-                        .trim(),
-
-                    descripcion: document
-                        .getElementById('productDescription')
-                        .value
-                        .trim(),
-
-                    categoria: document
-                        .getElementById('productCategory')
-                        .value,
-
-                    etiqueta: document
-                        .getElementById('productTag')
-                        .value
-                        .trim(),
-
-                    precio: Number(
-                        document
-                            .getElementById('productPrice')
-                            .value
-                    ),
-
-                    stock: Number(
-                        document
-                            .getElementById('productStock')
-                            .value
-                    ),
-
+                    nombre: name,
+                    descripcion: description,
+                    categoria: category,
+                    etiqueta: tag,
+                    precio: Number(priceValue),
+                    stock: Number(stockValue),
                     imagenUrl: imageUrl,
 
                     destacado:
@@ -4642,11 +4714,7 @@
                             .getElementById('productFeatured')
                             .value === 'SI',
 
-                    orden: Number(
-                        document
-                            .getElementById('productSortOrder')
-                            .value || 1
-                    ),
+                    orden: Number(orderValue || 1),
 
                     activo:
                         document
@@ -4669,12 +4737,19 @@
 
                 alert(
                     id
-                        ? 'Producto actualizado.'
-                        : 'Producto creado.'
+                        ? 'Producto actualizado correctamente.'
+                        : 'Producto e imagen agregados correctamente.'
                 );
             } catch (error) {
-                console.error(error);
-                alert(error.message);
+                console.error(
+                    'Error al guardar producto:',
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    'No fue posible guardar el producto.'
+                );
             } finally {
                 button.disabled = false;
                 button.innerHTML =
@@ -4864,31 +4939,100 @@
                 '#galleryModal .modal-footer .btn-gold'
             );
 
+            const id = document
+                .getElementById('galleryId')
+                .value;
+
+            const title = document
+                .getElementById('galleryTitle')
+                .value
+                .trim();
+
+            const description = document
+                .getElementById('galleryDescription')
+                .value
+                .trim();
+
+            const altText = document
+                .getElementById('galleryAltText')
+                .value
+                .trim();
+
+            const category = document
+                .getElementById('galleryCategory')
+                .value;
+
+            const section = document
+                .getElementById('gallerySection')
+                .value;
+
+            const orderValue = document
+                .getElementById('gallerySortOrder')
+                .value;
+
+            const selectedFile = document
+                .getElementById('galleryImageFile')
+                .files[0];
+
+            const writtenImageUrl = document
+                .getElementById('galleryImageUrl')
+                .value
+                .trim();
+
+            const currentItem = gallery.find(
+                item => item.id === id
+            );
+
+            const currentImageUrl =
+                currentItem?.imageUrl || '';
+
+            /*
+             * Validaciones antes de subir.
+             */
+            if (!title) {
+                alert('Escribe un título para la imagen.');
+                document.getElementById('galleryTitle').focus();
+                return;
+            }
+
+            if (!section) {
+                alert('Selecciona la sección de la página.');
+                document.getElementById('gallerySection').focus();
+                return;
+            }
+
+            if (
+                orderValue !== '' &&
+                (
+                    !Number.isInteger(Number(orderValue)) ||
+                    Number(orderValue) < 0
+                )
+            ) {
+                alert('El orden debe ser un número entero igual o mayor que cero.');
+                document.getElementById('gallerySortOrder').focus();
+                return;
+            }
+
+            if (
+                !selectedFile &&
+                !writtenImageUrl &&
+                !currentImageUrl
+            ) {
+                alert(
+                    'Selecciona una imagen desde tu dispositivo o pega una URL.'
+                );
+
+                return;
+            }
+
             try {
                 button.disabled = true;
                 button.innerHTML =
-                    '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+                    '<span class="spinner-border spinner-border-sm"></span> Subiendo y guardando...';
 
-                const id = document
-                    .getElementById('galleryId')
-                    .value;
-
-                const currentItem = gallery.find(
-                    item => item.id === id
-                );
-
-                const selectedFile = document
-                    .getElementById('galleryImageFile')
-                    .files[0];
-
-                let imageUrl = document
-                    .getElementById('galleryImageUrl')
-                    .value
-                    .trim();
-
-                if (!imageUrl && currentItem) {
-                    imageUrl = currentItem.imageUrl;
-                }
+                let imageUrl =
+                    writtenImageUrl ||
+                    currentImageUrl;
 
                 if (selectedFile) {
                     imageUrl = await uploadSelectedImage(
@@ -4897,37 +5041,21 @@
                     );
                 }
 
+                if (!imageUrl) {
+                    throw new Error(
+                        'No fue posible obtener la URL de la imagen.'
+                    );
+                }
+
                 const payload = {
-                    titulo: document
-                        .getElementById('galleryTitle')
-                        .value
-                        .trim(),
-
-                    descripcion: document
-                        .getElementById('galleryDescription')
-                        .value
-                        .trim(),
-
+                    titulo: title,
+                    descripcion: description,
                     imagenUrl: imageUrl,
-
-                    textoAlternativo: document
-                        .getElementById('galleryAltText')
-                        .value
-                        .trim(),
-
-                    categoria: document
-                        .getElementById('galleryCategory')
-                        .value,
-
-                    seccion: document
-                        .getElementById('gallerySection')
-                        .value,
-
-                    orden: Number(
-                        document
-                            .getElementById('gallerySortOrder')
-                            .value || 1
-                    ),
+                    textoAlternativo:
+                        altText || title,
+                    categoria: category,
+                    seccion: section,
+                    orden: Number(orderValue || 1),
 
                     activo:
                         document
@@ -4950,12 +5078,19 @@
 
                 alert(
                     id
-                        ? 'Imagen actualizada.'
-                        : 'Imagen creada.'
+                        ? 'Imagen actualizada correctamente.'
+                        : 'Imagen agregada correctamente a la galería.'
                 );
             } catch (error) {
-                console.error(error);
-                alert(error.message);
+                console.error(
+                    'Error al guardar imagen de galería:',
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    'No fue posible guardar la imagen.'
+                );
             } finally {
                 button.disabled = false;
                 button.innerHTML =
@@ -5077,26 +5212,56 @@
                 return;
             }
 
-            if (!file.type.startsWith("image/")) {
-                alert("Selecciona un archivo de imagen.");
-                event.target.value = "";
-                return;
-            }
+            const allowedTypes = [
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/gif'
+            ];
 
             const maxSize = 8 * 1024 * 1024;
 
-            if (file.size > maxSize) {
-                alert("La imagen no puede pesar más de 8 MB.");
-                event.target.value = "";
+            if (!allowedTypes.includes(file.type)) {
+                alert(
+                    'Formato no permitido. Selecciona una imagen JPG, PNG, WEBP o GIF.'
+                );
+
+                event.target.value = '';
+                resetImagePreview(
+                    type,
+                    'Selecciona una imagen JPG, PNG, WEBP o GIF.'
+                );
+
                 return;
+            }
+
+            if (file.size > maxSize) {
+                alert('La imagen no puede pesar más de 8 MB.');
+
+                event.target.value = '';
+                resetImagePreview(
+                    type,
+                    'La imagen debe pesar menos de 8 MB.'
+                );
+
+                return;
+            }
+
+            /*
+             * Si se selecciona un archivo local,
+             * eliminamos la URL escrita anteriormente.
+             */
+            const imageUrlInput = document.getElementById(
+                `${type}ImageUrl`
+            );
+
+            if (imageUrlInput) {
+                imageUrlInput.value = '';
             }
 
             const previewUrl = URL.createObjectURL(file);
 
-            setImagePreview(
-                type,
-                previewUrl
-            );
+            setImagePreview(type, previewUrl);
         }
 
         function previewImageUrl(type) {
