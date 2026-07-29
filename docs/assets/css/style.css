@@ -5576,8 +5576,7 @@ body.page-catalogo .mobile-app-nav {
         background: linear-gradient(135deg, #fff3cf, var(--flor-gold, #d6af65)) !important;
     }
 
-    body.page-catalogo .cart-float,
-    body.page-catalogo .whatsapp-float {
+        body.page-catalogo .whatsapp-float {
         display: none !important;
     }
 
@@ -9377,7 +9376,6 @@ body.page-admin .btn-gold {
 
 body.page-index .btn-main:hover,
 body.page-catalogo .btn-luxury:hover,
-body.page-catalogo .cart-float:hover,
 body.page-carrito .btn-pay:hover,
 body.page-carrito .btn-cart:hover,
 body.page-ideas .btn-ai:hover,
