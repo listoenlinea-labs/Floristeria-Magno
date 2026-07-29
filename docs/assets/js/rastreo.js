@@ -36,6 +36,14 @@ let currentTrackingCode = null;
 let currentOrderStatus = null;
 let locationPollingId = null;
 
+/*
+ * El mapa solamente puede activarse después de que
+ * el cliente presione el botón "Ver mapa".
+ */
+let mapRequestedByUser = false;
+let mapboxScriptPromise = null;
+let mapTrackingCode = null;
+
 const POLLING_INTERVAL_MS = 30_000;
 
 const seasonButtons =
@@ -136,6 +144,11 @@ const progressSteps =
 const liveMapSection =
     document.getElementById(
         'mapa-tiempo-real'
+    );
+
+const viewMapButton =
+    document.getElementById(
+        'viewMapButton'
     );
 
 const liveTrackingBadgeText =
@@ -310,6 +323,114 @@ function validarMapboxToken() {
             'PEGA_AQUI'
         )
     );
+}
+
+/*
+ * Descarga Mapbox GL JS solamente cuando el usuario
+ * solicita ver el mapa.
+ */
+function cargarMapboxScript() {
+    if (typeof window.mapboxgl !== 'undefined') {
+        return Promise.resolve(
+            window.mapboxgl
+        );
+    }
+
+    if (mapboxScriptPromise) {
+        return mapboxScriptPromise;
+    }
+
+    mapboxScriptPromise = new Promise(
+        (resolve, reject) => {
+            const existingScript =
+                document.querySelector(
+                    'script[data-mapbox-loader="true"]'
+                );
+
+            if (existingScript) {
+                existingScript.addEventListener(
+                    'load',
+                    () => resolve(window.mapboxgl),
+                    {
+                        once: true
+                    }
+                );
+
+                existingScript.addEventListener(
+                    'error',
+                    () => {
+                        mapboxScriptPromise = null;
+
+                        reject(
+                            new Error(
+                                'No fue posible cargar Mapbox.'
+                            )
+                        );
+                    },
+                    {
+                        once: true
+                    }
+                );
+
+                return;
+            }
+
+            const script =
+                document.createElement('script');
+
+            script.src =
+                'https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.js';
+
+            script.async = true;
+            script.dataset.mapboxLoader = 'true';
+
+            script.addEventListener(
+                'load',
+                () => {
+                    if (
+                        typeof window.mapboxgl ===
+                        'undefined'
+                    ) {
+                        mapboxScriptPromise = null;
+
+                        reject(
+                            new Error(
+                                'Mapbox terminó de cargar, pero no está disponible.'
+                            )
+                        );
+
+                        return;
+                    }
+
+                    resolve(window.mapboxgl);
+                },
+                {
+                    once: true
+                }
+            );
+
+            script.addEventListener(
+                'error',
+                () => {
+                    script.remove();
+                    mapboxScriptPromise = null;
+
+                    reject(
+                        new Error(
+                            'No fue posible descargar Mapbox.'
+                        )
+                    );
+                },
+                {
+                    once: true
+                }
+            );
+
+            document.head.appendChild(script);
+        }
+    );
+
+    return mapboxScriptPromise;
 }
 
 function crearMarcadorFloral() {
@@ -710,10 +831,14 @@ function actualizarMapaConUbicacion(
 }
 
 function mostrarSeccionMapa() {
+    /*
+     * Aunque el pedido esté en camino, la sección no
+     * puede mostrarse hasta que el usuario la solicite.
+     */
     if (
         !liveMapSection ||
-        currentOrderStatus !==
-        'EN_CAMINO'
+        !mapRequestedByUser ||
+        currentOrderStatus !== 'EN_CAMINO'
     ) {
         return;
     }
@@ -740,6 +865,24 @@ function ocultarSeccionMapa() {
     liveMapSection.classList.remove(
         'is-visible'
     );
+}
+
+function destruirMapa() {
+    detenerPollingUbicacion();
+    desconectarSocketRastreo();
+
+    if (deliveryMarker) {
+        deliveryMarker.remove();
+        deliveryMarker = null;
+    }
+
+    if (liveMap) {
+        liveMap.remove();
+        liveMap = null;
+    }
+
+    accuracySourceCreated = false;
+    mapTrackingCode = null;
 }
 
 async function consultarUbicacionActual(
@@ -783,7 +926,10 @@ async function consultarUbicacionActual(
         const shouldShowMap =
             estado === 'EN_CAMINO';
 
-        if (!shouldShowMap) {
+        if (
+            !shouldShowMap ||
+            !mapRequestedByUser
+        ) {
             ocultarSeccionMapa();
             detenerPollingUbicacion();
             desconectarSocketRastreo();
@@ -791,7 +937,10 @@ async function consultarUbicacionActual(
         }
 
         mostrarSeccionMapa();
-        inicializarMapa();
+
+        if (!inicializarMapa()) {
+            return;
+        }
 
         if (trackingData.ubicacion) {
             actualizarMapaConUbicacion(
@@ -908,15 +1057,9 @@ function conectarSocketRastreo(
         'rastreo:ubicacion',
         (payload) => {
             if (
+                !mapRequestedByUser ||
                 payload.codigoRastreo !==
                 codigoRastreo
-            ) {
-                return;
-            }
-
-            if (
-                currentOrderStatus !==
-                'EN_CAMINO'
             ) {
                 return;
             }
@@ -977,7 +1120,8 @@ function renderizarPedido(pedido) {
         construirEntrega(pedido);
 
     orderType.textContent =
-        pedido.tipoPedido || 'Arreglo floral';
+        pedido.tipoPedido ||
+        'Arreglo floral';
 
     renderizarProgreso(pedido.paso);
 
@@ -987,34 +1131,257 @@ function renderizarPedido(pedido) {
         )
             .trim()
             .toUpperCase();
+
+    const previousOrderStatus =
+        currentOrderStatus;
+
     currentOrderStatus =
         estadoPedido;
 
-    if (estadoPedido !== 'EN_CAMINO') {
+    const pedidoEnCamino =
+        estadoPedido === 'EN_CAMINO';
+
+    /*
+     * El botón solamente aparece durante la entrega.
+     */
+    if (viewMapButton) {
+        viewMapButton.hidden =
+            !pedidoEnCamino;
+    }
+
+    /*
+     * Si el pedido dejó de estar en camino, se cierra
+     * completamente el seguimiento y se oculta el mapa.
+     */
+    if (!pedidoEnCamino) {
+        mapRequestedByUser = false;
+
         ocultarSeccionMapa();
-        desconectarSocketRastreo();
-        detenerPollingUbicacion();
-    } else {
+        destruirMapa();
+
+        if (viewMapButton) {
+            viewMapButton.disabled = false;
+
+            viewMapButton.setAttribute(
+                'aria-expanded',
+                'false'
+            );
+
+            const icon =
+                viewMapButton.querySelector('i');
+
+            const text =
+                viewMapButton.querySelector('span');
+
+            if (icon) {
+                icon.className = 'bi bi-map';
+            }
+
+            if (text) {
+                text.textContent = 'Ver mapa';
+            }
+        }
+    }
+
+    /*
+     * Si la actualización automática confirma que todavía
+     * está en camino y el usuario ya abrió el mapa, se
+     * mantiene visible. No se crean conexiones nuevas.
+     */
+    if (
+        pedidoEnCamino &&
+        mapRequestedByUser &&
+        mapTrackingCode ===
+        pedido.codigoRastreo
+    ) {
+        mostrarSeccionMapa();
+    }
+
+    /*
+     * Si el pedido acaba de pasar a EN_CAMINO, dejamos el
+     * botón listo, pero todavía no cargamos Mapbox.
+     */
+    if (
+        pedidoEnCamino &&
+        previousOrderStatus !== 'EN_CAMINO' &&
+        !mapRequestedByUser &&
+        viewMapButton
+    ) {
+        viewMapButton.disabled = false;
+
+        viewMapButton.setAttribute(
+            'aria-expanded',
+            'false'
+        );
+
+        const icon =
+            viewMapButton.querySelector('i');
+
+        const text =
+            viewMapButton.querySelector('span');
+
+        if (icon) {
+            icon.className = 'bi bi-map';
+        }
+
+        if (text) {
+            text.textContent = 'Ver mapa';
+        }
+    }
+
+    trackingResult.hidden = false;
+    trackingResult.classList.add('visible');
+}
+
+async function abrirMapaDelPedido() {
+    if (
+        currentOrderStatus !== 'EN_CAMINO' ||
+        !codigoConsultado
+    ) {
+        return;
+    }
+
+    if (mapRequestedByUser && liveMap) {
         mostrarSeccionMapa();
 
-        consultarUbicacionActual(
-            pedido.codigoRastreo,
+        requestAnimationFrame(() => {
+            liveMapSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            liveMap.resize();
+        });
+
+        return;
+    }
+
+    const icon =
+        viewMapButton?.querySelector('i');
+
+    const text =
+        viewMapButton?.querySelector('span');
+
+    try {
+        if (viewMapButton) {
+            viewMapButton.disabled = true;
+
+            viewMapButton.setAttribute(
+                'aria-expanded',
+                'true'
+            );
+        }
+
+        if (icon) {
+            icon.className =
+                'spinner-border spinner-border-sm';
+        }
+
+        if (text) {
+            text.textContent =
+                'Cargando mapa...';
+        }
+
+        /*
+         * Desde este momento se permite mostrar e
+         * inicializar el mapa.
+         */
+        mapRequestedByUser = true;
+        mapTrackingCode = codigoConsultado;
+
+        await cargarMapboxScript();
+
+        mostrarSeccionMapa();
+
+        if (!inicializarMapa()) {
+            throw new Error(
+                'No fue posible inicializar el mapa.'
+            );
+        }
+
+        /*
+         * La primera petición de ubicación se realiza
+         * solamente después del clic.
+         */
+        await consultarUbicacionActual(
+            codigoConsultado,
             {
                 firstLocation: true
             }
         );
 
+        /*
+         * Socket y polling también empiezan solamente
+         * después del clic.
+         */
         conectarSocketRastreo(
-            pedido.codigoRastreo
+            codigoConsultado
         );
 
         iniciarPollingUbicacion(
-            pedido.codigoRastreo
+            codigoConsultado
         );
-    }
 
-    trackingResult.hidden = false;
-    trackingResult.classList.add('visible');
+        requestAnimationFrame(() => {
+            liveMapSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            window.setTimeout(() => {
+                if (liveMap) {
+                    liveMap.resize();
+                }
+            }, 450);
+        });
+
+        if (icon) {
+            icon.className =
+                'bi bi-geo-alt-fill';
+        }
+
+        if (text) {
+            text.textContent =
+                'Ir al mapa';
+        }
+    } catch (error) {
+        console.error(
+            'No fue posible abrir el mapa:',
+            error
+        );
+
+        mapRequestedByUser = false;
+        mapTrackingCode = null;
+
+        ocultarSeccionMapa();
+        destruirMapa();
+
+        if (viewMapButton) {
+            viewMapButton.setAttribute(
+                'aria-expanded',
+                'false'
+            );
+        }
+
+        if (icon) {
+            icon.className =
+                'bi bi-exclamation-circle';
+        }
+
+        if (text) {
+            text.textContent =
+                'Intentar de nuevo';
+        }
+
+        mostrarFeedback(
+            'No fue posible cargar el mapa. Intenta nuevamente.',
+            'error'
+        );
+    } finally {
+        if (viewMapButton) {
+            viewMapButton.disabled = false;
+        }
+    }
 }
 
 function detenerActualizacionAutomatica() {
@@ -1157,6 +1524,13 @@ trackingForm.addEventListener(
     }
 );
 
+if (viewMapButton) {
+    viewMapButton.addEventListener(
+        'click',
+        abrirMapaDelPedido
+    );
+}
+
 trackingInput.addEventListener(
     'input',
     () => {
@@ -1174,8 +1548,7 @@ window.addEventListener(
     'beforeunload',
     () => {
         detenerActualizacionAutomatica();
-        detenerPollingUbicacion();
-        desconectarSocketRastreo();
+        destruirMapa();
     }
 );
 

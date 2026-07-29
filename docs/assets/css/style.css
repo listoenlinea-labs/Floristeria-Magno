@@ -7958,6 +7958,77 @@ body.page-rastreo .order-pill {
     border: 1px solid rgba(59, 17, 29, .08);
 }
 
+body.page-rastreo .status-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+body.page-rastreo .view-map-button {
+    min-height: 42px;
+    padding: 9px 16px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: 1px solid #27151b;
+    border-radius: 999px;
+
+    background: #27151b;
+    color: #ffffff;
+
+    font-family: "Inter", sans-serif;
+    font-size: .9rem;
+    font-weight: 800;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 24px rgba(39, 21, 27, .16);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background-color .2s ease,
+        opacity .2s ease;
+}
+
+body.page-rastreo .view-map-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(39, 21, 27, .22);
+
+    background: #3b111d;
+}
+
+body.page-rastreo .view-map-button:active {
+    transform: translateY(0);
+}
+
+body.page-rastreo .view-map-button:focus-visible {
+    outline: 3px solid color-mix(in srgb,
+            var(--season-accent) 48%,
+            transparent);
+
+    outline-offset: 3px;
+}
+
+body.page-rastreo .view-map-button:disabled {
+    cursor: wait;
+    opacity: .68;
+    transform: none;
+}
+
+body.page-rastreo .view-map-button[hidden] {
+    display: none !important;
+}
+
 body.page-rastreo .status-body {
     padding: 32px;
 }
@@ -8659,6 +8730,16 @@ body.page-rastreo footer a {
     body.page-rastreo .status-body,
     body.page-rastreo .status-header {
         padding: 24px;
+    }
+
+    body.page-rastreo .status-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    body.page-rastreo .view-map-button {
+        flex: 1;
+        min-width: 140px;
     }
 
     body.page-rastreo .status-message h3 {
