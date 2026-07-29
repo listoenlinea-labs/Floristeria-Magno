@@ -6,8 +6,8 @@ const {
     '../controllers/repartidor-entregas.controller'
 );
 
-const repartidorAuth = require(
-    '../middleware/repartidor-auth.middleware'
+const adminORepartidorAuth = require(
+    '../middleware/admin-o-repartidor-auth.middleware'
 );
 
 const router = express.Router();
@@ -16,7 +16,7 @@ const router = express.Router();
  * Todas las rutas de este archivo requieren
  * credenciales del repartidor.
  */
-router.use(repartidorAuth);
+router.use(adminORepartidorAuth);
 
 router.get(
     '/',
