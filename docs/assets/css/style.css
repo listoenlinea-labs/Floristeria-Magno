@@ -1136,7 +1136,7 @@ body.page-index .mood-content h3 {
     font-size: 2.55rem;
     line-height: .9;
     margin: 0 0 10px;
-    color: #fff;
+    color: #fff !important;
 }
 
 body.page-index .flower-card img {
@@ -14470,5 +14470,171 @@ body.page-rastreo .mapboxgl-ctrl-attrib {
 
     .page-admin .delivery-toolbar .btn-soft {
         grid-column: span 3;
+    }
+}
+
+/* ==========================================================
+   TARJETAS DE MOMENTOS — ESTILO MAGNO
+========================================================== */
+
+body.page-index .mood-card-magno {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    height: 390px;
+
+    background: #2b0e17;
+    border: 1px solid rgba(255, 248, 239, 0.18);
+    border-radius: 32px;
+
+    box-shadow:
+        0 22px 55px rgba(43, 14, 23, 0.18),
+        0 8px 20px rgba(39, 21, 27, 0.10);
+
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+}
+
+/* Fotografía */
+body.page-index .mood-card-magno img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+
+    filter:
+        saturate(0.92) contrast(1.04) brightness(0.94);
+
+    transform: scale(1.01);
+
+    transition:
+        transform 0.75s cubic-bezier(.2, .75, .2, 1),
+        filter 0.6s ease;
+}
+
+/* Capa que uniforma los colores de fotografías distintas */
+body.page-index .mood-card-magno::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+
+    background:
+        linear-gradient(180deg,
+            rgba(43, 14, 23, 0.04) 0%,
+            rgba(43, 14, 23, 0.08) 34%,
+            rgba(43, 14, 23, 0.42) 68%,
+            rgba(19, 7, 13, 0.94) 100%),
+        linear-gradient(135deg,
+            rgba(217, 140, 164, 0.10),
+            transparent 48%,
+            rgba(214, 175, 101, 0.07));
+}
+
+/* Desactivamos el degradado viejo para no duplicar capas */
+body.page-index .mood-card-magno::after {
+    content: none;
+}
+
+/* Contenido */
+body.page-index .mood-card-magno .mood-content {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 22px;
+    z-index: 2;
+
+    color: #fff8ef;
+}
+
+/* Título */
+body.page-index .mood-card-magno .mood-content h3 {
+    max-width: 220px;
+    margin: 0 0 10px;
+
+    color: #fff8ef !important;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 3vw, 2.55rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+
+    text-shadow:
+        0 3px 18px rgba(0, 0, 0, 0.58),
+        0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Descripción */
+body.page-index .mood-card-magno .mood-content p {
+    max-width: 225px;
+    margin: 0;
+
+    color: rgba(255, 248, 239, 0.92);
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.5;
+
+    text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.85),
+        0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Pequeño detalle dorado arriba del título */
+body.page-index .mood-card-magno .mood-content::before {
+    content: "";
+    display: block;
+    width: 42px;
+    height: 2px;
+    margin-bottom: 14px;
+    border-radius: 999px;
+
+    background: linear-gradient(90deg,
+            #fff3cf,
+            #d6af65);
+
+    box-shadow: 0 2px 12px rgba(214, 175, 101, 0.35);
+}
+
+/* Hover */
+body.page-index .mood-card-magno:hover {
+    transform: translateY(-9px);
+    border-color: rgba(214, 175, 101, 0.38);
+
+    box-shadow:
+        0 34px 76px rgba(43, 14, 23, 0.26),
+        0 12px 28px rgba(39, 21, 27, 0.13);
+}
+
+body.page-index .mood-card-magno:hover img {
+    transform: scale(1.075);
+
+    filter:
+        saturate(1.02) contrast(1.06) brightness(0.96);
+}
+
+/* Adaptación móvil */
+@media (max-width: 767.98px) {
+    body.page-index .mood-card-magno {
+        height: 460px;
+        border-radius: 28px;
+    }
+
+    body.page-index .mood-card-magno .mood-content {
+        left: 20px;
+        right: 20px;
+        bottom: 22px;
+    }
+
+    body.page-index .mood-card-magno .mood-content h3 {
+        max-width: 280px;
+        font-size: 2.4rem;
+    }
+
+    body.page-index .mood-card-magno .mood-content p {
+        max-width: 300px;
+        font-size: 1rem;
     }
 }
