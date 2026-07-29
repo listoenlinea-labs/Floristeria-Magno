@@ -392,7 +392,11 @@ class SiteHeader extends HTMLElement {
       automaticScrollTargetLink = null;
     };
 
-    const scrollToSection = (section, updateHash = true) => {
+    const scrollToSection = (
+      section,
+      updateHash = true,
+      behavior = 'smooth'
+    ) => {
       const targetTop =
         section.getBoundingClientRect().top +
         window.scrollY -
@@ -405,7 +409,7 @@ class SiteHeader extends HTMLElement {
 
       window.scrollTo({
         top: Math.max(0, targetTop),
-        behavior: 'smooth'
+        behavior
       });
     };
 
@@ -472,15 +476,57 @@ class SiteHeader extends HTMLElement {
     );
     window.addEventListener('resize', this.handleSectionScroll);
 
-    const hash = window.location.hash.replace('#', '');
-    const hashItem = sections.find((item) => item.section.id === hash);
+    const getHashItem = () => {
+      const hash = decodeURIComponent(
+        window.location.hash.replace(/^#/, '')
+      );
 
-    if (hashItem) {
+      return sections.find(
+        (item) => item.section.id === hash
+      );
+    };
+
+    /*
+     * Cuando se llega desde otra página, el navegador intenta saltar al hash
+     * antes de que index.html termine de cargar productos y galerías desde la
+     * API. Ese contenido cambia la altura de las secciones anteriores y puede
+     * dejar #novias o #nosotros fuera de posición. Esta función vuelve a
+     * calcular la ubicación usando la altura real del encabezado.
+     */
+    const alignCurrentHash = (behavior = 'auto') => {
+      const hashItem = getHashItem();
+
+      if (!hashItem) {
+        return false;
+      }
+
+      isAutomaticScrolling = true;
+      automaticScrollTargetLink = hashItem.link;
+      activateLink(hashItem.link);
+      scrollToSection(hashItem.section, false, behavior);
+
+      return true;
+    };
+
+    this.handleHomeContentReady = () => {
+      // Dos frames permiten que el navegador aplique primero el nuevo layout.
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          alignCurrentHash('auto');
+        });
+      });
+    };
+
+    window.addEventListener(
+      'home-content-ready',
+      this.handleHomeContentReady
+    );
+
+    const initialHashItem = getHashItem();
+
+    if (initialHashItem) {
       window.setTimeout(() => {
-        isAutomaticScrolling = true;
-        automaticScrollTargetLink = hashItem.link;
-        activateLink(hashItem.link);
-        scrollToSection(hashItem.section, false);
+        alignCurrentHash('auto');
       }, 100);
     } else {
       this.handleSectionScroll();
@@ -501,6 +547,10 @@ class SiteHeader extends HTMLElement {
     window.removeEventListener('scroll', this.handleHeaderScroll);
     window.removeEventListener('scroll', this.handleSectionScrollEvent);
     window.removeEventListener('resize', this.handleSectionScroll);
+    window.removeEventListener(
+      'home-content-ready',
+      this.handleHomeContentReady
+    );
     if (this.cancelAutomaticScroll) this.cancelAutomaticScroll();
   }
 }

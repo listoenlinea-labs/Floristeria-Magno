@@ -1729,6 +1729,15 @@
 
         await loadDynamicHomeContent();
 
+        /*
+         * Avisa al encabezado compartido que las galerías y productos ya
+         * cambiaron el tamaño de la página. Si se llegó con #novias,
+         * #nosotros u otra ancla, el componente corrige la posición final.
+         */
+        window.dispatchEvent(
+          new CustomEvent('home-content-ready')
+        );
+
         const currentSeason = getSeasonByDate();
 
         setSeason(currentSeason);
