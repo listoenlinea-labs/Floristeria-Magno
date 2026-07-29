@@ -6702,100 +6702,29 @@ body.page-carrito .item-price {
     margin-bottom: 12px;
 }
 
-/* ==========================================================
-   SELECTOR DE CANTIDAD — CARRITO
-========================================================== */
-
 body.page-carrito .qty-control {
-    display: inline-grid;
-    grid-template-columns: 34px 36px 34px;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-
-    padding: 5px;
-    border: 1px solid rgba(39, 21, 27, 0.12);
+    gap: 10px;
+    padding: 8px;
     border-radius: 999px;
-
-    background:
-        linear-gradient(135deg,
-            rgba(255, 255, 255, 0.96),
-            rgba(255, 248, 239, 0.92));
-
-    box-shadow:
-        0 8px 22px rgba(39, 21, 27, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    background: rgba(19, 7, 13, .55);
+    border: 1px solid rgba(255, 255, 255, .10);
 }
 
-/* Botones menos y más */
 body.page-carrito .qty-control button {
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
-
-    padding: 0;
+    width: 30px;
+    height: 30px;
     border: 0;
     border-radius: 50%;
-
-    color: #ffffff;
-    background:
-        linear-gradient(135deg,
-            #3b111d,
-            #1f0b12);
-
-    box-shadow:
-        0 5px 14px rgba(59, 17, 29, 0.22);
-
-    font-family: "Inter", sans-serif;
-    font-size: 1.15rem;
-    font-weight: 700;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+    color: #1a0b10;
+    background: linear-gradient(135deg, #fff3cf, var(--flor-gold));
+    font-weight: 900;
 }
 
-/* Número de productos */
 body.page-carrito .qty-control strong {
-    min-width: 36px;
-
-    color: #27151b;
-    font-family: "Inter", sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
+    min-width: 18px;
     text-align: center;
-    line-height: 1;
-
-    user-select: none;
-}
-
-/* Hover */
-body.page-carrito .qty-control button:hover {
-    transform: translateY(-2px);
-
-    background:
-        linear-gradient(135deg,
-            #d98ca4,
-            #a85d74);
-
-    box-shadow:
-        0 8px 18px rgba(168, 93, 116, 0.28);
-}
-
-/* Al presionarlo */
-body.page-carrito .qty-control button:active {
-    transform: scale(0.92);
-}
-
-/* Accesibilidad con teclado */
-body.page-carrito .qty-control button:focus-visible {
-    outline: 3px solid rgba(217, 140, 164, 0.30);
-    outline-offset: 3px;
 }
 
 body.page-carrito .remove-btn {
@@ -14788,5 +14717,90 @@ body.page-index .mood-card-magno:hover img {
     body.page-index .mood-card-magno .mood-content p {
         max-width: 300px;
         font-size: 1rem;
+    }
+}
+
+/* ==========================================================
+   BOTÓN FLOTANTE DE CARRITO COMPARTIDO: INDEX Y CATÁLOGO
+========================================================== */
+
+/* Usa exactamente la misma paleta estacional en ambas páginas. */
+body.page-index.theme-spring,
+body.page-catalogo.theme-spring {
+    --cart-float-accent: #d98ca4;
+}
+
+body.page-index.theme-summer,
+body.page-catalogo.theme-summer {
+    --cart-float-accent: #f0a765;
+}
+
+body.page-index.theme-autumn,
+body.page-catalogo.theme-autumn {
+    --cart-float-accent: #c98268;
+}
+
+body.page-index.theme-winter,
+body.page-catalogo.theme-winter {
+    --cart-float-accent: #86a9b8;
+}
+
+body.page-index .cart-float,
+body.page-catalogo .cart-float {
+    position: fixed;
+    right: 22px;
+    bottom: 96px;
+    z-index: 1000;
+
+    min-width: 62px;
+    height: 62px;
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: 0;
+    border-radius: 999px;
+    background: var(--cart-float-accent, #d98ca4) !important;
+    color: #fff !important;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+    line-height: 1;
+    text-decoration: none !important;
+
+    box-shadow:
+        0 18px 45px
+        color-mix(
+            in srgb,
+            var(--cart-float-accent, #d98ca4) 35%,
+            transparent
+        ) !important;
+
+    transition:
+        transform .25s ease,
+        background-color .25s ease,
+        box-shadow .25s ease;
+}
+
+body.page-index .cart-float:hover,
+body.page-catalogo .cart-float:hover {
+    background: var(--cart-float-accent, #d98ca4) !important;
+    color: #fff !important;
+    transform: translateY(-4px) scale(1.03);
+}
+
+body.page-index .cart-float:focus-visible,
+body.page-catalogo .cart-float:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, .95);
+    outline-offset: 4px;
+}
+
+@media (max-width: 991.98px) {
+    body.page-index .cart-float,
+    body.page-catalogo .cart-float {
+        display: none;
     }
 }
