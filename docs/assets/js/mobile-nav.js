@@ -46,7 +46,7 @@ function addWhatsappMobileNavItem() {
     const whatsappLink = document.createElement('a');
 
     whatsappLink.className = 'mobile-nav-whatsapp';
-    whatsappLink.href = 'https://wa.me/5213312345678';
+    whatsappLink.href = 'https://wa.me/523336624226';
     whatsappLink.target = '_blank';
     whatsappLink.rel = 'noopener';
     whatsappLink.setAttribute(
