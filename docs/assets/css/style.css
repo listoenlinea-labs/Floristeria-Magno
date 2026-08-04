@@ -2364,7 +2364,7 @@ body.page-index .mobile-app-nav {
         bottom: 14px;
         z-index: 3000;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 6px;
         padding: 10px;
         border-radius: 28px;
