@@ -1,5 +1,7 @@
 /* ==========================================================
    NAVEGACIÓN MÓVIL COMPARTIDA
+   Cinco botones en una sola línea:
+   Inicio | Arreglos | Carrito | Rastrear | WhatsApp
 ========================================================== */
 
 .mobile-app-nav {
@@ -9,61 +11,71 @@
 @media (max-width: 767px) {
 
     body {
-        padding-bottom: 96px;
+        padding-bottom: 94px;
     }
 
     .mobile-app-nav {
         position: fixed;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
         z-index: 3000;
 
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: stretch;
+        gap: 3px;
 
-        padding: 10px;
-        border-radius: 28px;
+        width: auto;
+        min-width: 0;
+        padding: 8px;
 
-        background: rgba(255, 255, 255, 0.96);
         border: 1px solid rgba(17, 17, 17, 0.10);
+        border-radius: 25px;
+
+        background: rgba(255, 255, 255, 0.97);
 
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
 
-        box-shadow: 0 20px 55px rgba(17, 17, 17, 0.14);
+        box-shadow:
+            0 18px 50px rgba(17, 17, 17, 0.15);
     }
 
     .mobile-app-nav a,
     .mobile-app-nav button {
+        width: 100%;
         min-width: 0;
-        min-height: 54px;
+        min-height: 52px;
 
-        border: 0 !important;
-        outline: none !important;
+        margin: 0;
+        padding: 5px 1px;
+
+        border: 0;
+        outline: none;
+        border-radius: 17px;
+
         appearance: none;
         -webkit-appearance: none;
 
-        background: transparent !important;
-        color: #6f6f6f;
-
-        border-radius: 20px;
+        background: transparent;
+        color: #707070;
 
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
 
-        gap: 4px;
-        padding: 5px 2px;
+        gap: 3px;
 
         font-family: inherit;
-        font-size: 0.64rem;
+        font-size: 0.57rem;
         font-weight: 750;
-        line-height: 1.1;
+        line-height: 1;
         text-align: center;
         text-decoration: none;
+
+        overflow: hidden;
 
         transition:
             background-color 0.25s ease,
@@ -72,58 +84,162 @@
     }
 
     .mobile-app-nav i {
-        font-size: 1.22rem;
+        display: block;
+
+        margin: 0;
+
+        font-size: 1.12rem;
         line-height: 1;
     }
 
     .mobile-app-nav span {
         display: block;
+
+        width: 100%;
         max-width: 100%;
+
         overflow: hidden;
-        white-space: nowrap;
+
+        font-size: inherit;
+        line-height: 1.1;
+
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .mobile-app-nav a:hover,
     .mobile-app-nav button:hover {
-        background: #fff4f4 !important;
+        background: #fff4f4;
         color: #111111;
         transform: translateY(-1px);
     }
 
     .mobile-app-nav a.active,
     .mobile-app-nav button.active {
-        background: #fbe7e8 !important;
+        background: #fbe7e8;
         color: #111111;
         font-weight: 800;
     }
+
+    /* WhatsApp permanece dentro del mismo grid */
+    .mobile-app-nav .mobile-nav-whatsapp {
+        color: #198754;
+    }
+
+    .mobile-app-nav .mobile-nav-whatsapp i {
+        color: #198754;
+    }
+
+    .mobile-app-nav .mobile-nav-whatsapp:hover {
+        background: #eaf8ef;
+        color: #13733f;
+    }
+
+    .mobile-app-nav .mobile-nav-whatsapp:hover i {
+        color: #13733f;
+    }
 }
 
-.mobile-app-nav {
-    display: none !important;
+/* Teléfonos particularmente pequeños */
+@media (max-width: 360px) {
+
+    .mobile-app-nav {
+        left: 6px;
+        right: 6px;
+        bottom: 7px;
+
+        gap: 1px;
+        padding: 6px;
+        border-radius: 22px;
+    }
+
+    .mobile-app-nav a,
+    .mobile-app-nav button {
+        min-height: 49px;
+        padding: 4px 0;
+        border-radius: 15px;
+        font-size: 0.52rem;
+    }
+
+    .mobile-app-nav i {
+        font-size: 1.04rem;
+    }
 }
+
+/* ==========================================================
+   CORRECCIÓN FINAL: 5 ELEMENTOS EN UNA SOLA FILA
+========================================================== */
 
 @media (max-width: 767px) {
-    body .mobile-app-nav {
-        position: fixed !important;
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 14px !important;
-        z-index: 3000 !important;
 
+    body #mobile-nav-container .mobile-app-nav {
         display: grid !important;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-        gap: 6px !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        grid-auto-flow: column !important;
+        grid-auto-columns: minmax(0, 1fr) !important;
 
-        padding: 10px !important;
-        border-radius: 28px !important;
+        align-items: stretch !important;
+        justify-items: stretch !important;
 
-        background: rgba(255, 255, 255, 0.96) !important;
-        border: 1px solid rgba(17, 17, 17, 0.10) !important;
+        gap: 2px !important;
 
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        left: 8px !important;
+        right: 8px !important;
+        padding: 7px !important;
 
-        box-shadow: 0 20px 55px rgba(17, 17, 17, 0.14) !important;
+        width: auto !important;
+        max-width: none !important;
+
+        overflow: hidden !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a,
+    body #mobile-nav-container .mobile-app-nav>button {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        min-height: 52px !important;
+        height: 52px !important;
+
+        margin: 0 !important;
+        padding: 4px 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 3px !important;
+
+        overflow: hidden !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a i,
+    body #mobile-nav-container .mobile-app-nav>button i {
+        flex: 0 0 auto !important;
+        margin: 0 !important;
+        font-size: 1.08rem !important;
+        line-height: 1 !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a span,
+    body #mobile-nav-container .mobile-app-nav>button span {
+        display: block !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+
+        font-size: 0.54rem !important;
+        line-height: 1 !important;
+        text-align: center !important;
     }
 }

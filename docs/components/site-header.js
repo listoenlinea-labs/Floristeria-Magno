@@ -158,6 +158,10 @@ class SiteHeader extends HTMLElement {
           transform: translateY(-1px);
         }
 
+        .mobile-phone-link {
+  display: none;
+}
+
         .menu-toggle {
           display: none;
           width: 44px;
@@ -254,6 +258,130 @@ class SiteHeader extends HTMLElement {
           .header-cta {
             margin-top: 5px;
           }
+
+          .mobile-phone-link {
+            width: 100%;
+            min-height: 48px;
+
+            margin-top: 5px;
+            padding: 12px 14px;
+
+            border: 1px solid #ead7d9;
+            border-radius: 12px;
+
+            background: #fff4f4;
+            color: #111111;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            font-family: 'Inter', sans-serif;
+            font-size: 0.86rem;
+            font-weight: 750;
+            line-height: 1.2;
+            text-decoration: none;
+          }
+
+          .mobile-phone-link:hover {
+            background: #fbe7e8;
+            color: #111111;
+          }
+
+          .mobile-phone-link svg {
+            width: 19px;
+            height: 19px;
+            flex: 0 0 19px;
+          }
+
+          .mobile-app-nav-item-phone {
+            display: none;
+          }
+
+          @media (max-width: 767px) {
+            body {
+              padding-bottom: 94px;
+            }
+
+  .mobile-app-nav {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+
+    align-items: stretch;
+    justify-content: stretch;
+
+    padding: 7px 7px 9px;
+    border-radius: 28px;
+
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(17, 17, 17, 0.10);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow: 0 20px 55px rgba(17, 17, 17, 0.14);
+  }
+
+  /* Ocultamos el teléfono del header normal */
+  .mobile-phone-link {
+    display: none !important;
+  }
+
+  /* Traemos el teléfono a la barra móvil */
+  .mobile-app-nav-item-phone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 50px;
+    padding: 4px;
+
+    border: none;
+    border-radius: 16px;
+
+    background: transparent;
+    color: #198754;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 0.56rem;
+    font-weight: 750;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .mobile-app-nav-item-phone i {
+    display: block;
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.1;
+  }
+
+  .mobile-app-nav-item-phone span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-app-nav-item-phone:hover {
+    background: #eaf8ef;
+    color: #13733f;
+  }
+
+  .mobile-app-nav-item-phone:hover i {
+    color: #13733f;
+  }
+}
+
         }
       </style>
 
@@ -285,8 +413,44 @@ class SiteHeader extends HTMLElement {
             <a class="nav-link" href="${pageUrl('catalogo.html')}" data-page="catalogo">Catálogo</a>
             <a class="nav-link" href="${pageUrl('index.html', 'novias')}" data-section="novias">Novias</a>
             <a class="nav-link" href="${pageUrl('rastreo.html')}" data-page="rastreo">Rastrea tu pedido</a>
-            <a class="nav-link" href="${pageUrl('index.html', 'nosotros')}" data-section="nosotros">Quiénes somos</a>
-            <a class="header-cta" href="${pageUrl('index.html', 'contacto')}">Ordenar flores</a>
+            <a
+              class="nav-link"
+              href="${pageUrl('index.html', 'nosotros')}"
+              data-section="nosotros"
+            >
+              Quiénes somos
+            </a>
+
+            <a
+              class="mobile-phone-link"
+              href="tel:+5213312345678"
+              aria-label="Llamar a Floristería Juan H Magno"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M7.2 3.5l2.1 4.1-1.8 1.8c1.1 2.4 3 4.3 5.4 5.4l1.8-1.8 4.1 2.1c.5.3.8.8.7 1.4l-.5 3c-.1.7-.7 1.2-1.4 1.2C9.8 20.7 3.3 14.2 3.3 6.4c0-.7.5-1.3 1.2-1.4l3-.5c.6-.1 1.2.2 1.5.7z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <span>Llamar: 33 1234 5678</span>
+            </a>
+
+            <a
+              class="header-cta"
+              href="https://wa.me/5213312345678"
+              target="_blank"
+              rel="noopener"
+            >
+              Ordenar por WhatsApp
+            </a>
           </nav>
         </div>
       </header>
