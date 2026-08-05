@@ -657,7 +657,7 @@
             </div>
         </section>
 
-        <!-- OPINIONES DE GOOGLE -->
+        <!-- OPINIONES REALES DE GOOGLE — COPIA ESTÁTICA -->
         <section class="section-padding google-reviews-section" id="opiniones">
             <div class="container">
                 <div class="reviews-shell reveal">
@@ -679,43 +679,71 @@
                             </h2>
                         </div>
 
-                        <div class="reviews-score">
-                            <strong>4.9</strong>
+                        <div class="reviews-score" aria-label="Calificación de 5 estrellas en Google">
+                            <strong>5.0</strong>
                             <span>★★★★★</span>
-                            <small>Google</small>
+                            <small>11 opiniones</small>
                         </div>
                     </div>
 
                     <div class="reviews-grid">
-                        <article class="review-card">
-                            <span class="review-stars">★★★★★</span>
-                            <p>
-                                “Hermosos arreglos y excelente atención.”
+
+                        <!-- VICTORIA -->
+                        <article class="review-card google-review-card">
+                            <div class="review-author">
+                                <span class="review-author-placeholder">
+                                    V
+                                </span>
+
+                                <span class="review-author-information">
+                                    <strong>
+                                        Victoria Daniela Sánchez Razo 2-A
+                                    </strong>
+                                    <small>Hace 3 semanas</small>
+                                </span>
+                            </div>
+
+                            <span class="review-stars" aria-label="5 de 5 estrellas">
+                                ★★★★★
+                            </span>
+
+                            <p class="review-text">
+                                “Me encantó mi arreglo, está hermoso y, aparte de todo,
+                                muy diferente a lo convencional.”
                             </p>
-                            <strong>Cliente de Google</strong>
                         </article>
 
-                        <article class="review-card">
-                            <span class="review-stars">★★★★★</span>
-                            <p>
-                                “Entrega puntual y flores increíbles.”
+                        <!-- ALICIA -->
+                        <article class="review-card google-review-card">
+                            <div class="review-author">
+                                <span class="review-author-placeholder">
+                                    A
+                                </span>
+
+                                <span class="review-author-information">
+                                    <strong>
+                                        Alicia Guadalupe Lara Barrios
+                                    </strong>
+                                    <small>Hace 3 semanas</small>
+                                </span>
+                            </div>
+
+                            <span class="review-stars" aria-label="5 de 5 estrellas">
+                                ★★★★★
+                            </span>
+
+                            <p class="review-text">
+                                “Me encantaron las flores que recibí, súper cuidadas,
+                                muy fuera de lo común.”
                             </p>
-                            <strong>Cliente de Google</strong>
                         </article>
 
-                        <article class="review-card">
-                            <span class="review-stars">★★★★★</span>
-                            <p>
-                                “El diseño superó nuestras expectativas.”
-                            </p>
-                            <strong>Cliente de Google</strong>
-                        </article>
                     </div>
 
                     <a class="reviews-google-link"
-                        href="https://www.google.com/search?q=Florister%C3%ADa+Juan+H+Magno+Zapopan" target="_blank"
-                        rel="noopener">
-                        Ver opiniones en Google
+                        href="https://search.google.com/local/reviews?placeid=ChIJ84PL7SqvKIQRuMMxmVodsTw"
+                        target="_blank" rel="noopener noreferrer">
+                        Ver todas las opiniones en Google
                         <i class="bi bi-arrow-up-right"></i>
                     </a>
 
@@ -750,8 +778,8 @@
                             </span>
                         </p>
                         <div class="map-actions">
-                            <a class="btn-map-primary" id="googleMapsLink" target="_blank" rel="noopener"
-                                href="https://www.google.com/maps/search/?api=1&query=Florister%C3%ADa%20Juan%20H%20Magno%20Zapopan%20Jalisco">
+                            <a class="btn-map-primary" id="googleMapsLink" target="_blank" rel="noopener noreferrer"
+                                href="https://maps.app.goo.gl/Gtr79tHSSaSdUHWU6">
                                 <i class="bi bi-map"></i>
                                 Abrir Google Maps
                             </a>
@@ -1175,10 +1203,10 @@
             /*
              * Google Maps.
              */
-            setElementHref(
+            /*setElementHref(
                 "googleMapsLink",
                 googleMapsUrl
-            );
+            );*/
 
             /*
              * WhatsApp.

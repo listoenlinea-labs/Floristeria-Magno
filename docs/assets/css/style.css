@@ -15058,6 +15058,151 @@ body.page-index .reviews-google-link {
 
 @media (max-width: 767.98px) {
 
+    /* ==========================================================
+   OPINIONES MÓVILES — TARJETAS ANCHAS Y LEGIBLES
+========================================================== */
+
+    @media (max-width: 767.98px) {
+
+        /*
+     * Carrusel horizontal:
+     * una tarjeta completa y una parte de la siguiente.
+     */
+        body.page-index .reviews-grid {
+            display: flex !important;
+            grid-template-columns: none !important;
+
+            width: calc(100% + 13px);
+            gap: 10px !important;
+
+            margin-right: -13px;
+            padding: 0 13px 7px 0;
+
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+
+            scroll-snap-type: x mandatory;
+            scroll-padding-left: 0;
+
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body.page-index .reviews-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        /*
+     * Cada opinión ocupa casi todo el ancho.
+     * La siguiente queda parcialmente visible.
+     */
+        body.page-index .google-review-card {
+            flex: 0 0 88% !important;
+
+            width: 88% !important;
+            min-width: 0 !important;
+            height: 198px !important;
+
+            padding: 14px 13px !important;
+            border-radius: 18px !important;
+
+            display: flex !important;
+            flex-direction: column !important;
+
+            overflow: hidden !important;
+            scroll-snap-align: start;
+        }
+
+        /*
+     * Mostrar todas las opiniones.
+     * Esto anula las reglas anteriores que ocultaban
+     * desde la quinta tarjeta.
+     */
+        body.page-index .reviews-grid .review-card {
+            display: flex !important;
+        }
+
+        body.page-index .reviews-grid .review-card:nth-child(n + 5) {
+            display: flex !important;
+        }
+
+        /* Autor */
+        body.page-index .review-author {
+            display: flex !important;
+            align-items: center !important;
+
+            gap: 9px !important;
+            margin-bottom: 9px !important;
+        }
+
+        body.page-index .review-author-placeholder {
+            width: 34px !important;
+            height: 34px !important;
+            flex: 0 0 34px !important;
+
+            font-size: .72rem !important;
+        }
+
+        body.page-index .review-author-information {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        /*
+     * Nombre en máximo dos líneas.
+     * Ya no se corta inmediatamente con puntos suspensivos.
+     */
+        body.page-index .review-author-information strong {
+            display: -webkit-box !important;
+            overflow: hidden !important;
+
+            color: #27151b !important;
+            font-size: .73rem !important;
+            line-height: 1.15 !important;
+
+            white-space: normal !important;
+            text-overflow: clip !important;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        body.page-index .review-author-information small {
+            margin-top: 3px !important;
+
+            font-size: .58rem !important;
+            line-height: 1.1 !important;
+        }
+
+        /* Estrellas */
+        body.page-index .google-review-card .review-stars {
+            display: block !important;
+
+            margin-bottom: 7px !important;
+
+            font-size: .66rem !important;
+            letter-spacing: .04em !important;
+            white-space: nowrap !important;
+        }
+
+        /*
+     * Comentario más grande y hasta siete líneas.
+     */
+        body.page-index .google-review-card .review-text {
+            display: -webkit-box !important;
+            overflow: hidden !important;
+
+            margin: 0 !important;
+
+            color: #75686d !important;
+            font-size: .68rem !important;
+            line-height: 1.34 !important;
+
+            -webkit-line-clamp: 7 !important;
+            -webkit-box-orient: vertical !important;
+        }
+    }
+
     /* Centrar botón del Hero */
     body.page-index .home-actions {
         display: flex !important;
@@ -15656,7 +15801,7 @@ body.page-index .reviews-google-link {
     }
 
     /* En móvil mostramos dos; la tercera queda para escritorio */
-    body.page-index .review-card:nth-child(n + 3) {
+    body.page-index .review-card:nth-child(n + 5) {
         display: none !important;
     }
 
@@ -16325,4 +16470,93 @@ body.page-index .experience-mobile-subtitle {
     body.page-index #social .floral-carousel-wrap::after {
         width: clamp(55px, 7vw, 120px);
     }
+}
+
+/* ==========================================================
+   OPINIONES DE GOOGLE — AUTORES REALES HARDCODEADOS
+========================================================== */
+
+body.page-index .google-review-card {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+body.page-index .review-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 10px;
+}
+
+body.page-index .review-author-placeholder {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+    background:
+        linear-gradient(135deg,
+            #bd86a8,
+            #7a4cc7);
+
+    font-family: "Inter", sans-serif;
+    font-size: .9rem;
+    font-weight: 800;
+}
+
+body.page-index .review-author-information {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+body.page-index .review-author-information strong {
+    overflow: hidden;
+
+    color: #27151b;
+    font-size: .82rem;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+body.page-index .review-author-information small {
+    margin-top: 2px;
+
+    color: #8a7d81;
+    font-size: .66rem;
+}
+
+body.page-index .google-review-card .review-stars {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #dfa328;
+    font-size: .74rem;
+    letter-spacing: .03em;
+}
+
+body.page-index .google-review-card .review-text {
+    display: -webkit-box;
+    overflow: hidden;
+
+    margin: 0;
+
+    color: #75686d;
+    font-size: .78rem;
+    line-height: 1.5;
+
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
 }
