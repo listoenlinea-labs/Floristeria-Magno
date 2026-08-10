@@ -40,6 +40,8 @@
 
         box-shadow:
             0 18px 50px rgba(17, 17, 17, 0.15);
+
+        -webkit-tap-highlight-color: transparent;
     }
 
     .mobile-app-nav a,
@@ -57,9 +59,12 @@
 
         appearance: none;
         -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
 
-        background: transparent;
-        color: #707070;
+        background: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
 
         display: flex;
         flex-direction: column;
@@ -77,6 +82,9 @@
 
         overflow: hidden;
 
+        box-shadow: none;
+        transform: none;
+
         transition:
             background-color 0.25s ease,
             color 0.25s ease,
@@ -87,6 +95,8 @@
         display: block;
 
         margin: 0;
+
+        color: inherit !important;
 
         font-size: 1.12rem;
         line-height: 1;
@@ -100,6 +110,8 @@
 
         overflow: hidden;
 
+        color: inherit !important;
+
         font-size: inherit;
         line-height: 1.1;
 
@@ -107,40 +119,185 @@
         white-space: nowrap;
     }
 
-    .mobile-app-nav a:hover,
-    .mobile-app-nav button:hover {
-        background: #fff4f4;
-        color: #111111;
-        transform: translateY(-1px);
+    /* ======================================================
+       ESTADO NORMAL
+       Ningún botón no activo debe cambiar de color al tocarlo
+    ====================================================== */
+
+    .mobile-app-nav a:not(.active),
+    .mobile-app-nav button:not(.active),
+    .mobile-app-nav a:not(.active):link,
+    .mobile-app-nav a:not(.active):visited {
+        background: transparent !important;
+        background-image: none !important;
+        color: #707070 !important;
+
+        box-shadow: none !important;
+        outline: none !important;
+        transform: none !important;
     }
+
+    /* ======================================================
+       CLICK / TOUCH / FOCUS
+       Evita flashes, verdes o estados pegados en móvil
+    ====================================================== */
+
+    .mobile-app-nav a:not(.active):active,
+    .mobile-app-nav button:not(.active):active,
+    .mobile-app-nav a:not(.active):focus,
+    .mobile-app-nav button:not(.active):focus,
+    .mobile-app-nav a:not(.active):focus-visible,
+    .mobile-app-nav button:not(.active):focus-visible {
+        background: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        box-shadow: none !important;
+        outline: none !important;
+
+        transform: none !important;
+
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    .mobile-app-nav a:not(.active):active i,
+    .mobile-app-nav button:not(.active):active i,
+    .mobile-app-nav a:not(.active):focus i,
+    .mobile-app-nav button:not(.active):focus i,
+    .mobile-app-nav a:not(.active):focus-visible i,
+    .mobile-app-nav button:not(.active):focus-visible i,
+    .mobile-app-nav a:not(.active):active span,
+    .mobile-app-nav button:not(.active):active span,
+    .mobile-app-nav a:not(.active):focus span,
+    .mobile-app-nav button:not(.active):focus span,
+    .mobile-app-nav a:not(.active):focus-visible span,
+    .mobile-app-nav button:not(.active):focus-visible span {
+        color: #707070 !important;
+    }
+
+    /* ======================================================
+       BOTÓN ACTIVO
+       Solo la página actual debe verse rosa
+    ====================================================== */
 
     .mobile-app-nav a.active,
-    .mobile-app-nav button.active {
-        background: #fbe7e8;
-        color: #111111;
+    .mobile-app-nav button.active,
+    .mobile-app-nav a.active:link,
+    .mobile-app-nav a.active:visited,
+    .mobile-app-nav a.active:hover,
+    .mobile-app-nav button.active:hover,
+    .mobile-app-nav a.active:active,
+    .mobile-app-nav button.active:active,
+    .mobile-app-nav a.active:focus,
+    .mobile-app-nav button.active:focus,
+    .mobile-app-nav a.active:focus-visible,
+    .mobile-app-nav button.active:focus-visible {
+        background: #fbe7e8 !important;
+        background-image: none !important;
+
+        color: #111111 !important;
+
         font-weight: 800;
+
+        box-shadow: none !important;
+        outline: none !important;
+        transform: none !important;
     }
 
-    /* WhatsApp permanece dentro del mismo grid */
-    .mobile-app-nav .mobile-nav-whatsapp {
-        color: #198754;
+    .mobile-app-nav a.active i,
+    .mobile-app-nav button.active i,
+    .mobile-app-nav a.active span,
+    .mobile-app-nav button.active span {
+        color: #111111 !important;
     }
 
-    .mobile-app-nav .mobile-nav-whatsapp i {
-        color: #198754;
+    /* ======================================================
+       WHATSAPP
+       Mismo color que todos los demás botones
+    ====================================================== */
+
+    .mobile-app-nav .mobile-nav-whatsapp,
+    .mobile-app-nav .mobile-nav-whatsapp:link,
+    .mobile-app-nav .mobile-nav-whatsapp:visited {
+        background: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
     }
 
-    .mobile-app-nav .mobile-nav-whatsapp:hover {
-        background: #eaf8ef;
-        color: #13733f;
+    .mobile-app-nav .mobile-nav-whatsapp i,
+    .mobile-app-nav .mobile-nav-whatsapp span {
+        color: inherit !important;
     }
 
-    .mobile-app-nav .mobile-nav-whatsapp:hover i {
-        color: #13733f;
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):active,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus-visible {
+        background: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        box-shadow: none !important;
+        outline: none !important;
+        transform: none !important;
+    }
+
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover i,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):active i,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus i,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus-visible i {
+        color: #707070 !important;
     }
 }
 
-/* Teléfonos particularmente pequeños */
+
+/* ==========================================================
+   HOVER SOLO PARA COMPUTADORAS / MOUSE REAL
+
+   No se aplica en pantallas táctiles.
+========================================================== */
+
+@media (max-width: 767px) and (hover: hover) and (pointer: fine) {
+
+    .mobile-app-nav a:not(.active):hover,
+    .mobile-app-nav button:not(.active):hover {
+        background: #fff4f4 !important;
+        background-image: none !important;
+
+        color: #111111 !important;
+
+        transform: translateY(-1px) !important;
+    }
+
+    .mobile-app-nav a:not(.active):hover i,
+    .mobile-app-nav button:not(.active):hover i,
+    .mobile-app-nav a:not(.active):hover span,
+    .mobile-app-nav button:not(.active):hover span {
+        color: #111111 !important;
+    }
+
+    /*
+     * WhatsApp tampoco usa verde con mouse.
+     */
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover {
+        background: #fff4f4 !important;
+        color: #111111 !important;
+    }
+
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover i,
+    .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover span {
+        color: #111111 !important;
+    }
+}
+
+
+/* ==========================================================
+   TELÉFONOS PARTICULARMENTE PEQUEÑOS
+========================================================== */
+
 @media (max-width: 360px) {
 
     .mobile-app-nav {
@@ -150,14 +307,18 @@
 
         gap: 1px;
         padding: 6px;
+
         border-radius: 22px;
     }
 
     .mobile-app-nav a,
     .mobile-app-nav button {
         min-height: 49px;
+
         padding: 4px 0;
+
         border-radius: 15px;
+
         font-size: 0.52rem;
     }
 
@@ -166,14 +327,27 @@
     }
 }
 
+
 /* ==========================================================
-   CORRECCIÓN FINAL: 5 ELEMENTOS EN UNA SOLA FILA
+   CORRECCIÓN FINAL:
+   5 ELEMENTOS EN UNA SOLA FILA
 ========================================================== */
 
 @media (max-width: 767px) {
 
     body #mobile-nav-container .mobile-app-nav {
+        position: fixed !important;
+
+        left: 8px !important;
+        right: 8px !important;
+
+        top: auto !important;
+        bottom: max(10px, env(safe-area-inset-bottom)) !important;
+
+        z-index: 9999 !important;
+
         display: grid !important;
+
         grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
         grid-auto-flow: column !important;
         grid-auto-columns: minmax(0, 1fr) !important;
@@ -183,12 +357,12 @@
 
         gap: 2px !important;
 
-        left: 8px !important;
-        right: 8px !important;
         padding: 7px !important;
 
         width: auto !important;
         max-width: none !important;
+
+        margin: 0 !important;
 
         overflow: hidden !important;
     }
@@ -196,6 +370,7 @@
     body #mobile-nav-container .mobile-app-nav>a,
     body #mobile-nav-container .mobile-app-nav>button {
         width: 100% !important;
+
         min-width: 0 !important;
         max-width: none !important;
 
@@ -208,20 +383,27 @@
         display: flex !important;
         flex-direction: column !important;
         flex-wrap: nowrap !important;
+
         align-items: center !important;
         justify-content: center !important;
 
         gap: 3px !important;
 
         overflow: hidden !important;
+
+        -webkit-tap-highlight-color: transparent !important;
     }
 
     body #mobile-nav-container .mobile-app-nav>a i,
     body #mobile-nav-container .mobile-app-nav>button i {
         flex: 0 0 auto !important;
+
         margin: 0 !important;
+
         font-size: 1.08rem !important;
         line-height: 1 !important;
+
+        color: inherit !important;
     }
 
     body #mobile-nav-container .mobile-app-nav>a span,
@@ -235,11 +417,279 @@
         margin: 0 !important;
 
         overflow: hidden !important;
+
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
 
         font-size: 0.54rem !important;
         line-height: 1 !important;
         text-align: center !important;
+
+        color: inherit !important;
+    }
+
+    /* ======================================================
+       OVERRIDE FINAL
+       Evita que style.css o Bootstrap pinten los botones
+       al hacer click, focus o hover táctil.
+    ====================================================== */
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active),
+    body #mobile-nav-container .mobile-app-nav>button:not(.active),
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):link,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):visited,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):active,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):active,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):focus,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):focus,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):focus-visible,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):focus-visible {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        border-color: transparent !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        transform: none !important;
+
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active) i,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active) i,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active) span,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active) span {
+        color: #707070 !important;
+    }
+
+    /* Página actual */
+    body #mobile-nav-container .mobile-app-nav>a.active,
+    body #mobile-nav-container .mobile-app-nav>button.active,
+    body #mobile-nav-container .mobile-app-nav>a.active:hover,
+    body #mobile-nav-container .mobile-app-nav>button.active:hover,
+    body #mobile-nav-container .mobile-app-nav>a.active:active,
+    body #mobile-nav-container .mobile-app-nav>button.active:active,
+    body #mobile-nav-container .mobile-app-nav>a.active:focus,
+    body #mobile-nav-container .mobile-app-nav>button.active:focus,
+    body #mobile-nav-container .mobile-app-nav>a.active:focus-visible,
+    body #mobile-nav-container .mobile-app-nav>button.active:focus-visible {
+        background: #fbe7e8 !important;
+        background-color: #fbe7e8 !important;
+        background-image: none !important;
+
+        color: #111111 !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        transform: none !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a.active i,
+    body #mobile-nav-container .mobile-app-nav>button.active i,
+    body #mobile-nav-container .mobile-app-nav>a.active span,
+    body #mobile-nav-container .mobile-app-nav>button.active span {
+        color: #111111 !important;
+    }
+
+    /* WhatsApp jamás verde */
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active),
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):link,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):visited,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):hover,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):active,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):focus,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):focus-visible {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        transform: none !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active) i,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active) span {
+        color: #707070 !important;
+    }
+}
+
+
+/* ==========================================================
+   HOVER FINAL SOLO PARA MOUSE REAL
+========================================================== */
+
+@media (max-width: 767px) and (hover: hover) and (pointer: fine) {
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):hover,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):hover {
+        background: #fff4f4 !important;
+        background-color: #fff4f4 !important;
+
+        color: #111111 !important;
+
+        transform: translateY(-1px) !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):hover i,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):hover i,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):hover span,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):hover span {
+        color: #111111 !important;
+    }
+}
+
+/* ==========================================================
+   FEEDBACK TÁCTIL FINAL
+   Al mantener presionado:
+   rosa empolvado acorde a la identidad visual
+========================================================== */
+
+@media (max-width: 767px) {
+
+    html,
+    body,
+    #mobile-nav-container,
+    .mobile-app-nav,
+    .mobile-app-nav * {
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-touch-callout: none !important;
+    }
+
+    /* ======================================================
+       ESTADO NORMAL
+    ====================================================== */
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active),
+    body #mobile-nav-container .mobile-app-nav>button:not(.active) {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        transform: none !important;
+        filter: none !important;
+    }
+
+
+    /* ======================================================
+       FOCUS
+       No cambia de color solo por recibir focus
+    ====================================================== */
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):focus,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):focus,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):focus-visible,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):focus-visible {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+
+        color: #707070 !important;
+
+        border-color: transparent !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        transform: none !important;
+        filter: none !important;
+    }
+
+
+    /* ======================================================
+       PRESIONADO
+       Este reemplaza el antiguo verde
+    ====================================================== */
+
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):active,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):active,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):active {
+
+        background: #E7B8C0 !important;
+        background-color: #E7B8C0 !important;
+        background-image: none !important;
+
+        color: #111111 !important;
+
+        border-color: transparent !important;
+
+        outline: none !important;
+
+        box-shadow:
+            inset 0 0 0 1px rgba(17, 17, 17, 0.04),
+            0 4px 12px rgba(39, 21, 27, 0.08) !important;
+
+        transform: scale(0.96) !important;
+
+        filter: none !important;
+
+        transition:
+            background-color 0.08s ease,
+            color 0.08s ease,
+            transform 0.08s ease !important;
+    }
+
+
+    /* Icono y texto mientras se presiona */
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):active i,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):active i,
+    body #mobile-nav-container .mobile-app-nav>a:not(.active):active span,
+    body #mobile-nav-container .mobile-app-nav>button:not(.active):active span,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):active i,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active):active span {
+
+        color: #111111 !important;
+    }
+
+
+    /* ======================================================
+       PÁGINA ACTUAL
+       Permanece rosa claro
+    ====================================================== */
+
+    body #mobile-nav-container .mobile-app-nav>a.active,
+    body #mobile-nav-container .mobile-app-nav>button.active,
+    body #mobile-nav-container .mobile-app-nav>a.active:hover,
+    body #mobile-nav-container .mobile-app-nav>button.active:hover,
+    body #mobile-nav-container .mobile-app-nav>a.active:active,
+    body #mobile-nav-container .mobile-app-nav>button.active:active,
+    body #mobile-nav-container .mobile-app-nav>a.active:focus,
+    body #mobile-nav-container .mobile-app-nav>button.active:focus,
+    body #mobile-nav-container .mobile-app-nav>a.active:focus-visible,
+    body #mobile-nav-container .mobile-app-nav>button.active:focus-visible {
+
+        background: #FBE7E8 !important;
+        background-color: #FBE7E8 !important;
+        background-image: none !important;
+
+        color: #111111 !important;
+
+        outline: none !important;
+        box-shadow: none !important;
+
+        filter: none !important;
+        transform: none !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a.active i,
+    body #mobile-nav-container .mobile-app-nav>button.active i,
+    body #mobile-nav-container .mobile-app-nav>a.active span,
+    body #mobile-nav-container .mobile-app-nav>button.active span {
+
+        color: #111111 !important;
     }
 }
