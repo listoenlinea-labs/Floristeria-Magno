@@ -2548,11 +2548,6 @@ body.page-index .brand-logo {
     }
 }
 
-html,
-body.page-index {
-    overscroll-behavior-y: none;
-}
-
 body.page-index {
     overflow-anchor: none;
 }
@@ -5638,11 +5633,6 @@ body.page-catalogo .brand-logo {
     }
 }
 
-html,
-body.page-catalogo {
-    overscroll-behavior-y: none;
-}
-
 body.page-catalogo {
     overflow-anchor: none;
 }
@@ -6361,10 +6351,6 @@ body.page-ideas .brand-logo {
     }
 }
 
-html,
-body.page-ideas {
-    overscroll-behavior-y: none;
-}
 
 body.page-ideas {
     overflow-anchor: none;
@@ -7305,10 +7291,6 @@ body.page-carrito .brand-logo {
     }
 }
 
-html,
-body.page-carrito {
-    overscroll-behavior-y: none;
-}
 
 body.page-carrito {
     overflow-anchor: none;
@@ -8828,10 +8810,6 @@ body.page-rastreo .brand-logo {
     }
 }
 
-html,
-body.page-rastreo {
-    overscroll-behavior-y: none;
-}
 
 body.page-rastreo {
     overflow-anchor: none;
