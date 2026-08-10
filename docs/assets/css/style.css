@@ -16400,29 +16400,23 @@ body.page-index .google-review-card .review-text {
 }
 
 /* ==========================================================
-   INDEX MÓVIL — HERO SIN ANIMACIÓN INICIAL
-   En celular el contenido principal se muestra inmediatamente.
-   La animación editorial de apertura se conserva en escritorio.
+   INDEX MÓVIL — CONTENIDO INMEDIATO + PÉTALOS ANIMADOS
+   En celular se omite únicamente la flor de apertura.
+   El contenido aparece desde el primer render, mientras el fondo
+   y la lluvia de pétalos continúan animándose normalmente.
 ========================================================== */
 @media (max-width: 767.98px) {
-    /* Ocultar elementos decorativos de la animación de apertura. */
-    body.page-index .opening-flower,
-    body.page-index .floating-petal,
-    body.page-index .ink-layer,
-    body.page-index .branch,
-    body.page-index .mouse-light {
+    /* La flor de apertura no aporta valor en una pantalla pequeña. */
+    body.page-index .opening-flower {
         display: none !important;
         animation: none !important;
     }
 
-    /* Dejar el fondo del hero en su estado final, sin animar. */
-    body.page-index .hero.home-hero::before {
-        animation: none !important;
-        opacity: .52 !important;
-        transform: scale(1) !important;
-    }
-
-    /* Título, descripción y botón visibles desde el primer render. */
+    /*
+       El contenido no espera los delays editoriales de escritorio.
+       No tocamos .floating-petal ni .hero::before para conservar
+       la lluvia de pétalos y la animación del fondo.
+    */
     body.page-index .home-badge,
     body.page-index .home-title,
     body.page-index .home-description,
@@ -16434,11 +16428,54 @@ body.page-index .google-review-card .review-text {
         transform: none !important;
     }
 
-    /* El CTA no espera los 3.75 s de la animación de escritorio. */
     body.page-index .hero-actions.home-actions {
         animation: none !important;
         animation-delay: 0s !important;
         opacity: 1 !important;
         transform: none !important;
+    }
+}
+
+/* ==========================================================
+   CARRITO MÓVIL — INTRO CON MÁS AIRE Y MEJOR JERARQUÍA
+========================================================== */
+@media (max-width: 767.98px) {
+    /* El header compartido es fijo: reservamos espacio real debajo. */
+    body.page-carrito .cart-page {
+        padding: 112px 0 96px !important;
+    }
+
+    body.page-carrito .cart-page > .container > .mb-5:first-child {
+        max-width: 680px;
+        margin: 0 auto 38px !important;
+        padding: 18px 16px 0;
+        text-align: center;
+    }
+
+    body.page-carrito .cart-page > .container > .mb-5:first-child .eyebrow {
+        display: inline-block;
+        margin-bottom: 2px;
+        font-size: .72rem;
+        letter-spacing: .16em;
+    }
+
+    body.page-carrito .page-title {
+        max-width: 9ch;
+        margin: 12px auto 16px !important;
+        font-size: clamp(2.75rem, 12vw, 3.7rem) !important;
+        line-height: .94 !important;
+        letter-spacing: -.05em;
+        text-align: center;
+        text-wrap: balance;
+    }
+
+    body.page-carrito .page-copy {
+        max-width: 32rem;
+        margin: 0 auto !important;
+        padding: 0 4px;
+        font-size: .96rem;
+        line-height: 1.65;
+        text-align: center;
+        text-wrap: pretty;
     }
 }
