@@ -16398,3 +16398,47 @@ body.page-index .google-review-card .review-text {
     -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
 }
+
+/* ==========================================================
+   INDEX MÓVIL — HERO SIN ANIMACIÓN INICIAL
+   En celular el contenido principal se muestra inmediatamente.
+   La animación editorial de apertura se conserva en escritorio.
+========================================================== */
+@media (max-width: 767.98px) {
+    /* Ocultar elementos decorativos de la animación de apertura. */
+    body.page-index .opening-flower,
+    body.page-index .floating-petal,
+    body.page-index .ink-layer,
+    body.page-index .branch,
+    body.page-index .mouse-light {
+        display: none !important;
+        animation: none !important;
+    }
+
+    /* Dejar el fondo del hero en su estado final, sin animar. */
+    body.page-index .hero.home-hero::before {
+        animation: none !important;
+        opacity: .52 !important;
+        transform: scale(1) !important;
+    }
+
+    /* Título, descripción y botón visibles desde el primer render. */
+    body.page-index .home-badge,
+    body.page-index .home-title,
+    body.page-index .home-description,
+    body.page-index .home-actions,
+    body.page-index .home-hero-visual {
+        animation: none !important;
+        animation-delay: 0s !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* El CTA no espera los 3.75 s de la animación de escritorio. */
+    body.page-index .hero-actions.home-actions {
+        animation: none !important;
+        animation-delay: 0s !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
