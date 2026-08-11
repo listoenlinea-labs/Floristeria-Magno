@@ -226,9 +226,13 @@
         color: #707070 !important;
     }
 
-    .mobile-app-nav .mobile-nav-whatsapp i,
+    /* WhatsApp: solamente el icono conserva su verde oficial */
+    .mobile-app-nav .mobile-nav-whatsapp i {
+        color: #25D366 !important;
+    }
+
     .mobile-app-nav .mobile-nav-whatsapp span {
-        color: inherit !important;
+        color: #707070 !important;
     }
 
     .mobile-app-nav .mobile-nav-whatsapp:not(.active):hover,
@@ -249,7 +253,7 @@
     .mobile-app-nav .mobile-nav-whatsapp:not(.active):active i,
     .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus i,
     .mobile-app-nav .mobile-nav-whatsapp:not(.active):focus-visible i {
-        color: #707070 !important;
+        color: #25D366 !important;
     }
 }
 
@@ -517,7 +521,10 @@
         transform: none !important;
     }
 
-    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active) i,
+    body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active) i {
+        color: #25D366 !important;
+    }
+
     body #mobile-nav-container .mobile-app-nav>.mobile-nav-whatsapp:not(.active) span {
         color: #707070 !important;
     }
@@ -691,5 +698,43 @@
     body #mobile-nav-container .mobile-app-nav>button.active span {
 
         color: #111111 !important;
+    }
+}
+
+/* ==========================================================
+   WHATSAPP — SOLO ICONO VERDE
+   OVERRIDE DE MÁXIMA ESPECIFICIDAD
+========================================================== */
+
+@media (max-width: 767px) {
+
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active)>i.bi.bi-whatsapp {
+        color: #25D366 !important;
+        -webkit-text-fill-color: #25D366 !important;
+        opacity: 1 !important;
+        filter: none !important;
+    }
+
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active)>span {
+        color: #707070 !important;
+        -webkit-text-fill-color: #707070 !important;
+    }
+
+
+    /* También verde durante hover/focus */
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active):hover>i.bi.bi-whatsapp,
+
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active):focus>i.bi.bi-whatsapp,
+
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active):focus-visible>i.bi.bi-whatsapp {
+        color: #25D366 !important;
+        -webkit-text-fill-color: #25D366 !important;
+    }
+
+
+    /* También verde mientras mantienes presionado */
+    body #mobile-nav-container .mobile-app-nav>a.mobile-nav-whatsapp:not(.active):active>i.bi.bi-whatsapp {
+        color: #25D366 !important;
+        -webkit-text-fill-color: #25D366 !important;
     }
 }
