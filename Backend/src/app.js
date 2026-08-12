@@ -15,6 +15,9 @@ const detallesPedidoRoutes = require(
 const galeriaRoutes = require('./routes/galeria.routes');
 const uploadsRoutes = require('./routes/uploads.routes');
 const mercadoPagoRoutes = require('./routes/mercadopago.routes');
+const whatsappLeadsRoutes = require(
+    './routes/whatsapp-leads.routes'
+);
 const configuracionRoutes = require('./routes/configuracion.routes');
 const rastreoRoutes = require('./routes/rastreo.routes');
 const rastreoUbicacionRoutes = require('./routes/rastreo-ubicacion.routes');
@@ -226,6 +229,15 @@ app.use(
  * Checkout Pro de Mercado Pago.
  */
 app.use('/api/mercadopago', mercadoPagoRoutes);
+
+/*
+ * Leads generados cuando un visitante
+ * sale de la web hacia WhatsApp.
+ */
+app.use(
+    '/api/floristeria-magno/whatsapp',
+    whatsappLeadsRoutes
+);
 
 /*
  * Configuración global del sitio.

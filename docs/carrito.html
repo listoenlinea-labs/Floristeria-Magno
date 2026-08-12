@@ -175,8 +175,7 @@
 
             <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
 
-            <a class="whatsapp-confirm" id="whatsappConfirm" href="https://wa.me/5210000000000" target="_blank"
-              rel="noopener">
+            <a class="whatsapp-confirm" id="whatsappConfirm" href="#">
               O confirmar pedido por WhatsApp
             </a>
           </aside>
@@ -239,29 +238,23 @@
       return Object.values(readCart()).filter(item => Number(item.qty || 0) > 0);
     }
 
-    function updateWhatsapp(items, subtotal, delivery, total) {
-      const detail = items.length
-        ? items.map(item => `- ${item.name} x${item.qty}: ${money(Number(item.price || 0) * Number(item.qty || 0))}`).join('\n')
-        : 'Sin productos todavía';
+    function updateWhatsapp() {
+      /*
+       * El enlace ya no apunta directamente
+       * a wa.me.
+       *
+       * mobile-nav.js se encargará primero
+       * de registrar el lead.
+       */
+      whatsappConfirm.href = '#';
 
-      const receiver = receiverName.value.trim() || 'Pendiente';
-      const address = deliveryAddress.value.trim() || 'Pendiente';
-      const date = deliveryDate.value || 'Pendiente';
-      const slot = deliverySlot.value || 'Pendiente';
+      whatsappConfirm.removeAttribute(
+        'target'
+      );
 
-      const message =
-        `Hola, quiero confirmar mi pedido floral.\n\n` +
-        `${detail}\n\n` +
-        `Subtotal: ${money(subtotal)}\n` +
-        `Entrega estimada: ${money(delivery)}\n` +
-        `Total: ${money(total)}\n\n` +
-        `Datos de entrega:\n` +
-        `Recibe: ${receiver}\n` +
-        `Dirección: ${address}\n` +
-        `Fecha: ${date}\n` +
-        `Horario: ${slot}`;
-
-      whatsappConfirm.href = `https://wa.me/5210000000000?text=${encodeURIComponent(message)}`;
+      whatsappConfirm.removeAttribute(
+        'rel'
+      );
     }
 
     function renderCart() {
@@ -376,6 +369,68 @@
         renderCart
       );
     });
+
+    whatsappConfirm.addEventListener(
+      'click',
+      async event => {
+
+        event.preventDefault();
+
+
+        if (
+          typeof window.openTrackedWhatsapp !==
+          'function'
+        ) {
+          setCheckoutMessage(
+            'El sistema de WhatsApp todavía no está disponible. Intenta nuevamente.',
+            'error'
+          );
+
+          return;
+        }
+
+
+        whatsappConfirm.style.pointerEvents =
+          'none';
+
+        whatsappConfirm.style.opacity =
+          '0.65';
+
+
+        setCheckoutMessage(
+          'Preparando tu conversación por WhatsApp...',
+          'info'
+        );
+
+
+        try {
+
+          await window
+            .openTrackedWhatsapp({
+              source:
+                'carrito-confirmar'
+            });
+
+        } catch (error) {
+
+          console.error(
+            'Error iniciando WhatsApp:',
+            error
+          );
+
+          whatsappConfirm.style.pointerEvents =
+            '';
+
+          whatsappConfirm.style.opacity =
+            '';
+
+          setCheckoutMessage(
+            'No fue posible iniciar WhatsApp.',
+            'error'
+          );
+        }
+      }
+    );
 
     function setCheckoutMessage(message, type = 'error') {
       mercadoPagoMessage.textContent = message;

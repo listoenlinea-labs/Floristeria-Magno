@@ -6,6 +6,12 @@ const HistorialPedido = require('./HistorialPedido');
 const Galeria = require('./Galeria');
 const Configuracion = require('./Configuracion');
 const RastreoUbicacion = require('./RastreoUbicacion');
+
+const WhatsappLead = require('./WhatsappLead');
+const WhatsappLeadItem = require('./WhatsappLeadItem');
+const WhatsappLeadEvento = require('./WhatsappLeadEvento');
+
+
 /*
  * clientes 1 ─── N pedidos
  */
@@ -18,6 +24,7 @@ Pedido.belongsTo(Cliente, {
     foreignKey: 'clienteId',
     as: 'cliente'
 });
+
 
 /*
  * pedidos 1 ─── N detalle_pedido
@@ -32,6 +39,7 @@ DetallePedido.belongsTo(Pedido, {
     as: 'pedido'
 });
 
+
 /*
  * productos 1 ─── N detalle_pedido
  */
@@ -44,6 +52,7 @@ DetallePedido.belongsTo(Producto, {
     foreignKey: 'productoId',
     as: 'producto'
 });
+
 
 /*
  * pedidos 1 ─── N historial_pedido
@@ -58,6 +67,7 @@ HistorialPedido.belongsTo(Pedido, {
     as: 'pedido'
 });
 
+
 Pedido.hasMany(RastreoUbicacion, {
     foreignKey: 'pedidoId',
     as: 'ubicaciones'
@@ -68,6 +78,63 @@ RastreoUbicacion.belongsTo(Pedido, {
     as: 'pedido'
 });
 
+
+/*
+ * whatsapp_leads 1 ─── N whatsapp_lead_items
+ */
+WhatsappLead.hasMany(WhatsappLeadItem, {
+    foreignKey: 'leadId',
+    as: 'items'
+});
+
+WhatsappLeadItem.belongsTo(WhatsappLead, {
+    foreignKey: 'leadId',
+    as: 'lead'
+});
+
+
+/*
+ * productos 1 ─── N whatsapp_lead_items
+ */
+Producto.hasMany(WhatsappLeadItem, {
+    foreignKey: 'productoId',
+    as: 'whatsappLeadItems'
+});
+
+WhatsappLeadItem.belongsTo(Producto, {
+    foreignKey: 'productoId',
+    as: 'producto'
+});
+
+
+/*
+ * whatsapp_leads 1 ─── N eventos
+ */
+WhatsappLead.hasMany(WhatsappLeadEvento, {
+    foreignKey: 'leadId',
+    as: 'eventos'
+});
+
+WhatsappLeadEvento.belongsTo(WhatsappLead, {
+    foreignKey: 'leadId',
+    as: 'lead'
+});
+
+
+/*
+ * whatsapp_leads 1 ─── 0/1 pedido
+ */
+WhatsappLead.hasOne(Pedido, {
+    foreignKey: 'whatsappLeadId',
+    as: 'pedido'
+});
+
+Pedido.belongsTo(WhatsappLead, {
+    foreignKey: 'whatsappLeadId',
+    as: 'whatsappLead'
+});
+
+
 module.exports = {
     Cliente,
     Producto,
@@ -76,5 +143,9 @@ module.exports = {
     HistorialPedido,
     Galeria,
     Configuracion,
-    RastreoUbicacion
+    RastreoUbicacion,
+
+    WhatsappLead,
+    WhatsappLeadItem,
+    WhatsappLeadEvento
 };

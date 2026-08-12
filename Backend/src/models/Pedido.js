@@ -65,6 +65,23 @@ const Pedido = sequelize.define(
             field: 'tipo_pedido'
         },
 
+        origen: {
+            type: DataTypes.STRING(30),
+            allowNull: true
+        },
+
+        canalCierre: {
+            type: DataTypes.STRING(30),
+            allowNull: true,
+            field: 'canal_cierre'
+        },
+
+        whatsappLeadId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            field: 'whatsapp_lead_id'
+        },
+
         fechaEntrega: {
             type: DataTypes.DATEONLY,
             allowNull: true,

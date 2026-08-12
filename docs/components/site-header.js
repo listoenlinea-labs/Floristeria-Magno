@@ -445,9 +445,8 @@ class SiteHeader extends HTMLElement {
 
             <a
               class="header-cta"
-              href="https://wa.me/5213312345678"
-              target="_blank"
-              rel="noopener"
+              href="#"
+              id="headerWhatsappButton"
             >
               Ordenar por WhatsApp
             </a>
@@ -464,6 +463,8 @@ class SiteHeader extends HTMLElement {
     const header = root.getElementById('siteHeader');
     const menu = root.getElementById('siteHeaderMenu');
     const toggle = root.querySelector('.menu-toggle');
+    const whatsappButton =
+      root.getElementById('headerWhatsappButton');
 
     const closeMenu = () => {
       menu.classList.remove('open');
@@ -478,6 +479,32 @@ class SiteHeader extends HTMLElement {
     };
 
     toggle.addEventListener('click', toggleMenu);
+
+    if (whatsappButton) {
+      whatsappButton.addEventListener(
+        'click',
+        async (event) => {
+          event.preventDefault();
+
+          closeMenu();
+
+          if (
+            typeof window.openTrackedWhatsapp !==
+            'function'
+          ) {
+            console.error(
+              'openTrackedWhatsapp todavía no está disponible.'
+            );
+
+            return;
+          }
+
+          await window.openTrackedWhatsapp({
+            source: 'header-whatsapp'
+          });
+        }
+      );
+    }
 
     root.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', closeMenu);
