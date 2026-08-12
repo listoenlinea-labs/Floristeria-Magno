@@ -101,7 +101,27 @@ app.use(
     })
 );
 
-app.use(express.json({ limit: '1mb' }));
+app.use(
+    express.json({
+        limit: '1mb',
+
+        verify: (
+            req,
+            res,
+            buffer
+        ) => {
+            /*
+             * Guardamos los bytes originales
+             * necesarios para validar
+             * X-Hub-Signature-256.
+             */
+            req.rawBody =
+                Buffer.from(
+                    buffer
+                );
+        }
+    })
+);
 
 app.use(
     express.urlencoded({

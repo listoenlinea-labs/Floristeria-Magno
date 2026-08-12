@@ -9,7 +9,8 @@ const {
     Producto,
     Pedido,
     DetallePedido,
-    HistorialPedido
+    HistorialPedido,
+    WhatsappLead
 } = require('../models');
 
 const pedidoAttributes = [
@@ -23,6 +24,9 @@ const pedidoAttributes = [
     'total',
     'estado',
     'tipoPedido',
+    'origen',
+    'canalCierre',
+    'whatsappLeadId',
     'fechaEntrega',
     'ventanaEntrega',
     'mensajeTarjeta',
@@ -89,6 +93,27 @@ const pedidoIncludes = [
             ['creadoEn', 'ASC'],
             ['id', 'ASC']
         ]
+    },
+    {
+        model: WhatsappLead,
+        as: 'whatsappLead',
+
+        attributes: [
+            'id',
+            'codigo',
+            'origen',
+            'canal',
+            'estado',
+            'telefonoCliente',
+            'carritoTotal',
+            'paginaOrigen',
+            'fuenteClick',
+            'creadoEn',
+            'contactadoEn',
+            'convertidoEn'
+        ],
+
+        required: false
     }
 ];
 
