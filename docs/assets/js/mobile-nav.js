@@ -152,9 +152,11 @@ async function openTrackedWhatsapp(
     }
 
     whatsappRequestRunning = true;
-    const whatsappTab =
-        options.whatsappTab || null;
 
+    /*
+     * Detectamos si realmente estamos
+     * en un dispositivo móvil.
+     */
     const isMobile =
         navigator.userAgentData?.mobile === true ||
         /Android|iPhone|iPad|iPod/i.test(
@@ -162,12 +164,14 @@ async function openTrackedWhatsapp(
         );
 
     /*
-     * En computadora abrimos la pestaña AHORA,
-     * mientras seguimos dentro del click original.
+     * En desktop recibiremos la pestaña
+     * que se abrió directamente desde el click.
      *
-     * Así Chrome no la considera popup bloqueado.
+     * En móvil no necesitamos pestaña nueva:
+     * abriremos WhatsApp App.
      */
-
+    const whatsappTab =
+        options.whatsappTab || null;
 
     try {
         const response =
@@ -217,46 +221,62 @@ async function openTrackedWhatsapp(
             );
         }
 
-        /*
-         * CELULAR:
-         * abre WhatsApp normalmente.
-         */
         console.log(
             '✅ Lead registrado:',
             result.leadCode
         );
 
         console.log(
-            '✅ URL WhatsApp Web:',
-            result.whatsappWebUrl
+            '📱 Es móvil:',
+            isMobile
         );
 
-        console.log(
-            '✅ Pestaña disponible:',
-            Boolean(whatsappTab)
-        );
+        /*
+         * ==================================================
+         * CELULAR
+         * ==================================================
+         *
+         * Abrimos WhatsApp App.
+         *
+         * El lead YA fue registrado antes,
+         * por lo tanto no perdemos tracking.
+         */
+        if (isMobile) {
+            window.location.href =
+                result.whatsappMobileUrl;
 
+            return;
+        }
 
+        /*
+         * ==================================================
+         * DESKTOP
+         * ==================================================
+         *
+         * Usamos la pestaña que abrimos
+         * directamente desde el click.
+         */
         if (!whatsappTab) {
             throw new Error(
-                'No existe la pestaña donde abrir WhatsApp.'
+                'No existe la pestaña donde abrir WhatsApp Web.'
             );
         }
 
-
-        /*
-         * Siempre utilizamos la pestaña
-         * que se abrió directamente desde el click.
-         */
         whatsappTab.location.href =
             result.whatsappWebUrl;
 
     } catch (error) {
         console.error(
-            'Error registrando contacto de WhatsApp:',
+            '❌ Error registrando contacto de WhatsApp:',
             error
         );
 
+        /*
+         * Solo cerramos la pestaña
+         * si realmente existe.
+         *
+         * En móvil será null.
+         */
         if (
             whatsappTab &&
             !whatsappTab.closed
@@ -272,7 +292,6 @@ async function openTrackedWhatsapp(
         whatsappRequestRunning = false;
     }
 }
-
 
 /*
  * Permitimos que otras páginas,
@@ -407,18 +426,47 @@ function addWhatsappMobileNavItem() {
 
             event.preventDefault();
 
+            const isMobile =
+                navigator.userAgentData?.mobile === true ||
+                /Android|iPhone|iPad|iPod/i.test(
+                    navigator.userAgent
+                );
+
             /*
-             * IMPORTANTE:
-             * Abrimos la pestaña AQUÍ MISMO,
-             * directamente desde el click del usuario.
+             * ==================================================
+             * CELULAR
+             * ==================================================
              *
-             * Esto evita que Chrome la considere
-             * una ventana emergente bloqueable.
+             * NO abrimos about:blank.
+             *
+             * Después del registro del lead
+             * iremos directamente a WhatsApp App.
              */
-            const whatsappTab = window.open(
-                'about:blank',
-                '_blank'
-            );
+            if (isMobile) {
+
+                await openTrackedWhatsapp({
+                    source:
+                        'mobile-nav'
+                });
+
+                return;
+            }
+
+
+            /*
+             * ==================================================
+             * DESKTOP
+             * ==================================================
+             *
+             * Abrimos una pestaña inmediatamente
+             * desde el click para que Chrome
+             * no la bloquee.
+             */
+            const whatsappTab =
+                window.open(
+                    'about:blank',
+                    '_blank'
+                );
 
             if (!whatsappTab) {
                 alert(
@@ -430,6 +478,9 @@ function addWhatsappMobileNavItem() {
 
 
             try {
+                whatsappTab.opener =
+                    null;
+
                 whatsappTab.document.title =
                     'Preparando WhatsApp...';
 
@@ -448,7 +499,7 @@ function addWhatsappMobileNavItem() {
                 >
                     <div>
                         <h2>
-                            Preparando WhatsApp...
+                            Preparando WhatsApp Web...
                         </h2>
 
                         <p>
@@ -457,6 +508,7 @@ function addWhatsappMobileNavItem() {
                     </div>
                 </main>
             `;
+
             } catch (error) {
                 console.warn(
                     'No fue posible preparar la pestaña:',
@@ -466,7 +518,9 @@ function addWhatsappMobileNavItem() {
 
 
             await openTrackedWhatsapp({
-                source: 'mobile-nav',
+                source:
+                    'mobile-nav',
+
                 whatsappTab
             });
         }
