@@ -466,24 +466,64 @@
 
                     <div class="row g-4">
                         <div class="col-lg-5">
-                            <label>Imagen del producto</label>
 
-                            <div class="image-uploader" onclick="document.getElementById('productImageFile').click()">
-                                <div id="productImagePreview">
-                                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                                    <h5 class="mt-3 mb-1">Cargar imagen</h5>
-                                    <p class="small-muted mb-0">Selecciona una foto desde la computadora o celular.</p>
+                            <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                                <label class="mb-0">
+                                    Fotografías del producto
+                                </label>
+
+                                <span id="productImagesCounter" class="small-muted">
+                                    0 / 10
+                                </span>
+                            </div>
+
+                            <div class="image-uploader product-multi-uploader"
+                                onclick="document.getElementById('productImageFile').click()">
+                                <div>
+                                    <i class="bi bi-images upload-icon"></i>
+
+                                    <h5 class="mt-3 mb-1">
+                                        Agregar fotografías
+                                    </h5>
+
+                                    <p class="small-muted mb-0">
+                                        Puedes seleccionar varias fotos del mismo arreglo.
+                                    </p>
+
+                                    <small class="small-muted">
+                                        Máximo 10 imágenes · 8 MB por fotografía
+                                    </small>
                                 </div>
                             </div>
 
                             <input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif"
-                                class="d-none" onchange="handleImageFile(event, 'product')">
+                                class="d-none" multiple onchange="handleProductImageFiles(event)">
+
+                            <div id="productImagesPreview" class="product-images-admin-grid mt-3"></div>
 
                             <div class="mt-3">
-                                <label>O pegar URL de Google Drive</label>
-                                <input id="productImageUrl" class="form-control"
-                                    placeholder="Link de Drive o URL de imagen" oninput="previewImageUrl('product')">
+                                <label>
+                                    O agregar una imagen mediante URL
+                                </label>
+
+                                <div class="input-group">
+                                    <input id="productImageUrl" class="form-control"
+                                        placeholder="Link de Drive o URL de imagen">
+
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="addProductImageUrl()">
+                                        <i class="bi bi-plus-lg"></i>
+                                        Agregar
+                                    </button>
+                                </div>
                             </div>
+
+                            <p class="small-muted mt-2 mb-0">
+                                La fotografía marcada como
+                                <strong>Portada</strong>
+                                será la que aparecerá primero en el catálogo.
+                            </p>
+
                         </div>
 
                         <div class="col-lg-7">
@@ -873,6 +913,7 @@
         const MEXICO_LOCALE =
             'es-MX';
         let products = [];
+        let selectedProductImages = [];
         let sections = [];
         let gallery = [];
         let orders = [];
@@ -1650,6 +1691,17 @@
                             Number(product.stock || 0),
                         imageUrl:
                             product.imagenUrl || '',
+                        images:
+                            Array.isArray(product.imagenes) &&
+                                product.imagenes.length
+                                ? product.imagenes
+                                    .map(image => image.imagenUrl)
+                                    .filter(Boolean)
+                                : (
+                                    product.imagenUrl
+                                        ? [product.imagenUrl]
+                                        : []
+                                ),
                         featured:
                             product.destacado
                                 ? 'SI'
@@ -4529,146 +4581,402 @@
         }
 
         function editProduct(id) {
-            const p = products.find(item => item.id === id);
-            if (!p) return;
-
-            document.getElementById("productModalTitle").textContent = "Editar producto";
-            document.getElementById("productId").value = p.id || "";
-            document.getElementById("productName").value = p.name || "";
-            document.getElementById("productPrice").value = p.price || "";
-            document.getElementById("productStock").value = p.stock || "";
-            document.getElementById("productCategory").value = p.category || "Ramos";
-            document.getElementById("productTag").value = p.tag || "";
-            document.getElementById("productDescription").value = p.description || "";
-            document.getElementById("productImageUrl").value = p.imageUrl || "";
-            document.getElementById("productActive").value = p.active || "SI";
-            document.getElementById("productFeatured").value = p.featured || "NO";
-            document.getElementById("productSortOrder").value = p.sortOrder || "";
-
-            setImagePreview("product", p.imageUrl);
-            productModal.show();
-        }
-
-        function clearProductForm() {
-            document.getElementById("productId").value = "";
-            document.getElementById("productName").value = "";
-            document.getElementById("productPrice").value = "";
-            document.getElementById("productStock").value = "";
-            document.getElementById("productCategory").value = "Ramos";
-            document.getElementById("productTag").value = "";
-            document.getElementById("productDescription").value = "";
-            document.getElementById("productImageUrl").value = "";
-            document.getElementById("productActive").value = "SI";
-            document.getElementById("productFeatured").value = "NO";
-            document.getElementById("productSortOrder").value = "";
-            document.getElementById("productImageFile").value = "";
-            resetImagePreview("product", "Selecciona una foto desde la computadora o celular.");
-        }
-
-        async function saveProduct() {
-            const button = document.querySelector(
-                '#productModal .modal-footer .btn-gold'
-            );
-
-            const id = document
-                .getElementById('productId')
-                .value;
-
-            const name = document
-                .getElementById('productName')
-                .value
-                .trim();
-
-            const description = document
-                .getElementById('productDescription')
-                .value
-                .trim();
-
-            const category = document
-                .getElementById('productCategory')
-                .value;
-
-            const tag = document
-                .getElementById('productTag')
-                .value
-                .trim();
-
-            const priceValue = document
-                .getElementById('productPrice')
-                .value;
-
-            const stockValue = document
-                .getElementById('productStock')
-                .value;
-
-            const orderValue = document
-                .getElementById('productSortOrder')
-                .value;
-
-            const selectedFile = document
-                .getElementById('productImageFile')
-                .files[0];
-
-            const writtenImageUrl = document
-                .getElementById('productImageUrl')
-                .value
-                .trim();
-
-            const currentProduct = products.find(
+            const p = products.find(
                 item => item.id === id
             );
 
-            const currentImageUrl =
-                currentProduct?.imageUrl || '';
+            if (!p) {
+                return;
+            }
+
+            document
+                .getElementById(
+                    "productModalTitle"
+                )
+                .textContent =
+                "Editar producto";
+
+            document
+                .getElementById(
+                    "productId"
+                )
+                .value =
+                p.id || "";
+
+            document
+                .getElementById(
+                    "productName"
+                )
+                .value =
+                p.name || "";
+
+            document
+                .getElementById(
+                    "productPrice"
+                )
+                .value =
+                p.price || "";
+
+            document
+                .getElementById(
+                    "productStock"
+                )
+                .value =
+                p.stock || "";
+
+            document
+                .getElementById(
+                    "productCategory"
+                )
+                .value =
+                p.category || "Ramos";
+
+            document
+                .getElementById(
+                    "productTag"
+                )
+                .value =
+                p.tag || "";
+
+            document
+                .getElementById(
+                    "productDescription"
+                )
+                .value =
+                p.description || "";
+
+            document
+                .getElementById(
+                    "productImageUrl"
+                )
+                .value = "";
+
+            document
+                .getElementById(
+                    "productActive"
+                )
+                .value =
+                p.active || "SI";
+
+            document
+                .getElementById(
+                    "productFeatured"
+                )
+                .value =
+                p.featured || "NO";
+
+            document
+                .getElementById(
+                    "productSortOrder"
+                )
+                .value =
+                p.sortOrder || "";
+
+            document
+                .getElementById(
+                    "productImageFile"
+                )
+                .value = "";
 
             /*
-             * Validaciones antes de subir el archivo.
+             * Cargamos las imágenes existentes.
+             */
+            selectedProductImages =
+                (
+                    Array.isArray(p.images) &&
+                    p.images.length
+                )
+                    ? p.images.map(url => ({
+                        url,
+                        file: null,
+                        previewUrl: url
+                    }))
+                    : (
+                        p.imageUrl
+                            ? [
+                                {
+                                    url:
+                                        p.imageUrl,
+                                    file: null,
+                                    previewUrl:
+                                        p.imageUrl
+                                }
+                            ]
+                            : []
+                    );
+
+            renderProductImagesPreview();
+
+            productModal.show();
+        }
+
+
+        function clearProductForm() {
+            document.getElementById(
+                "productId"
+            ).value = "";
+
+            document.getElementById(
+                "productName"
+            ).value = "";
+
+            document.getElementById(
+                "productPrice"
+            ).value = "";
+
+            document.getElementById(
+                "productStock"
+            ).value = "";
+
+            document.getElementById(
+                "productCategory"
+            ).value = "Ramos";
+
+            document.getElementById(
+                "productTag"
+            ).value = "";
+
+            document.getElementById(
+                "productDescription"
+            ).value = "";
+
+            document.getElementById(
+                "productImageUrl"
+            ).value = "";
+
+            document.getElementById(
+                "productActive"
+            ).value = "SI";
+
+            document.getElementById(
+                "productFeatured"
+            ).value = "NO";
+
+            document.getElementById(
+                "productSortOrder"
+            ).value = "";
+
+            document.getElementById(
+                "productImageFile"
+            ).value = "";
+
+            /*
+             * Liberamos URLs temporales creadas
+             * mediante URL.createObjectURL().
+             */
+            selectedProductImages
+                .forEach(image => {
+                    if (
+                        image.file &&
+                        image.previewUrl
+                    ) {
+                        URL.revokeObjectURL(
+                            image.previewUrl
+                        );
+                    }
+                });
+
+            selectedProductImages = [];
+
+            renderProductImagesPreview();
+        }
+
+        async function saveProduct() {
+            const button =
+                document.querySelector(
+                    '#productModal .modal-footer .btn-gold'
+                );
+
+            const id =
+                document
+                    .getElementById(
+                        'productId'
+                    )
+                    .value;
+
+            const name =
+                document
+                    .getElementById(
+                        'productName'
+                    )
+                    .value
+                    .trim();
+
+            const description =
+                document
+                    .getElementById(
+                        'productDescription'
+                    )
+                    .value
+                    .trim();
+
+            const category =
+                document
+                    .getElementById(
+                        'productCategory'
+                    )
+                    .value;
+
+            const tag =
+                document
+                    .getElementById(
+                        'productTag'
+                    )
+                    .value
+                    .trim();
+
+            const priceValue =
+                document
+                    .getElementById(
+                        'productPrice'
+                    )
+                    .value;
+
+            const stockValue =
+                document
+                    .getElementById(
+                        'productStock'
+                    )
+                    .value;
+
+            const orderValue =
+                document
+                    .getElementById(
+                        'productSortOrder'
+                    )
+                    .value;
+
+            /*
+             * Si dejó escrita una URL y no pulsó
+             * "Agregar", la agregamos automáticamente.
+             */
+            const pendingUrl =
+                document
+                    .getElementById(
+                        'productImageUrl'
+                    )
+                    .value
+                    .trim();
+
+            if (
+                pendingUrl &&
+                selectedProductImages.length < 10
+            ) {
+                const exists =
+                    selectedProductImages.some(
+                        image =>
+                            image.url ===
+                            pendingUrl
+                    );
+
+                if (!exists) {
+                    selectedProductImages.push({
+                        url:
+                            pendingUrl,
+
+                        file:
+                            null,
+
+                        previewUrl:
+                            convertDriveUrl(
+                                pendingUrl
+                            )
+                    });
+                }
+
+                document
+                    .getElementById(
+                        'productImageUrl'
+                    )
+                    .value = '';
+
+                renderProductImagesPreview();
+            }
+
+            /*
+             * VALIDACIONES
              */
             if (!name) {
-                alert('Escribe el nombre del producto.');
-                document.getElementById('productName').focus();
+                alert(
+                    'Escribe el nombre del producto.'
+                );
+
+                document
+                    .getElementById(
+                        'productName'
+                    )
+                    .focus();
+
                 return;
             }
 
             if (
                 priceValue === '' ||
-                !Number.isFinite(Number(priceValue)) ||
+                !Number.isFinite(
+                    Number(priceValue)
+                ) ||
                 Number(priceValue) < 0
             ) {
-                alert('Escribe un precio válido.');
-                document.getElementById('productPrice').focus();
+                alert(
+                    'Escribe un precio válido.'
+                );
+
+                document
+                    .getElementById(
+                        'productPrice'
+                    )
+                    .focus();
+
                 return;
             }
 
             if (
                 stockValue === '' ||
-                !Number.isInteger(Number(stockValue)) ||
+                !Number.isInteger(
+                    Number(stockValue)
+                ) ||
                 Number(stockValue) < 0
             ) {
-                alert('Escribe un stock válido.');
-                document.getElementById('productStock').focus();
+                alert(
+                    'Escribe un stock válido.'
+                );
+
+                document
+                    .getElementById(
+                        'productStock'
+                    )
+                    .focus();
+
                 return;
             }
 
             if (
                 orderValue !== '' &&
                 (
-                    !Number.isInteger(Number(orderValue)) ||
+                    !Number.isInteger(
+                        Number(orderValue)
+                    ) ||
                     Number(orderValue) < 0
                 )
             ) {
-                alert('El orden debe ser un número entero igual o mayor que cero.');
-                document.getElementById('productSortOrder').focus();
+                alert(
+                    'El orden debe ser un número entero igual o mayor que cero.'
+                );
+
+                document
+                    .getElementById(
+                        'productSortOrder'
+                    )
+                    .focus();
+
                 return;
             }
 
             if (
-                !selectedFile &&
-                !writtenImageUrl &&
-                !currentImageUrl
+                !selectedProductImages.length
             ) {
                 alert(
-                    'Selecciona una imagen desde tu dispositivo o pega una URL.'
+                    'Agrega al menos una fotografía del producto.'
                 );
 
                 return;
@@ -4676,60 +4984,157 @@
 
             try {
                 button.disabled = true;
-                button.innerHTML =
-                    '<span class="spinner-border spinner-border-sm"></span> Subiendo y guardando...';
 
-                let imageUrl =
-                    writtenImageUrl ||
-                    currentImageUrl;
+                button.innerHTML = `
+            <span
+                class="
+                    spinner-border
+                    spinner-border-sm
+                "
+            ></span>
+            Subiendo fotografías...
+        `;
+
+                const imageUrls = [];
 
                 /*
-                 * Si seleccionaron un archivo nuevo,
-                 * primero se sube al backend.
+                 * Recorremos TODAS las imágenes.
+                 *
+                 * Si ya existe en servidor:
+                 * conservamos URL.
+                 *
+                 * Si es archivo nuevo:
+                 * la subimos al endpoint actual.
                  */
-                if (selectedFile) {
-                    imageUrl = await uploadSelectedImage(
-                        selectedFile,
-                        'product'
-                    );
+                for (
+                    let index = 0;
+                    index <
+                    selectedProductImages.length;
+                    index++
+                ) {
+                    const image =
+                        selectedProductImages[
+                        index
+                        ];
+
+                    button.innerHTML = `
+                <span
+                    class="
+                        spinner-border
+                        spinner-border-sm
+                    "
+                ></span>
+
+                Procesando imagen
+                ${index + 1}
+                de
+                ${selectedProductImages.length}...
+            `;
+
+                    if (image.file) {
+                        const uploadedUrl =
+                            await uploadSelectedImage(
+                                image.file,
+                                'product'
+                            );
+
+                        if (!uploadedUrl) {
+                            throw new Error(
+                                `No fue posible subir la imagen ${index + 1}.`
+                            );
+                        }
+
+                        imageUrls.push(
+                            uploadedUrl
+                        );
+
+                        continue;
+                    }
+
+                    if (image.url) {
+                        imageUrls.push(
+                            image.url
+                        );
+                    }
                 }
 
-                if (!imageUrl) {
+                if (!imageUrls.length) {
                     throw new Error(
-                        'No fue posible obtener la URL de la imagen.'
+                        'No fue posible obtener las URLs de las imágenes.'
                     );
                 }
 
                 const payload = {
-                    nombre: name,
-                    descripcion: description,
-                    categoria: category,
-                    etiqueta: tag,
-                    precio: Number(priceValue),
-                    stock: Number(stockValue),
-                    imagenUrl: imageUrl,
+                    nombre:
+                        name,
+
+                    descripcion:
+                        description,
+
+                    categoria:
+                        category,
+
+                    etiqueta:
+                        tag,
+
+                    precio:
+                        Number(priceValue),
+
+                    stock:
+                        Number(stockValue),
+
+                    /*
+                     * Compatibilidad con todo tu
+                     * proyecto actual.
+                     */
+                    imagenUrl:
+                        imageUrls[0],
+
+                    /*
+                     * NUEVO
+                     */
+                    imagenes:
+                        imageUrls,
 
                     destacado:
                         document
-                            .getElementById('productFeatured')
+                            .getElementById(
+                                'productFeatured'
+                            )
                             .value === 'SI',
 
-                    orden: Number(orderValue || 1),
+                    orden:
+                        Number(
+                            orderValue || 1
+                        ),
 
                     activo:
                         document
-                            .getElementById('productActive')
+                            .getElementById(
+                                'productActive'
+                            )
                             .value === 'SI'
                 };
 
-                const path = id
-                    ? `/productos/${id}`
-                    : '/productos';
+                const path =
+                    id
+                        ? `/productos/${id}`
+                        : '/productos';
 
-                await apiFetch(path, {
-                    method: id ? 'PUT' : 'POST',
-                    body: JSON.stringify(payload)
-                });
+                await apiFetch(
+                    path,
+                    {
+                        method:
+                            id
+                                ? 'PUT'
+                                : 'POST',
+
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
 
                 productModal.hide();
 
@@ -4737,8 +5142,8 @@
 
                 alert(
                     id
-                        ? 'Producto actualizado correctamente.'
-                        : 'Producto e imagen agregados correctamente.'
+                        ? `Producto actualizado correctamente con ${imageUrls.length} fotografía(s).`
+                        : `Producto creado correctamente con ${imageUrls.length} fotografía(s).`
                 );
             } catch (error) {
                 console.error(
@@ -4752,8 +5157,11 @@
                 );
             } finally {
                 button.disabled = false;
-                button.innerHTML =
-                    '<i class="bi bi-save"></i> Guardar producto';
+
+                button.innerHTML = `
+            <i class="bi bi-save"></i>
+            Guardar producto
+        `;
             }
         }
 
@@ -5203,6 +5611,399 @@
                 console.error(error);
                 alert(error.message);
             }
+        }
+
+        function handleProductImageFiles(event) {
+            const files =
+                Array.from(
+                    event.target.files || []
+                );
+
+            if (!files.length) {
+                return;
+            }
+
+            const allowedTypes = [
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/gif'
+            ];
+
+            const maxSize =
+                8 * 1024 * 1024;
+
+            const availableSlots =
+                10 -
+                selectedProductImages.length;
+
+            if (availableSlots <= 0) {
+                alert(
+                    'Solo puedes agregar hasta 10 fotografías por producto.'
+                );
+
+                event.target.value = '';
+                return;
+            }
+
+            const filesToAdd =
+                files.slice(
+                    0,
+                    availableSlots
+                );
+
+            for (
+                const file
+                of filesToAdd
+            ) {
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+                    alert(
+                        `${file.name}: formato no permitido.`
+                    );
+
+                    continue;
+                }
+
+                if (
+                    file.size > maxSize
+                ) {
+                    alert(
+                        `${file.name}: la imagen supera los 8 MB.`
+                    );
+
+                    continue;
+                }
+
+                selectedProductImages.push({
+                    url: '',
+                    file,
+                    previewUrl:
+                        URL.createObjectURL(file)
+                });
+            }
+
+            event.target.value = '';
+
+            renderProductImagesPreview();
+        }
+
+
+        function addProductImageUrl() {
+            const input =
+                document.getElementById(
+                    'productImageUrl'
+                );
+
+            const url =
+                input.value.trim();
+
+            if (!url) {
+                return;
+            }
+
+            if (
+                selectedProductImages.length >= 10
+            ) {
+                alert(
+                    'Solo puedes agregar hasta 10 fotografías por producto.'
+                );
+
+                return;
+            }
+
+            const exists =
+                selectedProductImages.some(
+                    image =>
+                        image.url === url
+                );
+
+            if (exists) {
+                alert(
+                    'Esa imagen ya fue agregada.'
+                );
+
+                return;
+            }
+
+            selectedProductImages.push({
+                url,
+                file: null,
+                previewUrl:
+                    convertDriveUrl(url)
+            });
+
+            input.value = '';
+
+            renderProductImagesPreview();
+        }
+
+
+        function removeProductImage(index) {
+            const image =
+                selectedProductImages[index];
+
+            if (!image) {
+                return;
+            }
+
+            if (
+                image.file &&
+                image.previewUrl
+            ) {
+                URL.revokeObjectURL(
+                    image.previewUrl
+                );
+            }
+
+            selectedProductImages.splice(
+                index,
+                1
+            );
+
+            renderProductImagesPreview();
+        }
+
+
+        function setProductImageAsMain(index) {
+            if (
+                index <= 0 ||
+                index >=
+                selectedProductImages.length
+            ) {
+                return;
+            }
+
+            const [
+                selectedImage
+            ] =
+                selectedProductImages.splice(
+                    index,
+                    1
+                );
+
+            selectedProductImages.unshift(
+                selectedImage
+            );
+
+            renderProductImagesPreview();
+        }
+
+
+        function moveProductImage(
+            index,
+            direction
+        ) {
+            const newIndex =
+                index + direction;
+
+            if (
+                newIndex < 0 ||
+                newIndex >=
+                selectedProductImages.length
+            ) {
+                return;
+            }
+
+            const current =
+                selectedProductImages[index];
+
+            selectedProductImages[index] =
+                selectedProductImages[newIndex];
+
+            selectedProductImages[newIndex] =
+                current;
+
+            renderProductImagesPreview();
+        }
+
+
+        function renderProductImagesPreview() {
+            const container =
+                document.getElementById(
+                    'productImagesPreview'
+                );
+
+            const counter =
+                document.getElementById(
+                    'productImagesCounter'
+                );
+
+            if (!container) {
+                return;
+            }
+
+            if (counter) {
+                counter.textContent =
+                    `${selectedProductImages.length} / 10`;
+            }
+
+            if (
+                !selectedProductImages.length
+            ) {
+                container.innerHTML = `
+            <div class="product-images-empty">
+                <i class="bi bi-image"></i>
+
+                <span>
+                    Aún no hay fotografías.
+                </span>
+            </div>
+        `;
+
+                return;
+            }
+
+            container.innerHTML =
+                selectedProductImages
+                    .map(
+                        (image, index) => `
+                    <article
+                        class="
+                            product-admin-image-card
+                            ${index === 0
+                                ? 'is-main'
+                                : ''}
+                        "
+                    >
+                        <div
+                            class="
+                                product-admin-image-wrap
+                            "
+                        >
+                            <img
+                                src="${escapeHtml(
+                                    image.previewUrl ||
+                                    image.url
+                                )}"
+                                alt="Fotografía ${index + 1}"
+                            >
+
+                            ${index === 0
+                                ? `
+                                        <span
+                                            class="
+                                                product-admin-main-badge
+                                            "
+                                        >
+                                            <i
+                                                class="
+                                                    bi
+                                                    bi-star-fill
+                                                "
+                                            ></i>
+                                            Portada
+                                        </span>
+                                    `
+                                : ''
+                            }
+
+                            <button
+                                type="button"
+                                class="
+                                    product-admin-remove-image
+                                "
+                                onclick="
+                                    removeProductImage(
+                                        ${index}
+                                    )
+                                "
+                                title="Eliminar fotografía"
+                            >
+                                <i
+                                    class="
+                                        bi
+                                        bi-x-lg
+                                    "
+                                ></i>
+                            </button>
+                        </div>
+
+                        <div
+                            class="
+                                product-admin-image-actions
+                            "
+                        >
+                            ${index !== 0
+                                ? `
+                                        <button
+                                            type="button"
+                                            onclick="
+                                                setProductImageAsMain(
+                                                    ${index}
+                                                )
+                                            "
+                                        >
+                                            <i
+                                                class="
+                                                    bi
+                                                    bi-star
+                                                "
+                                            ></i>
+
+                                            Portada
+                                        </button>
+                                    `
+                                : `
+                                        <span>
+                                            Imagen principal
+                                        </span>
+                                    `
+                            }
+
+                            <div>
+                                <button
+                                    type="button"
+                                    onclick="
+                                        moveProductImage(
+                                            ${index},
+                                            -1
+                                        )
+                                    "
+                                    ${index === 0
+                                ? 'disabled'
+                                : ''}
+                                    title="Mover a la izquierda"
+                                >
+                                    <i
+                                        class="
+                                            bi
+                                            bi-arrow-left
+                                        "
+                                    ></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="
+                                        moveProductImage(
+                                            ${index},
+                                            1
+                                        )
+                                    "
+                                    ${index ===
+                                selectedProductImages.length - 1
+                                ? 'disabled'
+                                : ''
+                            }
+                                    title="Mover a la derecha"
+                                >
+                                    <i
+                                        class="
+                                            bi
+                                            bi-arrow-right
+                                        "
+                                    ></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `
+                    )
+                    .join('');
         }
 
         function handleImageFile(event, type) {

@@ -9,6 +9,7 @@ const sequelize = require('../config/database');
 const TABLES = [
     'clientes',
     'productos',
+    'producto_imagenes',
     'pedidos',
     'detalle_pedido'
 ];

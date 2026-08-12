@@ -16406,6 +16406,7 @@ body.page-index .google-review-card .review-text {
    y la lluvia de pétalos continúan animándose normalmente.
 ========================================================== */
 @media (max-width: 767.98px) {
+
     /* La flor de apertura no aporta valor en una pantalla pequeña. */
     body.page-index .opening-flower {
         display: none !important;
@@ -16440,19 +16441,20 @@ body.page-index .google-review-card .review-text {
    CARRITO MÓVIL — INTRO CON MÁS AIRE Y MEJOR JERARQUÍA
 ========================================================== */
 @media (max-width: 767.98px) {
+
     /* El header compartido es fijo: reservamos espacio real debajo. */
     body.page-carrito .cart-page {
         padding: 112px 0 96px !important;
     }
 
-    body.page-carrito .cart-page > .container > .mb-5:first-child {
+    body.page-carrito .cart-page>.container>.mb-5:first-child {
         max-width: 680px;
         margin: 0 auto 38px !important;
         padding: 18px 16px 0;
         text-align: center;
     }
 
-    body.page-carrito .cart-page > .container > .mb-5:first-child .eyebrow {
+    body.page-carrito .cart-page>.container>.mb-5:first-child .eyebrow {
         display: inline-block;
         margin-bottom: 2px;
         font-size: .72rem;
@@ -16478,4 +16480,336 @@ body.page-index .google-review-card .review-text {
         text-align: center;
         text-wrap: pretty;
     }
+}
+
+/* =========================================================
+   PRODUCTOS - MÚLTIPLES IMÁGENES ADMIN
+   ========================================================= */
+
+.product-multi-uploader {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.product-images-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.product-images-empty {
+    grid-column: 1 / -1;
+    padding: 18px;
+    border: 1px dashed rgba(0, 0, 0, 0.16);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.product-admin-image-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.product-admin-image-card.is-main {
+    border-color: #c5a45d;
+    box-shadow:
+        0 0 0 2px rgba(197, 164, 93, 0.12);
+}
+
+.product-admin-image-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.product-admin-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-admin-main-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 8px;
+    border-radius: 999px;
+
+    background: rgba(22, 22, 22, 0.88);
+    color: #fff;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.product-admin-main-badge i {
+    color: #d7b76b;
+}
+
+.product-admin-remove-image {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 32px;
+    height: 32px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.92);
+    color: #a83232;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.product-admin-image-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px;
+}
+
+.product-admin-image-actions>button,
+.product-admin-image-actions>div button {
+    border: 0;
+    background: #f3f3f3;
+    border-radius: 8px;
+    min-height: 32px;
+    padding: 5px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.product-admin-image-actions>div {
+    display: flex;
+    gap: 4px;
+}
+
+.product-admin-image-actions button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.product-admin-image-actions span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #80662c;
+}
+
+@media (max-width: 575.98px) {
+    .product-images-admin-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================================
+   GALERÍA DE IMÁGENES EN TARJETAS DEL CATÁLOGO
+   ========================================================= */
+
+.product-gallery {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-gallery-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.35s ease;
+}
+
+.product-gallery-counter {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background:
+        rgba(20, 20, 20, 0.72);
+
+    color: #fff;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    font-size: 0.76rem;
+    font-weight: 700;
+
+    backdrop-filter: blur(8px);
+}
+
+.product-gallery-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 6;
+
+    transform: translateY(-50%);
+
+    width: 40px;
+    height: 40px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.88);
+
+    color: #242424;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.product-gallery-arrow:hover {
+    background: #fff;
+}
+
+.product-gallery-prev {
+    left: 12px;
+}
+
+.product-gallery-next {
+    right: 12px;
+}
+
+.product-gallery-thumbnails {
+    position: absolute;
+
+    left: 50%;
+    bottom: 12px;
+
+    z-index: 6;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 6px;
+
+    max-width: calc(100% - 24px);
+
+    padding: 6px;
+
+    overflow-x: auto;
+
+    background:
+        rgba(255, 255, 255, 0.74);
+
+    border-radius: 12px;
+
+    backdrop-filter: blur(10px);
+}
+
+.product-gallery-thumbnail {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    padding: 0;
+
+    border:
+        2px solid transparent;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    opacity: 0.72;
+
+    transition:
+        opacity 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.product-gallery-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.product-gallery-thumbnail.active {
+    opacity: 1;
+    border-color: #c7a55a;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 575.98px) {
+
+    .product-gallery-arrow {
+        width: 36px;
+        height: 36px;
+    }
+
+    .product-gallery-thumbnail {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .product-gallery-counter {
+        top: 10px;
+        right: 10px;
+    }
+}
+
+/* Comentar o descomentar esto para mostrar los cuadritos de imagenes en catálogo */
+
+.product-gallery-thumbnails {
+    display: none;
 }

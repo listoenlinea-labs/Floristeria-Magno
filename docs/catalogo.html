@@ -276,9 +276,32 @@
                 : product.categoria || "Arreglo"
             );
 
+          const images =
+            Array.isArray(product.imagenes) &&
+              product.imagenes.length
+              ? product.imagenes
+                .map(
+                  image =>
+                    image.imagenUrl
+                )
+                .filter(Boolean)
+              : (
+                product.imagenUrl
+                  ? [
+                    product.imagenUrl
+                  ]
+                  : []
+              );
+
+          const safeImages =
+            images.length
+              ? images
+              : [
+                "https://placehold.co/900x900?text=Sin+imagen"
+              ];
+
           const imageUrl =
-            product.imagenUrl ||
-            "https://placehold.co/900x900?text=Sin+imagen";
+            safeImages[0];
 
           return `
                 <div
@@ -291,21 +314,118 @@
                         data-product-name="${escapeHtml(product.nombre)}"
                         data-product-price="${Number(product.precio)}"
                     >
-                        <div class="product-img-wrap">
-                            <span class="product-badge">
-                                ${escapeHtml(badge)}
-                            </span>
+                        <div class="product-img-wrap product-gallery">
 
-                            <img
-                                src="${escapeHtml(imageUrl)}"
-                                alt="${escapeHtml(product.nombre)}"
-                                loading="lazy"
-                                onerror="
-                                    this.onerror = null;
-                                    this.src = 'https://placehold.co/900x900?text=Sin+imagen';
-                                "
-                            >
-                        </div>
+    <span class="product-badge">
+        ${escapeHtml(badge)}
+    </span>
+
+    ${safeImages.length > 1
+              ? `
+                <span
+                    class="product-gallery-counter"
+                >
+                    <i class="bi bi-images"></i>
+
+                    <span>
+                        1 / ${safeImages.length}
+                    </span>
+                </span>
+            `
+              : ''
+            }
+
+    <img
+        class="product-gallery-main-image"
+        src="${escapeHtml(imageUrl)}"
+        data-gallery-index="0"
+        alt="${escapeHtml(product.nombre)}"
+        loading="lazy"
+        onerror="
+            this.onerror = null;
+            this.src = 'https://placehold.co/900x900?text=Sin+imagen';
+        "
+    >
+
+    ${safeImages.length > 1
+              ? `
+                <button
+                    type="button"
+                    class="
+                        product-gallery-arrow
+                        product-gallery-prev
+                    "
+                    aria-label="Fotografía anterior"
+                >
+                    <i
+                        class="
+                            bi
+                            bi-chevron-left
+                        "
+                    ></i>
+                </button>
+
+                <button
+                    type="button"
+                    class="
+                        product-gallery-arrow
+                        product-gallery-next
+                    "
+                    aria-label="Siguiente fotografía"
+                >
+                    <i
+                        class="
+                            bi
+                            bi-chevron-right
+                        "
+                    ></i>
+                </button>
+
+                <div
+                    class="
+                        product-gallery-thumbnails
+                    "
+                >
+                    ${safeImages
+                .map(
+                  (
+                    galleryImage,
+                    imageIndex
+                  ) => `
+                                <button
+                                    type="button"
+                                    class="
+                                        product-gallery-thumbnail
+                                        ${imageIndex === 0
+                      ? 'active'
+                      : ''
+                    }
+                                    "
+                                    data-index="${imageIndex}"
+                                    data-image-url="${escapeHtml(
+                      galleryImage
+                    )}"
+                                    aria-label="
+                                        Ver fotografía
+                                        ${imageIndex + 1}
+                                    "
+                                >
+                                    <img
+                                        src="${escapeHtml(
+                      galleryImage
+                    )}"
+                                        alt=""
+                                    >
+                                </button>
+                            `
+                )
+                .join('')}
+                </div>
+            `
+              : ''
+            }
+
+</div>
 
                         <div class="p-4">
                             <h3 class="serif fs-1 mb-1">
@@ -314,9 +434,9 @@
 
                             <p class="text-muted-custom">
                                 ${escapeHtml(
-            product.descripcion ||
-            "Arreglo floral disponible."
-          )}
+              product.descripcion ||
+              "Arreglo floral disponible."
+            )}
                             </p>
 
                             <div class="d-flex justify-content-between align-items-center gap-3">
@@ -352,6 +472,172 @@
         `;
       }
     }
+
+    function showProductGalleryImage(
+      gallery,
+      index
+    ) {
+      if (!gallery) {
+        return;
+      }
+
+      const mainImage =
+        gallery.querySelector(
+          '.product-gallery-main-image'
+        );
+
+      const thumbnails =
+        Array.from(
+          gallery.querySelectorAll(
+            '.product-gallery-thumbnail'
+          )
+        );
+
+      if (
+        !mainImage ||
+        !thumbnails.length
+      ) {
+        return;
+      }
+
+      let normalizedIndex =
+        Number(index);
+
+      if (
+        normalizedIndex < 0
+      ) {
+        normalizedIndex =
+          thumbnails.length - 1;
+      }
+
+      if (
+        normalizedIndex >=
+        thumbnails.length
+      ) {
+        normalizedIndex = 0;
+      }
+
+      const selectedThumbnail =
+        thumbnails[
+        normalizedIndex
+        ];
+
+      const imageUrl =
+        selectedThumbnail.dataset
+          .imageUrl;
+
+      if (!imageUrl) {
+        return;
+      }
+
+      mainImage.src =
+        imageUrl;
+
+      mainImage.dataset.galleryIndex =
+        String(normalizedIndex);
+
+      thumbnails.forEach(
+        (
+          thumbnail,
+          thumbnailIndex
+        ) => {
+          thumbnail.classList.toggle(
+            'active',
+            thumbnailIndex ===
+            normalizedIndex
+          );
+        }
+      );
+
+      const counter =
+        gallery.querySelector(
+          '.product-gallery-counter span'
+        );
+
+      if (counter) {
+        counter.textContent =
+          `${normalizedIndex + 1} / ${thumbnails.length}`;
+      }
+    }
+
+
+    document.addEventListener(
+      'click',
+      event => {
+        const previousButton =
+          event.target.closest(
+            '.product-gallery-prev'
+          );
+
+        const nextButton =
+          event.target.closest(
+            '.product-gallery-next'
+          );
+
+        const thumbnail =
+          event.target.closest(
+            '.product-gallery-thumbnail'
+          );
+
+        if (
+          !previousButton &&
+          !nextButton &&
+          !thumbnail
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const gallery =
+          event.target.closest(
+            '.product-gallery'
+          );
+
+        if (!gallery) {
+          return;
+        }
+
+        const mainImage =
+          gallery.querySelector(
+            '.product-gallery-main-image'
+          );
+
+        const currentIndex =
+          Number(
+            mainImage?.dataset
+              .galleryIndex || 0
+          );
+
+        if (previousButton) {
+          showProductGalleryImage(
+            gallery,
+            currentIndex - 1
+          );
+
+          return;
+        }
+
+        if (nextButton) {
+          showProductGalleryImage(
+            gallery,
+            currentIndex + 1
+          );
+
+          return;
+        }
+
+        if (thumbnail) {
+          showProductGalleryImage(
+            gallery,
+            Number(
+              thumbnail.dataset.index
+            )
+          );
+        }
+      }
+    );
 
     const catalogHero = document.querySelector('.catalog-hero');
     const catalogMouseLight = document.getElementById('catalogMouseLight');
@@ -460,7 +746,12 @@
       const id = card.dataset.productId;
       const name = card.dataset.productName || card.querySelector('h3')?.textContent?.trim() || 'Arreglo floral';
       const price = Number(card.dataset.productPrice || 0);
-      const image = card.querySelector('img')?.getAttribute('src') || '';
+      const image =
+        card
+          .querySelector(
+            '.product-gallery-main-image'
+          )
+          ?.getAttribute('src') || '';
       const description = card.querySelector('p')?.textContent?.trim() || '';
       const badge = card.querySelector('.product-badge')?.textContent?.trim();
       const category = card.closest('[data-category]')?.dataset.category;

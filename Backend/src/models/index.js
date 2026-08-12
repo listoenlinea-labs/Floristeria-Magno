@@ -1,5 +1,6 @@
 const Cliente = require('./Cliente');
 const Producto = require('./Producto');
+const ProductoImagen = require('./ProductoImagen');
 const Pedido = require('./Pedido');
 const DetallePedido = require('./DetallePedido');
 const HistorialPedido = require('./HistorialPedido');
@@ -53,6 +54,19 @@ DetallePedido.belongsTo(Producto, {
     as: 'producto'
 });
 
+
+/*
+ * productos 1 ─── N producto_imagenes
+ */
+Producto.hasMany(ProductoImagen, {
+    foreignKey: 'productoId',
+    as: 'imagenes'
+});
+
+ProductoImagen.belongsTo(Producto, {
+    foreignKey: 'productoId',
+    as: 'producto'
+});
 
 /*
  * pedidos 1 ─── N historial_pedido
@@ -138,13 +152,13 @@ Pedido.belongsTo(WhatsappLead, {
 module.exports = {
     Cliente,
     Producto,
+    ProductoImagen,
     Pedido,
     DetallePedido,
     HistorialPedido,
     Galeria,
     Configuracion,
     RastreoUbicacion,
-
     WhatsappLead,
     WhatsappLeadItem,
     WhatsappLeadEvento
