@@ -169,30 +169,6 @@ function generarCodigoRastreo() {
     return `JHM-${String(numero).padStart(6, '0')}`;
 }
 
-async function generarCodigoRastreoUnico(
-    transaction
-) {
-    for (let attempt = 0; attempt < 10; attempt += 1) {
-        const codigoRastreo =
-            generarCodigoRastreo();
-
-        const existingOrder =
-            await Pedido.findOne({
-                where: {
-                    codigoRastreo
-                },
-                transaction
-            });
-
-        if (!existingOrder) {
-            return codigoRastreo;
-        }
-    }
-
-    throw configurationError(
-        'No fue posible generar un código de rastreo único'
-    );
-}
 
 function calcularSubtotalProductos(items) {
     return items.reduce(
@@ -209,7 +185,6 @@ function calcularSubtotalProductos(items) {
 async function crearClientePedidoYDetalles({
     items,
     delivery,
-    codigoRastreo,
     total,
     transaction
 }) {
@@ -245,7 +220,7 @@ async function crearClientePedidoYDetalles({
 
     const pedido = await Pedido.create(
         {
-            codigoRastreo,
+            codigoRastreo: null,
             clienteId: cliente.id,
 
             nombreDestinatario:
@@ -288,6 +263,18 @@ async function crearClientePedidoYDetalles({
         }
     );
 
+    const codigoRastreo =
+        `JHM-${String(pedido.id).padStart(6, '0')}`;
+
+    await pedido.update(
+        {
+            codigoRastreo
+        },
+        {
+            transaction
+        }
+    );
+
     const detailRows = items.map(item => ({
         pedidoId: pedido.id,
         productoId: Number(item.id),
@@ -320,7 +307,8 @@ async function crearClientePedidoYDetalles({
 
     return {
         cliente,
-        pedido
+        pedido,
+        codigoRastreo
     };
 }
 
@@ -566,19 +554,14 @@ async function crearPreferencia(req, res, next) {
         transaction =
             await sequelize.transaction();
 
-        const codigoRastreo =
-            await generarCodigoRastreoUnico(
-                transaction
-            );
-
         const {
             cliente,
-            pedido
+            pedido,
+            codigoRastreo
         } =
             await crearClientePedidoYDetalles({
                 items: productItems,
                 delivery,
-                codigoRastreo,
                 total,
                 transaction
             });

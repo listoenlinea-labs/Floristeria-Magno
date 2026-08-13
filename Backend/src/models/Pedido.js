@@ -12,7 +12,7 @@ const Pedido = sequelize.define(
 
         codigoRastreo: {
             type: DataTypes.STRING(30),
-            allowNull: false,
+            allowNull: true,
             unique: true,
             field: 'codigo_rastreo'
         },
