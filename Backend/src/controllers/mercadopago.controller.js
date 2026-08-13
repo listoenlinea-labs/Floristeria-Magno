@@ -160,17 +160,23 @@ function validateDelivery(delivery) {
 }
 
 function generarCodigoRastreo() {
-    const datePart = new Date()
-        .toISOString()
-        .slice(2, 10)
-        .replaceAll('-', '');
+    const characters =
+        'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-    const randomPart = crypto
-        .randomBytes(4)
-        .toString('hex')
-        .toUpperCase();
+    let randomPart = '';
 
-    return `JHM-${datePart}-${randomPart}`;
+    for (let i = 0; i < 6; i += 1) {
+        const randomIndex =
+            crypto.randomInt(
+                0,
+                characters.length
+            );
+
+        randomPart +=
+            characters[randomIndex];
+    }
+
+    return `JHM-${randomPart}`;
 }
 
 async function generarCodigoRastreoUnico(
