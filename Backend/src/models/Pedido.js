@@ -113,6 +113,12 @@ const Pedido = sequelize.define(
             field: 'estado_pago'
         },
 
+        pagadoEn: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: 'pagado_en'
+        },
+
         referenciaPago: {
             type: DataTypes.STRING(150),
             allowNull: true,

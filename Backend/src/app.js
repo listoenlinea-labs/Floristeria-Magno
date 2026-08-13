@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.routes');
 const productosRoutes = require('./routes/productos.routes');
 const clientesRoutes = require('./routes/clientes.routes');
 const pedidosRoutes = require('./routes/pedidos.routes');
+const ventasRoutes = require('./routes/ventas.routes');
 const detallesPedidoRoutes = require(
     './routes/detalles-pedido.routes'
 );
@@ -220,6 +221,14 @@ app.use(
 app.use(
     '/api/floristeria-magno/pedidos',
     pedidosRoutes
+);
+
+/*
+ * Dashboard administrativo de ventas.
+ */
+app.use(
+    '/api/floristeria-magno/ventas',
+    ventasRoutes
 );
 
 /*

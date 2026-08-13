@@ -251,17 +251,41 @@ async function crearClientePedidoYDetalles({
         {
             codigoRastreo,
             clienteId: cliente.id,
+
             nombreDestinatario:
                 delivery.receiverName,
+
             direccionEntrega:
                 delivery.address,
+
             total,
-            estado: 'PENDIENTE',
-            tipoPedido: 'CATALOGO_WEB',
-            fechaEntrega: delivery.date,
-            ventanaEntrega: delivery.slot,
-            metodoPago: 'MERCADO_PAGO',
-            estadoPago: 'PENDIENTE'
+
+            estado:
+                'PENDIENTE',
+
+            tipoPedido:
+                'CATALOGO_WEB',
+
+            /*
+             * IMPORTANTE PARA REPORTES DE VENTAS.
+             */
+            origen:
+                'WEB',
+
+            canalCierre:
+                'MERCADO_PAGO',
+
+            fechaEntrega:
+                delivery.date,
+
+            ventanaEntrega:
+                delivery.slot,
+
+            metodoPago:
+                'MERCADO_PAGO',
+
+            estadoPago:
+                'PENDIENTE'
         },
         {
             transaction
@@ -816,17 +840,219 @@ async function recibirWebhook(req, res, next) {
             );
         }
 
-        const paymentClient = new Payment(getClient());
-        const payment = await paymentClient.get({ id: paymentId });
+        const paymentClient =
+            new Payment(
+                getClient()
+            );
 
-        console.log('Webhook Mercado Pago verificado:', {
-            paymentId: payment.id,
-            status: payment.status,
-            statusDetail: payment.status_detail,
-            externalReference: payment.external_reference,
-            amount: payment.transaction_amount,
-            liveMode: payment.live_mode
-        });
+        const payment =
+            await paymentClient.get({
+                id: paymentId
+            });
+
+        console.log(
+            'Webhook Mercado Pago verificado:',
+            {
+                paymentId:
+                    payment.id,
+
+                status:
+                    payment.status,
+
+                statusDetail:
+                    payment.status_detail,
+
+                externalReference:
+                    payment.external_reference,
+
+                amount:
+                    payment.transaction_amount,
+
+                liveMode:
+                    payment.live_mode
+            }
+        );
+
+
+        /*
+         * ==========================================================
+         * ACTUALIZAR PEDIDO REAL
+         * ==========================================================
+         */
+
+        const codigoRastreo =
+            normalizeText(
+                payment.external_reference,
+                30
+            );
+
+        if (!codigoRastreo) {
+            console.warn(
+                'Pago Mercado Pago sin external_reference:',
+                payment.id
+            );
+
+            return res.sendStatus(200);
+        }
+
+
+        const pedido =
+            await Pedido.findOne({
+                where: {
+                    codigoRastreo
+                }
+            });
+
+
+        if (!pedido) {
+            console.warn(
+                'No existe pedido para el pago:',
+                {
+                    paymentId:
+                        payment.id,
+
+                    codigoRastreo
+                }
+            );
+
+            return res.sendStatus(200);
+        }
+
+
+        const paymentStatus =
+            String(
+                payment.status || ''
+            )
+                .trim()
+                .toLowerCase();
+
+
+        /*
+         * ==========================================================
+         * PAGO APROBADO = VENTA REAL
+         * ==========================================================
+         */
+        if (
+            paymentStatus === 'approved'
+        ) {
+            /*
+             * Evitamos modificar pagadoEn
+             * si el webhook llega repetido.
+             */
+            const paymentDate =
+                pedido.pagadoEn ||
+                (
+                    payment.date_approved
+                        ? new Date(
+                            payment.date_approved
+                        )
+                        : new Date()
+                );
+
+            await pedido.update({
+                estadoPago:
+                    'PAGADO',
+
+                pagadoEn:
+                    paymentDate,
+
+                referenciaPago:
+                    String(
+                        payment.id
+                    ),
+
+                origen:
+                    'WEB',
+
+                canalCierre:
+                    'MERCADO_PAGO',
+
+                metodoPago:
+                    'MERCADO_PAGO',
+
+                /*
+                 * Una venta aprobada ya puede pasar
+                 * al flujo de preparación.
+                 */
+                estado:
+                    pedido.estado === 'PENDIENTE'
+                        ? 'RECIBIDO'
+                        : pedido.estado,
+
+                actualizadoEn:
+                    new Date()
+            });
+
+
+            console.log(
+                '✅ Venta Mercado Pago confirmada:',
+                {
+                    pedidoId:
+                        pedido.id,
+
+                    codigoRastreo:
+                        pedido.codigoRastreo,
+
+                    total:
+                        pedido.total,
+
+                    paymentId:
+                        payment.id
+                }
+            );
+
+            return res.sendStatus(200);
+        }
+
+
+        /*
+         * ==========================================================
+         * PAGO PENDIENTE
+         * ==========================================================
+         */
+        if (
+            paymentStatus === 'pending' ||
+            paymentStatus === 'in_process'
+        ) {
+            await pedido.update({
+                estadoPago:
+                    'PENDIENTE',
+
+                actualizadoEn:
+                    new Date()
+            });
+
+            return res.sendStatus(200);
+        }
+
+
+        /*
+         * ==========================================================
+         * PAGO RECHAZADO / CANCELADO
+         * ==========================================================
+         */
+        if (
+            [
+                'rejected',
+                'cancelled',
+                'refunded',
+                'charged_back'
+            ].includes(
+                paymentStatus
+            )
+        ) {
+            await pedido.update({
+                estadoPago:
+                    paymentStatus
+                        .toUpperCase(),
+
+                actualizadoEn:
+                    new Date()
+            });
+
+            return res.sendStatus(200);
+        }
+
 
         return res.sendStatus(200);
     } catch (error) {

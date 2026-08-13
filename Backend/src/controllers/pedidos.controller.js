@@ -32,6 +32,7 @@ const pedidoAttributes = [
     'mensajeTarjeta',
     'metodoPago',
     'estadoPago',
+    'pagadoEn',
     'referenciaPago',
     'comprobanteUrl',
     'creadoEn',

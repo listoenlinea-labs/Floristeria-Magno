@@ -91,6 +91,10 @@
                     <i class="bi bi-calendar2-heart"></i>
                     Historial de pedidos
                 </button>
+                <button class="tab-btn" id="salesTabButton" onclick="setTab('sales', this)">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Ventas
+                </button>
                 <button class="tab-btn" id="deliveryTabButton" onclick="openDeliveryTab(this)">
                     <i class="bi bi-truck"></i>
                     Repartidor
@@ -279,6 +283,234 @@
                 </div>
             </section>
 
+            <!-- ======================================================
+     VENTAS
+     ====================================================== -->
+            <section id="tabSales" class="hidden">
+
+                <div class="sales-page-header glass">
+
+                    <div>
+                        <div class="eyebrow">
+                            Inteligencia comercial
+                        </div>
+
+                        <h2>
+                            Ventas de la página
+                        </h2>
+
+                        <p class="small-muted mb-0">
+                            Solo se contabilizan ventas web
+                            realmente pagadas y concretadas.
+                        </p>
+                    </div>
+
+
+                    <div class="sales-filters">
+
+                        <select id="salesMonthFilter" class="form-select" onchange="loadSales()">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+
+
+                        <select id="salesYearFilter" class="form-select" onchange="loadSales()"></select>
+
+
+                        <select id="salesChannelFilter" class="form-select" onchange="loadSales()">
+                            <option value="TODOS">
+                                Todos los canales
+                            </option>
+
+                            <option value="MERCADO_PAGO">
+                                Mercado Pago
+                            </option>
+
+                            <option value="WHATSAPP">
+                                WhatsApp
+                            </option>
+                        </select>
+
+                    </div>
+                </div>
+
+
+                <!-- TOTAL PRINCIPAL -->
+                <div class="sales-total-hero">
+
+                    <span>
+                        Total vendido en
+                        <strong id="salesSelectedPeriod">
+                            este mes
+                        </strong>
+                    </span>
+
+                    <strong id="salesGrandTotal" class="sales-grand-total">
+                        $0.00
+                    </strong>
+
+                    <div id="salesVariation" class="sales-variation">
+                        Sin información del mes anterior
+                    </div>
+
+                </div>
+
+
+                <!-- KPIS -->
+                <div class="sales-kpi-grid">
+
+                    <article class="sales-kpi-card">
+                        <span>
+                            Ventas concretadas
+                        </span>
+
+                        <strong id="salesCount">
+                            0
+                        </strong>
+                    </article>
+
+
+                    <article class="sales-kpi-card">
+                        <span>
+                            Ticket promedio
+                        </span>
+
+                        <strong id="salesAverageTicket">
+                            $0.00
+                        </strong>
+                    </article>
+
+
+                    <article class="sales-kpi-card">
+                        <span>
+                            Mercado Pago
+                        </span>
+
+                        <strong id="salesMercadoPago">
+                            $0.00
+                        </strong>
+                    </article>
+
+
+                    <article class="sales-kpi-card">
+                        <span>
+                            WhatsApp
+                        </span>
+
+                        <strong id="salesWhatsapp">
+                            $0.00
+                        </strong>
+                    </article>
+
+                </div>
+
+
+                <!-- GRÁFICA ANUAL -->
+                <div class="content-card glass sales-chart-card">
+
+                    <div class="sales-section-heading">
+                        <div>
+                            <div class="eyebrow">
+                                Tendencia anual
+                            </div>
+
+                            <h3>
+                                Ventas durante
+                                <span id="salesChartYear"></span>
+                            </h3>
+                        </div>
+
+                        <p class="small-muted mb-0">
+                            La gráfica siempre muestra los
+                            12 meses del año seleccionado.
+                        </p>
+                    </div>
+
+
+                    <div class="sales-chart-container">
+                        <canvas id="salesAnnualChart"></canvas>
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCTOS POPULARES -->
+                <div class="sales-products-layout">
+
+                    <div class="content-card glass">
+
+                        <div class="sales-section-heading">
+                            <div>
+                                <div class="eyebrow">
+                                    Ranking mensual
+                                </div>
+
+                                <h3>
+                                    Productos más populares
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div id="salesPopularProducts" class="sales-products-ranking"></div>
+
+                    </div>
+
+
+                    <div class="sales-product-winners">
+
+                        <article class="sales-winner-card" id="salesMostSold"></article>
+
+                        <article class="sales-winner-card" id="salesMostRevenue"></article>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VENTAS INDIVIDUALES -->
+                <div class="content-card glass">
+
+                    <div class="sales-section-heading">
+
+                        <div>
+                            <div class="eyebrow">
+                                Detalle
+                            </div>
+
+                            <h3>
+                                Ventas del mes
+                            </h3>
+
+                            <p class="small-muted mb-0">
+                                Cliente, entrega, productos
+                                y método de pago.
+                            </p>
+                        </div>
+
+
+                        <button type="button" class="btn-soft" onclick="loadSales()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Actualizar
+                        </button>
+
+                    </div>
+
+
+                    <div id="salesList" class="sales-list"></div>
+
+                </div>
+
+            </section>
             <section id="tabDelivery" class="hidden">
                 <div class="delivery-hero-card glass">
                     <div>
@@ -890,7 +1122,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
     <script>
@@ -917,6 +1149,8 @@
         let sections = [];
         let gallery = [];
         let orders = [];
+        let salesDashboard = null;
+        let salesAnnualChart = null;
         let settings = {};
         let ordersCalendarDays = {};
 
@@ -1137,6 +1371,7 @@
                 );
 
                 await restoreAdminSession();
+                initializeSalesFilters();
             }
         );
 
@@ -1365,6 +1600,11 @@
 
             setElementVisible(
                 'ordersTabButton',
+                isAdmin
+            );
+
+            setElementVisible(
+                'salesTabButton',
                 isAdmin
             );
 
@@ -1835,6 +2075,69 @@
             await loadDeliveryOrders();
         }
 
+        function initializeSalesFilters() {
+            const now =
+                new Date();
+
+            const monthSelect =
+                document.getElementById(
+                    'salesMonthFilter'
+                );
+
+            const yearSelect =
+                document.getElementById(
+                    'salesYearFilter'
+                );
+
+            if (
+                !monthSelect ||
+                !yearSelect
+            ) {
+                return;
+            }
+
+            monthSelect.value =
+                String(
+                    now.getMonth() + 1
+                );
+
+            const currentYear =
+                now.getFullYear();
+
+            yearSelect.innerHTML = '';
+
+            /*
+             * Desde 2025 hasta cinco años adelante.
+             */
+            for (
+                let year = currentYear + 5;
+                year >= 2025;
+                year--
+            ) {
+                const option =
+                    document.createElement(
+                        'option'
+                    );
+
+                option.value =
+                    String(year);
+
+                option.textContent =
+                    String(year);
+
+                if (
+                    year === currentYear
+                ) {
+                    option.selected =
+                        true;
+                }
+
+                yearSelect.appendChild(
+                    option
+                );
+            }
+        }
+
         function setTab(tab, clickedButton) {
             currentTab = tab;
 
@@ -1855,6 +2158,16 @@
                 .getElementById('tabOrders')
                 .classList
                 .toggle('hidden', tab !== 'orders');
+
+            document
+                .getElementById(
+                    'tabSales'
+                )
+                .classList
+                .toggle(
+                    'hidden',
+                    tab !== 'sales'
+                );
 
             document
                 .getElementById('tabDelivery')
@@ -1897,6 +2210,22 @@
                 loadOrders();
             }
 
+            if (
+                tab === 'sales'
+            ) {
+                mainBtn.innerHTML =
+                    '<i class="bi bi-arrow-clockwise"></i> Actualizar ventas';
+
+                mainBtn.onclick =
+                    loadSales;
+
+                mainBtn.classList.remove(
+                    'hidden'
+                );
+
+                loadSales();
+            }
+
             if (tab === "sections") {
                 mainBtn.innerHTML = '<i class="bi bi-plus-lg"></i> Nueva sección';
                 mainBtn.onclick = openSectionModal;
@@ -1918,6 +2247,1106 @@
                     'hidden'
                 );
             }
+        }
+
+        const SALES_MONTH_NAMES = [
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre'
+        ];
+
+
+        async function loadSales() {
+            const month =
+                Number(
+                    document
+                        .getElementById(
+                            'salesMonthFilter'
+                        )
+                        .value
+                );
+
+            const year =
+                Number(
+                    document
+                        .getElementById(
+                            'salesYearFilter'
+                        )
+                        .value
+                );
+
+            const channel =
+                document
+                    .getElementById(
+                        'salesChannelFilter'
+                    )
+                    .value;
+
+
+            const salesList =
+                document.getElementById(
+                    'salesList'
+                );
+
+
+            salesList.innerHTML = `
+        <div class="sales-loading">
+            <span
+                class="
+                    spinner-border
+                    spinner-border-sm
+                "
+            ></span>
+
+            Consultando ventas...
+        </div>
+    `;
+
+
+            try {
+                const result =
+                    await apiFetch(
+                        `/ventas/dashboard` +
+                        `?mes=${encodeURIComponent(month)}` +
+                        `&anio=${encodeURIComponent(year)}` +
+                        `&canal=${encodeURIComponent(channel)}`
+                    );
+
+
+                salesDashboard =
+                    result.data;
+
+
+                renderSalesDashboard();
+
+            } catch (error) {
+                console.error(
+                    'Error cargando ventas:',
+                    error
+                );
+
+
+                salesList.innerHTML = `
+            <div class="admin-empty-state">
+                <i
+                    class="
+                        bi
+                        bi-exclamation-triangle
+                    "
+                ></i>
+
+                <h4>
+                    No pudimos cargar las ventas
+                </h4>
+
+                <p>
+                    ${escapeHtml(
+                    error.message
+                )}
+                </p>
+            </div>
+        `;
+            }
+        }
+
+
+        function renderSalesDashboard() {
+            if (!salesDashboard) {
+                return;
+            }
+
+
+            const summary =
+                salesDashboard.resumen || {};
+
+
+            const filters =
+                salesDashboard.filtros || {};
+
+
+            const monthName =
+                SALES_MONTH_NAMES[
+                Number(
+                    filters.mes || 1
+                ) - 1
+                ] ||
+                'Mes';
+
+
+            document
+                .getElementById(
+                    'salesSelectedPeriod'
+                )
+                .textContent =
+                `${monthName} ${filters.anio}`;
+
+
+            document
+                .getElementById(
+                    'salesGrandTotal'
+                )
+                .textContent =
+                formatCurrency(
+                    summary.totalVentas
+                );
+
+
+            document
+                .getElementById(
+                    'salesCount'
+                )
+                .textContent =
+                Number(
+                    summary.numeroVentas || 0
+                );
+
+
+            document
+                .getElementById(
+                    'salesAverageTicket'
+                )
+                .textContent =
+                formatCurrency(
+                    summary.ticketPromedio
+                );
+
+
+            document
+                .getElementById(
+                    'salesMercadoPago'
+                )
+                .textContent =
+                formatCurrency(
+                    summary.mercadoPago
+                );
+
+
+            document
+                .getElementById(
+                    'salesWhatsapp'
+                )
+                .textContent =
+                formatCurrency(
+                    summary.whatsapp
+                );
+
+
+            renderSalesVariation(
+                summary
+            );
+
+
+            renderSalesChart(
+                salesDashboard.anual || [],
+                filters.anio
+            );
+
+
+            renderPopularProducts(
+                salesDashboard.productos || {}
+            );
+
+
+            renderSalesList(
+                salesDashboard.ventas || []
+            );
+        }
+
+
+        function renderSalesVariation(
+            summary
+        ) {
+            const element =
+                document.getElementById(
+                    'salesVariation'
+                );
+
+
+            const variation =
+                summary.variacionPorcentaje;
+
+
+            const previousTotal =
+                Number(
+                    summary.mesAnterior || 0
+                );
+
+
+            if (
+                variation === null ||
+                variation === undefined
+            ) {
+                element.className =
+                    'sales-variation';
+
+                element.innerHTML = `
+            Sin ventas registradas
+            en el mes anterior
+        `;
+
+                return;
+            }
+
+
+            const number =
+                Number(variation);
+
+
+            const positive =
+                number >= 0;
+
+
+            element.className =
+                `sales-variation ${positive
+                    ? 'is-positive'
+                    : 'is-negative'
+                }`;
+
+
+            element.innerHTML = `
+        <strong>
+            ${positive
+                    ? '↑'
+                    : '↓'
+                }
+
+            ${Math.abs(
+                    number
+                ).toFixed(1)}%
+        </strong>
+
+        respecto al mes anterior
+
+        <span>
+            (${formatCurrency(
+                    previousTotal
+                )})
+        </span>
+    `;
+        }
+
+
+        function renderSalesChart(
+            annualData,
+            year
+        ) {
+            const canvas =
+                document.getElementById(
+                    'salesAnnualChart'
+                );
+
+
+            if (!canvas) {
+                return;
+            }
+
+
+            document
+                .getElementById(
+                    'salesChartYear'
+                )
+                .textContent =
+                year || '';
+
+
+            const labels =
+                annualData.map(
+                    item =>
+                        String(
+                            item.nombre || ''
+                        ).slice(
+                            0,
+                            3
+                        )
+                );
+
+
+            const totals =
+                annualData.map(
+                    item =>
+                        Number(
+                            item.total || 0
+                        )
+                );
+
+
+            if (
+                salesAnnualChart
+            ) {
+                salesAnnualChart.destroy();
+            }
+
+
+            salesAnnualChart =
+                new Chart(
+                    canvas,
+                    {
+                        type:
+                            'bar',
+
+                        data: {
+                            labels,
+
+                            datasets: [
+                                {
+                                    label:
+                                        'Ventas',
+
+                                    data:
+                                        totals,
+
+                                    borderWidth:
+                                        1,
+
+                                    borderRadius:
+                                        10,
+
+                                    maxBarThickness:
+                                        55
+                                }
+                            ]
+                        },
+
+                        options: {
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            interaction: {
+                                intersect:
+                                    false,
+
+                                mode:
+                                    'index'
+                            },
+
+                            plugins: {
+                                legend: {
+                                    display:
+                                        false
+                                },
+
+                                tooltip: {
+                                    callbacks: {
+                                        label(
+                                            context
+                                        ) {
+                                            return (
+                                                'Ventas: ' +
+                                                formatCurrency(
+                                                    context.raw
+                                                )
+                                            );
+                                        }
+                                    }
+                                }
+                            },
+
+                            scales: {
+                                y: {
+                                    beginAtZero:
+                                        true,
+
+                                    ticks: {
+                                        callback(
+                                            value
+                                        ) {
+                                            return (
+                                                '$' +
+                                                Number(
+                                                    value
+                                                )
+                                                    .toLocaleString(
+                                                        'es-MX'
+                                                    )
+                                            );
+                                        }
+                                    }
+                                },
+
+                                x: {
+                                    grid: {
+                                        display:
+                                            false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+        }
+
+
+        function renderPopularProducts(
+            productsData
+        ) {
+            const ranking =
+                Array.isArray(
+                    productsData.ranking
+                )
+                    ? productsData.ranking
+                    : [];
+
+
+            const container =
+                document.getElementById(
+                    'salesPopularProducts'
+                );
+
+
+            if (!ranking.length) {
+                container.innerHTML = `
+            <div class="sales-empty">
+                No hay productos vendidos
+                durante este periodo.
+            </div>
+        `;
+            } else {
+                container.innerHTML =
+                    ranking
+                        .slice(
+                            0,
+                            10
+                        )
+                        .map(
+                            (
+                                product,
+                                index
+                            ) => `
+                        <article
+                            class="
+                                sales-ranking-item
+                            "
+                        >
+
+                            <span
+                                class="
+                                    sales-ranking-position
+                                "
+                            >
+                                ${index + 1}
+                            </span>
+
+
+                            ${product.imagenUrl
+                                    ? `
+                                        <img
+                                            src="${escapeHtml(
+                                        product.imagenUrl
+                                    )}"
+                                            alt="${escapeHtml(
+                                        product.nombre
+                                    )}"
+                                        >
+                                    `
+                                    : `
+                                        <div
+                                            class="
+                                                sales-ranking-placeholder
+                                            "
+                                        >
+                                            <i
+                                                class="
+                                                    bi
+                                                    bi-flower1
+                                                "
+                                            ></i>
+                                        </div>
+                                    `
+                                }
+
+
+                            <div
+                                class="
+                                    sales-ranking-info
+                                "
+                            >
+                                <strong>
+                                    ${escapeHtml(
+                                    product.nombre
+                                )}
+                                </strong>
+
+                                <span>
+                                    ${Number(
+                                    product.cantidad || 0
+                                )}
+                                    unidades
+                                </span>
+                            </div>
+
+
+                            <strong
+                                class="
+                                    sales-ranking-money
+                                "
+                            >
+                                ${formatCurrency(
+                                    product.ingresos
+                                )}
+                            </strong>
+
+                        </article>
+                    `
+                        )
+                        .join('');
+            }
+
+
+            renderSalesWinner(
+                'salesMostSold',
+                productsData.masVendido,
+                'Más vendido',
+                'bi-trophy',
+                product => `
+            ${Number(
+                    product.cantidad || 0
+                )}
+            unidades
+        `
+            );
+
+
+            renderSalesWinner(
+                'salesMostRevenue',
+                productsData.mayorIngreso,
+                'Mayor ingreso',
+                'bi-cash-stack',
+                product =>
+                    formatCurrency(
+                        product.ingresos
+                    )
+            );
+        }
+
+
+        function renderSalesWinner(
+            elementId,
+            product,
+            label,
+            icon,
+            valueBuilder
+        ) {
+            const container =
+                document.getElementById(
+                    elementId
+                );
+
+
+            if (!product) {
+                container.innerHTML = `
+            <i
+                class="
+                    bi
+                    ${icon}
+                "
+            ></i>
+
+            <span>
+                ${label}
+            </span>
+
+            <strong>
+                Sin información
+            </strong>
+        `;
+
+                return;
+            }
+
+
+            container.innerHTML = `
+        <i
+            class="
+                bi
+                ${icon}
+            "
+        ></i>
+
+        <span>
+            ${label}
+        </span>
+
+        <strong>
+            ${escapeHtml(
+                product.nombre
+            )}
+        </strong>
+
+        <small>
+            ${valueBuilder(
+                product
+            )}
+        </small>
+    `;
+        }
+
+
+        function renderSalesList(
+            sales
+        ) {
+            const container =
+                document.getElementById(
+                    'salesList'
+                );
+
+
+            if (
+                !Array.isArray(sales) ||
+                !sales.length
+            ) {
+                container.innerHTML = `
+            <div
+                class="
+                    admin-empty-state
+                "
+            >
+                <i
+                    class="
+                        bi
+                        bi-receipt
+                    "
+                ></i>
+
+                <h4>
+                    No hay ventas en este periodo
+                </h4>
+
+                <p>
+                    Solo aparecen pedidos web
+                    con pago confirmado.
+                </p>
+            </div>
+        `;
+
+                return;
+            }
+
+
+            container.innerHTML =
+                sales
+                    .map(
+                        sale =>
+                            renderSaleCard(
+                                sale
+                            )
+                    )
+                    .join('');
+        }
+
+
+        function renderSaleCard(
+            sale
+        ) {
+            const client =
+                sale.cliente || {};
+
+
+            const details =
+                Array.isArray(
+                    sale.detalles
+                )
+                    ? sale.detalles
+                    : [];
+
+
+            const channel =
+                sale.canalCierre ===
+                    'WHATSAPP'
+                    ? 'WhatsApp'
+                    : 'Mercado Pago';
+
+
+            const channelIcon =
+                sale.canalCierre ===
+                    'WHATSAPP'
+                    ? 'bi-whatsapp'
+                    : 'bi-credit-card';
+
+
+            const paymentDate =
+                sale.pagadoEn
+                    ? new Date(
+                        sale.pagadoEn
+                    )
+                    : null;
+
+
+            const formattedDate =
+                paymentDate
+                    ? new Intl.DateTimeFormat(
+                        'es-MX',
+                        {
+                            dateStyle:
+                                'medium',
+
+                            timeStyle:
+                                'short'
+                        }
+                    ).format(
+                        paymentDate
+                    )
+                    : 'Fecha no disponible';
+
+
+            return `
+        <article
+            class="
+                sales-sale-card
+            "
+        >
+
+            <button
+                type="button"
+                class="
+                    sales-sale-summary
+                "
+                onclick="
+                    toggleSaleDetails(
+                        ${Number(
+                sale.id
+            )}
+                    )
+                "
+            >
+
+                <div
+                    class="
+                        sales-sale-main
+                    "
+                >
+
+                    <span
+                        class="
+                            sales-sale-code
+                        "
+                    >
+                        ${escapeHtml(
+                sale.codigoRastreo ||
+                `Pedido ${sale.id}`
+            )}
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(
+                client.nombre ||
+                sale.nombreDestinatario ||
+                'Cliente'
+            )}
+                    </strong>
+
+                    <small>
+                        ${escapeHtml(
+                formattedDate
+            )}
+                    </small>
+
+                </div>
+
+
+                <div
+                    class="
+                        sales-sale-channel
+                    "
+                >
+                    <i
+                        class="
+                            bi
+                            ${channelIcon}
+                        "
+                    ></i>
+
+                    ${channel}
+                </div>
+
+
+                <strong
+                    class="
+                        sales-sale-total
+                    "
+                >
+                    ${formatCurrency(
+                sale.total
+            )}
+                </strong>
+
+
+                <i
+                    class="
+                        bi
+                        bi-chevron-down
+                        sales-sale-chevron
+                    "
+                ></i>
+
+            </button>
+
+
+            <div
+                id="saleDetails-${Number(
+                sale.id
+            )}"
+                class="
+                    sales-sale-details
+                    hidden
+                "
+            >
+
+                <div
+                    class="
+                        sales-detail-grid
+                    "
+                >
+
+                    <section>
+                        <span
+                            class="
+                                sales-detail-label
+                            "
+                        >
+                            Comprador
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                client.nombre ||
+                'Sin nombre'
+            )}
+                        </strong>
+
+                        <p>
+                            ${client.telefono
+                    ? escapeHtml(
+                        client.telefono
+                    )
+                    : 'Sin teléfono'
+                }
+                        </p>
+
+                        <p>
+                            ${client.email
+                    ? escapeHtml(
+                        client.email
+                    )
+                    : 'Sin correo'
+                }
+                        </p>
+                    </section>
+
+
+                    <section>
+                        <span
+                            class="
+                                sales-detail-label
+                            "
+                        >
+                            Entrega
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                    sale.nombreDestinatario ||
+                    client.nombre ||
+                    'Sin destinatario'
+                )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml(
+                    sale.direccionEntrega ||
+                    client.direccion ||
+                    'Sin dirección'
+                )}
+                        </p>
+
+                        ${sale.telefonoDestinatario
+                    ? `
+                                    <p>
+                                        ${escapeHtml(
+                        sale.telefonoDestinatario
+                    )}
+                                    </p>
+                                `
+                    : ''
+                }
+
+                        ${sale.fechaEntrega
+                    ? `
+                                    <p>
+                                        Entrega:
+                                        ${escapeHtml(
+                        sale.fechaEntrega
+                    )}
+                                    </p>
+                                `
+                    : ''
+                }
+
+                        ${sale.ventanaEntrega
+                    ? `
+                                    <p>
+                                        ${escapeHtml(
+                        sale.ventanaEntrega
+                    )}
+                                    </p>
+                                `
+                    : ''
+                }
+                    </section>
+
+
+                    <section>
+                        <span
+                            class="
+                                sales-detail-label
+                            "
+                        >
+                            Pago
+                        </span>
+
+                        <strong>
+                            ${channel}
+                        </strong>
+
+                        <p>
+                            Estado:
+                            ${escapeHtml(
+                    sale.estadoPago ||
+                    ''
+                )}
+                        </p>
+
+                        ${sale.referenciaPago
+                    ? `
+                                    <p>
+                                        Referencia:
+                                        ${escapeHtml(
+                        sale.referenciaPago
+                    )}
+                                    </p>
+                                `
+                    : ''
+                }
+                    </section>
+
+                </div>
+
+
+                <div
+                    class="
+                        sales-products-detail
+                    "
+                >
+
+                    <h4>
+                        Productos vendidos
+                    </h4>
+
+                    ${details.length
+                    ? details
+                        .map(
+                            detail => `
+                                        <div
+                                            class="
+                                                sales-product-detail-row
+                                            "
+                                        >
+
+                                            <div>
+                                                <strong>
+                                                    ${escapeHtml(
+                                detail.producto
+                                    ?.nombre ||
+                                'Producto'
+                            )}
+                                                </strong>
+
+                                                <small>
+                                                    ${Number(
+                                detail.cantidad ||
+                                0
+                            )}
+                                                    ×
+                                                    ${formatCurrency(
+                                detail.precioUnitario
+                            )}
+                                                </small>
+                                            </div>
+
+                                            <strong>
+                                                ${formatCurrency(
+                                detail.subtotal
+                            )}
+                                            </strong>
+
+                                        </div>
+                                    `
+                        )
+                        .join('')
+                    : `
+                                <p
+                                    class="
+                                        small-muted
+                                    "
+                                >
+                                    No hay detalle
+                                    de productos.
+                                </p>
+                            `
+                }
+
+                </div>
+
+
+                <div
+                    class="
+                        sales-sale-footer-total
+                    "
+                >
+                    <span>
+                        Total de la venta
+                    </span>
+
+                    <strong>
+                        ${formatCurrency(
+                    sale.total
+                )}
+                    </strong>
+                </div>
+
+            </div>
+
+        </article>
+    `;
+        }
+
+
+        function toggleSaleDetails(
+            saleId
+        ) {
+            const details =
+                document.getElementById(
+                    `saleDetails-${saleId}`
+                );
+
+            if (!details) {
+                return;
+            }
+
+            details.classList.toggle(
+                'hidden'
+            );
         }
 
         const ORDER_STATUS_INFO = {
