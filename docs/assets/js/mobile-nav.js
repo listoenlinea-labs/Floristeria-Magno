@@ -301,7 +301,123 @@ async function openTrackedWhatsapp(
 window.openTrackedWhatsapp =
     openTrackedWhatsapp;
 
+/*
+ * ==========================================================
+ * PUNTO ÚNICO PARA ABRIR WHATSAPP
+ * ==========================================================
+ *
+ * Todos los botones de WhatsApp del sitio
+ * deben utilizar esta función.
+ *
+ * DESKTOP:
+ * abre una pestaña nueva y después carga WhatsApp Web.
+ *
+ * MÓVIL:
+ * registra el lead y abre WhatsApp App.
+ */
+async function startTrackedWhatsapp(
+    source = 'whatsapp'
+) {
+    const isMobile =
+        navigator.userAgentData?.mobile === true ||
+        /Android|iPhone|iPad|iPod/i.test(
+            navigator.userAgent
+        );
 
+
+    /*
+     * ======================================================
+     * MÓVIL
+     * ======================================================
+     */
+    if (isMobile) {
+
+        await openTrackedWhatsapp({
+            source
+        });
+
+        return;
+    }
+
+
+    /*
+     * ======================================================
+     * DESKTOP
+     * ======================================================
+     *
+     * Abrimos la pestaña AQUÍ,
+     * directamente durante el click.
+     */
+    const whatsappTab =
+        window.open(
+            'about:blank',
+            '_blank'
+        );
+
+
+    if (!whatsappTab) {
+
+        alert(
+            'El navegador bloqueó la nueva pestaña. Permite ventanas emergentes para este sitio.'
+        );
+
+        return;
+    }
+
+
+    try {
+
+        whatsappTab.opener =
+            null;
+
+
+        whatsappTab.document.title =
+            'Preparando WhatsApp...';
+
+
+        whatsappTab.document.body.innerHTML = `
+            <main
+                style="
+                    min-height:100vh;
+                    display:grid;
+                    place-items:center;
+                    font-family:Arial,sans-serif;
+                    background:#ffffff;
+                    color:#222222;
+                    text-align:center;
+                    padding:24px;
+                "
+            >
+                <div>
+                    <h2>
+                        Preparando WhatsApp Web...
+                    </h2>
+
+                    <p>
+                        Un momento.
+                    </p>
+                </div>
+            </main>
+        `;
+
+    } catch (error) {
+
+        console.warn(
+            'No fue posible preparar la pestaña:',
+            error
+        );
+    }
+
+
+    await openTrackedWhatsapp({
+        source,
+        whatsappTab
+    });
+}
+
+
+window.startTrackedWhatsapp =
+    startTrackedWhatsapp;
 
 document.addEventListener(
     'DOMContentLoaded',
@@ -426,103 +542,9 @@ function addWhatsappMobileNavItem() {
 
             event.preventDefault();
 
-            const isMobile =
-                navigator.userAgentData?.mobile === true ||
-                /Android|iPhone|iPad|iPod/i.test(
-                    navigator.userAgent
-                );
-
-            /*
-             * ==================================================
-             * CELULAR
-             * ==================================================
-             *
-             * NO abrimos about:blank.
-             *
-             * Después del registro del lead
-             * iremos directamente a WhatsApp App.
-             */
-            if (isMobile) {
-
-                await openTrackedWhatsapp({
-                    source:
-                        'mobile-nav'
-                });
-
-                return;
-            }
-
-
-            /*
-             * ==================================================
-             * DESKTOP
-             * ==================================================
-             *
-             * Abrimos una pestaña inmediatamente
-             * desde el click para que Chrome
-             * no la bloquee.
-             */
-            const whatsappTab =
-                window.open(
-                    'about:blank',
-                    '_blank'
-                );
-
-            if (!whatsappTab) {
-                alert(
-                    'Chrome bloqueó la nueva pestaña. Permite ventanas emergentes para este sitio.'
-                );
-
-                return;
-            }
-
-
-            try {
-                whatsappTab.opener =
-                    null;
-
-                whatsappTab.document.title =
-                    'Preparando WhatsApp...';
-
-                whatsappTab.document.body.innerHTML = `
-                <main
-                    style="
-                        min-height:100vh;
-                        display:grid;
-                        place-items:center;
-                        font-family:Arial,sans-serif;
-                        background:#ffffff;
-                        color:#222222;
-                        text-align:center;
-                        padding:24px;
-                    "
-                >
-                    <div>
-                        <h2>
-                            Preparando WhatsApp Web...
-                        </h2>
-
-                        <p>
-                            Un momento.
-                        </p>
-                    </div>
-                </main>
-            `;
-
-            } catch (error) {
-                console.warn(
-                    'No fue posible preparar la pestaña:',
-                    error
-                );
-            }
-
-
-            await openTrackedWhatsapp({
-                source:
-                    'mobile-nav',
-
-                whatsappTab
-            });
+            await startTrackedWhatsapp(
+                'mobile-nav'
+            );
         }
     );
 
@@ -617,3 +639,45 @@ function setActiveMobileNavItem() {
             }
         );
 }
+
+/*
+ * ==========================================================
+ * BOTONES WHATSAPP COMPARTIDOS
+ * ==========================================================
+ *
+ * Cualquier elemento HTML que tenga:
+ *
+ * class="js-tracked-whatsapp"
+ *
+ * utilizará automáticamente el sistema
+ * de tracking de leads.
+ */
+document.addEventListener(
+    'click',
+    async event => {
+
+        const whatsappButton =
+            event.target.closest(
+                '.js-tracked-whatsapp'
+            );
+
+
+        if (!whatsappButton) {
+            return;
+        }
+
+
+        event.preventDefault();
+
+
+        const source =
+            whatsappButton.dataset
+                .whatsappSource ||
+            'whatsapp-button';
+
+
+        await startTrackedWhatsapp(
+            source
+        );
+    }
+);

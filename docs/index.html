@@ -511,8 +511,8 @@
                                         naturales. Eso hace que cada ramo sea único y especial.
                                     </p>
                                 </div>
-                                <a href="https://wa.me/520000000000" class="btn-main mt-2 d-inline-flex"
-                                    id="availabilityWhatsappLink" target="_blank" rel="noopener">
+                                <a href="#" class="btn-main mt-2 d-inline-flex js-tracked-whatsapp"
+                                    id="availabilityWhatsappLink" data-whatsapp-source="inicio-disponibilidad">
                                     Confirmar disponibilidad
                                 </a>
                             </div>
@@ -783,8 +783,8 @@
                                 <i class="bi bi-map"></i>
                                 Abrir Google Maps
                             </a>
-                            <a class="btn-map-secondary" id="directionsWhatsappLink" target="_blank" rel="noopener"
-                                href="https://wa.me/520000000000">
+                            <a class="btn-map-secondary js-tracked-whatsapp" id="directionsWhatsappLink" href="#"
+                                data-whatsapp-source="inicio-indicaciones">
                                 <i class="bi bi-whatsapp"></i>
                                 Pedir indicaciones
                             </a>
@@ -809,8 +809,8 @@
                                 convertimos en una composición floral hecha para recordar.
                             </p>
                             <div class="d-flex flex-wrap gap-3">
-                                <a href="https://wa.me/520000000000" class="btn-main" id="contactWhatsappLink"
-                                    target="_blank" rel="noopener">
+                                <a href="#" class="btn-main js-tracked-whatsapp" id="contactWhatsappLink"
+                                    data-whatsapp-source="inicio-cotizar">
                                     <i class="bi bi-whatsapp me-2"></i>
                                     Cotizar por WhatsApp
                                 </a>
@@ -881,7 +881,10 @@
                     <p class="mb-2" id="footerHours" style="color:rgba(255,248,239,.68);">
                         Lunes a viernes 9:00 a.m. – 7:00 p.m.
                     </p>
-                    <a target="_blank" href="https://wa.me/52 33 3662 4226">WhatsApp: 33 3662 4226</a>
+                    <a href="#" id="footerWhatsappLink" class="js-tracked-whatsapp"
+                        data-whatsapp-source="inicio-footer">
+                        WhatsApp: 33 3662 4226
+                    </a>
                 </div>
             </div>
             <hr style="border-color:rgba(255,255,255,.1);margin:38px 0 24px;">
@@ -893,8 +896,8 @@
         <i class="bi bi-bag-heart"></i>
         <span id="cartCount">0</span>
     </a>
-    <a class="whatsapp-float" id="floatingWhatsappLink" href="https://wa.me/52 33 3662 4226"
-        aria-label="Contactar por WhatsApp" target="_blank" rel="noopener">
+    <a class="whatsapp-float js-tracked-whatsapp" id="floatingWhatsappLink" href="#"
+        data-whatsapp-source="inicio-floating" aria-label="Contactar por WhatsApp">
         <i class="bi bi-whatsapp"></i>
     </a>
     <!-- MODAL CARRITO -->
@@ -1211,51 +1214,7 @@
             /*
              * WhatsApp.
              */
-            const generalWhatsappUrl =
-                buildWhatsappUrl(whatsapp);
 
-            const availabilityWhatsappUrl =
-                buildWhatsappUrl(
-                    whatsapp,
-                    "Hola, quiero confirmar disponibilidad de un arreglo floral."
-                );
-
-            const directionsWhatsappUrl =
-                buildWhatsappUrl(
-                    whatsapp,
-                    "Hola, quisiera pedir indicaciones para llegar a la floristería."
-                );
-
-            const quoteWhatsappUrl =
-                buildWhatsappUrl(
-                    whatsapp,
-                    "Hola, quisiera cotizar un arreglo floral."
-                );
-
-            setElementHref(
-                "availabilityWhatsappLink",
-                availabilityWhatsappUrl
-            );
-
-            setElementHref(
-                "directionsWhatsappLink",
-                directionsWhatsappUrl
-            );
-
-            setElementHref(
-                "contactWhatsappLink",
-                quoteWhatsappUrl
-            );
-
-            setElementHref(
-                "floatingWhatsappLink",
-                generalWhatsappUrl
-            );
-
-            setElementHref(
-                "footerWhatsappLink",
-                generalWhatsappUrl
-            );
 
             const footerWhatsapp =
                 document.getElementById(
