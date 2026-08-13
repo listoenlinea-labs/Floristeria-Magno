@@ -160,23 +160,13 @@ function validateDelivery(delivery) {
 }
 
 function generarCodigoRastreo() {
-    const characters =
-        'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const numero =
+        crypto.randomInt(
+            0,
+            1000000
+        );
 
-    let randomPart = '';
-
-    for (let i = 0; i < 6; i += 1) {
-        const randomIndex =
-            crypto.randomInt(
-                0,
-                characters.length
-            );
-
-        randomPart +=
-            characters[randomIndex];
-    }
-
-    return `JHM-${randomPart}`;
+    return `JHM-${String(numero).padStart(6, '0')}`;
 }
 
 async function generarCodigoRastreoUnico(
