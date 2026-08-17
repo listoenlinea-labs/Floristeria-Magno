@@ -105,10 +105,10 @@
                         </span>
                     </p>
                     <div class="hero-actions home-actions">
-                        <a href="catalogo.html" class="btn-main page-link-transition" id="siteHeroButton">
+                        <!--<a href="catalogo.html" class="btn-main page-link-transition" id="siteHeroButton">
                             <i class="bi bi-bag-heart me-2"></i>
                             <span id="siteHeroButtonText">Ver arreglos</span>
-                        </a>
+                        </a>-->
                         <a href="#experiencia" class="btn-secondary-hero mobile-secondary-action">
                             Detalles importantes
                         </a>
@@ -172,6 +172,7 @@
             </div>
         </section>
         <!-- SERVICIOS -->
+        <!--
         <section class="section-padding" id="servicios">
             <div class="container">
                 <div class="text-center mb-5 reveal">
@@ -220,7 +221,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section>-->
         <!-- CARRUSEL EDITORIAL -->
         <section class="section-padding dark-section mobile-hide-section" id="colecciones">
             <div class="container">
@@ -522,6 +523,7 @@
         </section>
 
         <!-- RAMOS DE NOVIA -->
+        <!--
         <section class="section-padding soft-section" id="novias">
             <div class="container">
                 <div class="row align-items-end mb-5 reveal">
@@ -561,7 +563,7 @@
                 </div>
             </div>
         </section>
-
+        -->
         <!-- QUIÉNES SOMOS -->
         <section class="section-padding" id="nosotros">
             <div class="container">
@@ -622,14 +624,14 @@
         <section class="section-padding soft-section" id="social">
             <div class="container">
                 <div class="text-center mb-4 reveal">
-                    <div class="eyebrow">Inspiración floral</div>
+                    <div class="eyebrow">Nuestras creaciones</div>
                     <h2 class="section-title">
                         <span class="desktop-copy">
                             Detalles que se ven bien en persona y en foto.
                         </span>
 
                         <span class="mobile-copy">
-                            Inspiración floral.
+                            Nuestras creaciones.
                         </span>
                     </h2>
                     <p class="text-muted-custom mx-auto mt-3 inspiration-description" style="max-width:760px;">
@@ -645,7 +647,7 @@
             </div>
 
             <div class="floral-carousel-wrap reveal">
-                <div class="floral-carousel" id="floralCarousel" aria-label="Carrusel de inspiración floral">
+                <div class="floral-carousel" id="floralCarousel" aria-label="Carrusel de Nuestras creaciones">
                     <article class="floral-slide">
                         <div class="gallery-loading-state">
                             <div class="gallery-loading-spinner"></div>
@@ -1366,9 +1368,22 @@
             }
 
             try {
-                const items = await getGallerySection(
-                    "momentos"
-                );
+                const [momentsItems, bridalItems] = await Promise.all([
+                    getGallerySection("momentos"),
+                    getGallerySection("novias")
+                ]);
+
+                const items = [...momentsItems];
+
+                // Agregar una tarjeta especial de Novias
+                if (bridalItems.length) {
+                    items.push({
+                        ...bridalItems[0],
+                        titulo: "Para tu boda",
+                        descripcion: "Ramos de novia personalizados para un día inolvidable.",
+                        isBridalCard: true
+                    });
+                }
 
                 if (!items.length) {
                     container.innerHTML = `
@@ -1383,7 +1398,7 @@
                 }
 
                 container.innerHTML = items.map(item => `
-            <div class="col-md-6 col-lg-3 reveal visible">
+            <div class="col-md-6 moments-card-column reveal visible">
                 <article class="mood-card mood-card-magno">
                     <img
                         src="${escapeHtml(getGalleryImageUrl(item))}"
@@ -1404,6 +1419,7 @@
                 </article>
             </div>
         `).join("");
+
             } catch (error) {
                 console.error(
                     "Error cargando momentos:",
@@ -1487,9 +1503,15 @@
 
         async function loadCollectionsGallery() {
             try {
-                const items = await getGallerySection(
-                    "colecciones"
-                );
+                const [collectionsItems, bridalItems] = await Promise.all([
+                    getGallerySection("colecciones"),
+                    getGallerySection("novias")
+                ]);
+
+                const items = [
+                    ...collectionsItems,
+                    ...bridalItems
+                ];
 
                 renderBootstrapCarousel(
                     "heroArtCarousel",
@@ -1507,9 +1529,15 @@
 
         async function loadStoriesGallery() {
             try {
-                const items = await getGallerySection(
-                    "historias"
-                );
+                const [storiesItems, bridalItems] = await Promise.all([
+                    getGallerySection("historias"),
+                    getGallerySection("novias")
+                ]);
+
+                const items = [
+                    ...storiesItems,
+                    ...bridalItems
+                ];
 
                 renderBootstrapCarousel(
                     "flowerStoryCarousel",
@@ -1596,9 +1624,27 @@
             }
 
             try {
-                const allItems = await getGallerySection(
-                    "inspiracion"
-                );
+                const [inspirationItems, bridalItems] = await Promise.all([
+                    getGallerySection("inspiracion"),
+                    getGallerySection("novias")
+                ]);
+
+                /*
+                 * Identificamos las imágenes provenientes
+                 * específicamente de Novias.
+                 */
+                const bridalSlides = bridalItems.map(item => ({
+                    ...item,
+                    titulo: item.titulo || "Ramos de novia",
+                    isBridal: true
+                }));
+
+                const allItems = [
+                    ...inspirationItems.slice(0, 2),
+                    ...bridalSlides.slice(0, 1),
+                    ...inspirationItems.slice(2),
+                    ...bridalSlides.slice(1)
+                ];
 
                 const items = limitIndexItems(
                     allItems,
@@ -1628,13 +1674,18 @@
 
                 <span>
                     ${escapeHtml(
-                    item.titulo ||
-                    item.categoria ||
-                    "Inspiración"
+                    item.isBridal
+                        ? "RAMOS DE NOVIA"
+                        : (
+                            item.titulo ||
+                            item.categoria ||
+                            "Inspiración"
+                        )
                 )}
                 </span>
             </article>
         `).join("");
+
             } catch (error) {
                 console.error(
                     "Error cargando inspiración:",
@@ -1795,77 +1846,62 @@
             }
 
             try {
-                const response = await fetch(
-                    `${API_BASE_URL}/galeria?seccion=hero`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Accept: "application/json"
-                        }
-                    }
-                );
+                const [heroImages, bridalImages] = await Promise.all([
+                    getGallerySection("hero"),
+                    getGallerySection("novias")
+                ]);
 
-                if (!response.ok) {
-                    throw new Error(
-                        `La API respondió con el estado ${response.status}`
-                    );
-                }
-
-                const result = await response.json();
-
-                if (!result.ok) {
-                    throw new Error(
-                        result.message ||
-                        "No fue posible consultar las imágenes del hero"
-                    );
-                }
-
-                const images = Array.isArray(result.data)
-                    ? result.data
-                        .filter(image => Number(image.activo) === 1)
-                        .sort(
-                            (a, b) =>
-                                Number(a.orden || 999) -
-                                Number(b.orden || 999)
-                        )
-                    : [];
+                const images = [
+                    ...heroImages,
+                    ...bridalImages
+                ];
 
                 if (!images.length) {
-                    renderHeroFallback(carouselElement, carouselInner);
+                    renderHeroFallback(
+                        carouselElement,
+                        carouselInner
+                    );
                     return;
                 }
 
-                carouselInner.innerHTML = images.map((image, index) => {
-                    const imageUrl = convertDriveImageUrl(
-                        image.imagenUrl
-                    );
+                carouselInner.innerHTML = images.map(
+                    (image, index) => {
 
-                    const alternativeText =
-                        image.textoAlternativo ||
-                        image.titulo ||
-                        "Arreglo floral de Floristería Juan H Magno";
+                        const imageUrl =
+                            getGalleryImageUrl(image);
 
-                    return `
-        <div class="carousel-item ${index === 0 ? "active" : ""}">
-          <img
-            src="${escapeHtml(imageUrl)}"
-            alt="${escapeHtml(alternativeText)}"
-            loading="${index === 0 ? "eager" : "lazy"}"
-            decoding="async"
-            onerror="handleHeroImageError(this)"
-          >
-        </div>
-      `;
-                }).join("");
+                        const alternativeText =
+                            getGalleryAlt(image);
 
-                startHeroCarousel(carouselElement, images.length);
+                        return `
+                    <div class="carousel-item ${index === 0 ? "active" : ""}">
+                        <img
+                            src="${escapeHtml(imageUrl)}"
+                            alt="${escapeHtml(alternativeText)}"
+                            loading="${index === 0 ? "eager" : "lazy"}"
+                            decoding="async"
+                            onerror="handleHeroImageError(this)"
+                        >
+                    </div>
+                `;
+                    }
+                ).join("");
+
+                startHeroCarousel(
+                    carouselElement,
+                    images.length
+                );
+
             } catch (error) {
                 console.error(
                     "Error al cargar la galería del hero:",
                     error
                 );
 
-                renderHeroFallback(carouselElement, carouselInner);
+                renderHeroFallback(
+                    carouselElement,
+                    carouselInner
+                );
             }
         }
 

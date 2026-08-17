@@ -9403,7 +9403,7 @@ body.page-index section:not(.dark-section):not(.cta-section) {
 body.page-index .soft-section:nth-of-type(even),
 body.page-index #momentos,
 body.page-index #contacto {
-    background: var(--fd-pink) !important;
+    background: var(--fd-white) !important;
 }
 
 body.page-index .dark-section {
@@ -17469,5 +17469,12 @@ body.page-index .google-review-card .review-text {
         grid-column: 3;
 
         font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 992px) {
+    #momentsGalleryGrid .moments-card-column {
+        flex: 0 0 20%;
+        max-width: 20%;
     }
 }
