@@ -411,7 +411,6 @@ class SiteHeader extends HTMLElement {
             <a class="nav-link" href="${pageUrl('index.html', 'momentos')}" data-section="momentos">Momentos</a>
             <a class="nav-link" href="${pageUrl('index.html', 'servicios')}" data-section="servicios">Servicios</a>
             <a class="nav-link" href="${pageUrl('catalogo.html')}" data-page="catalogo">Catálogo</a>
-            <a class="nav-link" href="${pageUrl('index.html', 'novias')}" data-section="novias">Novias</a>
             <a class="nav-link" href="${pageUrl('rastreo.html')}" data-page="rastreo">Rastrea tu pedido</a>
             <a
               class="nav-link"
