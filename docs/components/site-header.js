@@ -389,9 +389,9 @@ class SiteHeader extends HTMLElement {
         <div class="header-inner">
           <a class="brand-logo" href="${pageUrl('index.html', 'inicio')}" aria-label="Ir al inicio">
             <span class="logo-mark">
-              <img src="${logoUrl}" alt="Logo Floristería Juan H Magno">
+              <img src="${logoUrl}" alt="Logo Floristería Magno">
             </span>
-            <span>Juan H <span class="brand-name-accent">Magno</span></span>
+            <span>Floristería <span class="brand-name-accent">Magno</span></span>
           </a>
 
           <button
@@ -424,7 +424,7 @@ class SiteHeader extends HTMLElement {
             <a
               class="mobile-phone-link"
               href="tel:+5213312345678"
-              aria-label="Llamar a Floristería Juan H Magno"
+              aria-label="Llamar a Floristería Magno"
             >
               <svg
                 viewBox="0 0 24 24"

@@ -46,7 +46,7 @@ const configuracionEstados = {
         etiqueta: 'Entregado',
         titulo: 'Tu pedido fue entregado.',
         descripcion:
-            'Gracias por confiar en Juan H Magno. Esperamos que este detalle haya acompañado un momento especial.'
+            'Gracias por confiar en Floristería Magno. Esperamos que este detalle haya acompañado un momento especial.'
     },
 
     CANCELADO: {

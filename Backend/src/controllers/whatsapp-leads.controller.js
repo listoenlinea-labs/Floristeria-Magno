@@ -310,7 +310,7 @@ function createWhatsappMessage({
     total
 }) {
     let message =
-        'Hola 👋 Vi sus arreglos en la página de Juan H Magno y quisiera información.';
+        'Hola 👋 Vi sus arreglos en la página de Floristería Magno y quisiera información.';
 
 
     if (items.length) {

@@ -85,7 +85,7 @@ async function enviarCorreoCodigoRastreo({
 
     console.log('Enviando correo...');
     const info = await transporter.sendMail({
-        from: `"Floristería Juan H Magno" <${fromEmail}>`,
+        from: `"Floristería Magno" <${fromEmail}>`,
         to: email,
 
         subject:
@@ -104,7 +104,7 @@ async function enviarCorreoCodigoRastreo({
                 ? `Rastrea tu pedido aquí: ${trackingUrl}`
                 : '',
             '',
-            'Floristería Juan H Magno'
+            'Floristería Magno'
         ]
             .filter(Boolean)
             .join('\n'),
@@ -189,7 +189,7 @@ async function enviarCorreoCodigoRastreo({
                 ${trackingButton}
 
                 <p style="margin-top:32px;color:#76666a;">
-                    Floristería Juan H Magno
+                    Floristería Magno
                 </p>
             </div>
         `

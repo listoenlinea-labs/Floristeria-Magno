@@ -520,7 +520,7 @@ function addWhatsappMobileNavItem() {
 
     whatsappLink.setAttribute(
         'aria-label',
-        'Contactar a la Floristería Juan H Magno por WhatsApp'
+        'Contactar a la Floristería Magno por WhatsApp'
     );
 
 
