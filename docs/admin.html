@@ -1016,7 +1016,7 @@
                                 </option>
 
                                 <option value="novias">
-                                    Ramos de novia
+                                    Novias y bodas
                                 </option>
 
                                 <option value="inspiracion">
@@ -5570,10 +5570,11 @@
 
         function getGallerySectionInfo(section) {
             const sections = {
+
                 hero: {
                     label: "Hero / carrusel principal",
                     description:
-                        "Imágenes grandes que aparecen en el carrusel de portada.",
+                        "Imágenes propias del carrusel principal. Además, el sitio agrega automáticamente las imágenes de Novias.",
                     icon: "bi-images",
                     order: 1
                 },
@@ -5581,7 +5582,7 @@
                 "hero-secundaria": {
                     label: "Imagen pequeña del hero",
                     description:
-                        "Imagen decorativa que acompaña al carrusel principal.",
+                        "Imagen decorativa pequeña que acompaña al carrusel principal.",
                     icon: "bi-image",
                     order: 2
                 },
@@ -5589,39 +5590,39 @@
                 momentos: {
                     label: "Momentos",
                     description:
-                        "Tarjetas de Para enamorar, celebrar, agradecer y eventos.",
+                        "Tarjetas de enamorar, celebrar, agradecer y eventos. La tarjeta Para tu boda se genera automáticamente usando la primera imagen de Novias.",
                     icon: "bi-heart",
                     order: 3
+                },
+
+                novias: {
+                    label: "Novias y bodas",
+                    description:
+                        "Fuente especial de imágenes de boda. Se reutilizan automáticamente en Hero, Momentos, Colecciones, Historias y Nuestras creaciones.",
+                    icon: "bi-gem",
+                    order: 4
                 },
 
                 colecciones: {
                     label: "Colecciones",
                     description:
-                        "Carrusel editorial de arreglos y composiciones florales.",
+                        "Imágenes propias del carrusel editorial. El sitio también agrega automáticamente las imágenes de Novias.",
                     icon: "bi-collection",
-                    order: 4
+                    order: 5
                 },
 
                 historias: {
                     label: "Historias",
                     description:
-                        "Carrusel visual de la sección Historia detrás de cada flor.",
+                        "Imágenes propias del carrusel Historia detrás de cada flor. También incluye automáticamente las imágenes de Novias.",
                     icon: "bi-book",
-                    order: 5
-                },
-
-                novias: {
-                    label: "Ramos de novia",
-                    description:
-                        "Diseños florales mostrados en la sección de bodas y novias.",
-                    icon: "bi-gem",
                     order: 6
                 },
 
                 inspiracion: {
-                    label: "Inspiración floral",
+                    label: "Nuestras creaciones / Inspiración",
                     description:
-                        "Galería horizontal ubicada cerca del final de la página.",
+                        "Imágenes propias del carrusel horizontal Nuestras creaciones. Las imágenes de Novias también se intercalan automáticamente.",
                     icon: "bi-stars",
                     order: 7
                 },
@@ -5629,7 +5630,7 @@
                 otros: {
                     label: "Otras imágenes",
                     description:
-                        "Imágenes sin una sección específica asignada.",
+                        "Imágenes que no tienen una ubicación específica asignada en el sitio.",
                     icon: "bi-folder",
                     order: 99
                 }
@@ -5708,6 +5709,7 @@
                         item.sortOrder || 0
                     )}
                 </span>
+                
             </div>
 
             <div class="admin-gallery-content">
@@ -5969,6 +5971,30 @@
                         </div>
                     </header>
 
+                    ${section === "novias"
+                            ? `
+        <div class="admin-gallery-bridal-notice">
+            <div class="admin-gallery-bridal-notice-icon">
+                <i class="bi bi-gem"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Estas imágenes se reutilizan automáticamente
+                </strong>
+
+                <p>
+                    Las fotografías de Novias y bodas también aparecen
+                    en el Hero principal, en la tarjeta "Para tu boda",
+                    en Colecciones, Historias y Nuestras creaciones.
+                    Solo necesitas administrarlas desde aquí.
+                </p>
+            </div>
+        </div>
+    `
+                            : ""
+                        }
+    
                     <div
                         class="
                             admin-gallery-grid
@@ -7549,7 +7575,7 @@
                 momentos: "Momentos especiales",
                 servicios: "Servicios",
                 catalogo: "Catálogo principal",
-                novias: "Ramos de novia",
+                novias: "Novias y bodas",
                 temporada: "Temporada",
                 promociones: "Promociones"
             };

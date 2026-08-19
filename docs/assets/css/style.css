@@ -8868,6 +8868,7 @@ body.page-admin {
     color: #27151b;
 }
 
+
 body .btn-main,
 body .btn-luxury,
 body .btn-gold,
@@ -9129,6 +9130,53 @@ body.page-ideas .eyebrow,
 body.page-rastreo .eyebrow,
 body.page-admin .eyebrow {
     color: var(--fd-black) !important;
+}
+
+.admin-gallery-bridal-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    margin: 18px 0 22px;
+    padding: 16px 18px;
+
+    border: 1px solid rgba(124, 64, 87, 0.16);
+    border-radius: 16px;
+
+    background:
+        rgba(124, 64, 87, 0.06);
+}
+
+.admin-gallery-bridal-notice-icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: rgba(124, 64, 87, 0.12);
+    color: #7c4057;
+
+    font-size: 1.1rem;
+}
+
+.admin-gallery-bridal-notice strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.admin-gallery-bridal-notice p {
+    margin: 0;
+
+    color: #6f6670;
+
+    line-height: 1.55;
+    font-size: 0.9rem;
 }
 
 /* ----------------------------------------------------------
