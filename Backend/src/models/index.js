@@ -7,7 +7,7 @@ const HistorialPedido = require('./HistorialPedido');
 const Galeria = require('./Galeria');
 const Configuracion = require('./Configuracion');
 const RastreoUbicacion = require('./RastreoUbicacion');
-
+const FechaEspecial = require('./FechaEspecial');
 const WhatsappLead = require('./WhatsappLead');
 const WhatsappLeadItem = require('./WhatsappLeadItem');
 const WhatsappLeadEvento = require('./WhatsappLeadEvento');
@@ -159,6 +159,7 @@ module.exports = {
     Galeria,
     Configuracion,
     RastreoUbicacion,
+    FechaEspecial,
     WhatsappLead,
     WhatsappLeadItem,
     WhatsappLeadEvento

@@ -102,6 +102,10 @@
                 <button class="tab-btn" id="galleryTabButton" onclick="setTab('gallery', this)">
                     <i class="bi bi-images"></i> Galería
                 </button>
+                <button class="tab-btn" id="specialDatesTabButton" onclick="setTab('specialDates', this)">
+                    <i class="bi bi-calendar-event"></i>
+                    Fechas especiales
+                </button>
                 <button class="tab-btn" id="settingsTabButton" onclick="setTab('settings', this)">
                     <i class="bi bi-gear"></i> Configuración
                 </button>
@@ -146,13 +150,15 @@
 
                         <select id="categoryFilter" class="form-select" onchange="renderProducts()">
                             <option value="">Todas las categorías</option>
-                            <option>Ramos</option>
-                            <option>Arreglos</option>
-                            <option>Rosas</option>
+                            <option>Románticos</option>
                             <option>Cumpleaños</option>
-                            <option>Aniversario</option>
-                            <option>Funerario</option>
-                            <option>Temporada</option>
+                            <option>Nacimientos</option>
+                            <option>Tulipanes</option>
+                            <option>Novias</option>
+                            <option>Flores exóticas</option>
+                            <option>Peonías</option>
+                            <option>Pureza</option>
+                            <option>Buchiramos</option>
                         </select>
 
                         <select id="statusFilter" class="form-select" onchange="renderProducts()">
@@ -613,6 +619,63 @@
                 </div>
             </section>
 
+            <section id="tabSpecialDates" class="hidden">
+                <div class="content-card glass">
+
+                    <div class="
+                d-flex
+                justify-content-between
+                align-items-center
+                gap-3
+                flex-wrap
+                mb-4
+            ">
+                        <div>
+                            <div class="eyebrow">
+                                Control de pedidos
+                            </div>
+
+                            <h2 class="mb-1">
+                                Fechas especiales
+                            </h2>
+
+                            <p class="small-muted mb-0">
+                                Define temporadas de alta demanda,
+                                avisos anticipados y fechas de corte
+                                sin modificar el código de la página.
+                            </p>
+                        </div>
+
+                        <button type="button" class="btn-gold" onclick="openSpecialDateModal()">
+                            <i class="bi bi-plus-lg"></i>
+                            Nueva fecha especial
+                        </button>
+                    </div>
+
+                    <div class="special-dates-admin-help mb-4">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        <div>
+                            <strong>
+                                ¿Cómo funcionan los cortes?
+                            </strong>
+
+                            <p class="mb-0">
+                                El aviso aparece desde la fecha indicada.
+                                Cuando llega la fecha de corte,
+                                las compras se bloquean automáticamente
+                                hasta que termine el periodo configurado.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div id="specialDatesList" class="special-dates-admin-list"></div>
+
+                </div>
+            </section>
+
             <section id="tabSettings" class="hidden">
                 <div class="content-card glass">
                     <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-4">
@@ -784,25 +847,25 @@
                                 </div>
                             </div>
 
-                            <div class="form-grid-2 mb-3">
-                                <div>
-                                    <label>Categoría</label>
-                                    <select id="productCategory" class="form-select">
-                                        <option>Ramos</option>
-                                        <option>Arreglos</option>
-                                        <option>Rosas</option>
-                                        <option>Cumpleaños</option>
-                                        <option>Aniversario</option>
-                                        <option>Funerario</option>
-                                        <option>Temporada</option>
-                                    </select>
-                                </div>
+                            <div class="mb-3">
+                                <label>Categoría del catálogo</label>
 
-                                <div>
-                                    <label>Etiqueta / ocasión</label>
-                                    <input id="productTag" class="form-control"
-                                        placeholder="Amor, cumpleaños, elegante...">
-                                </div>
+                                <select id="productCategory" class="form-select">
+                                    <option value="Románticos">Románticos</option>
+                                    <option value="Cumpleaños">Cumpleaños</option>
+                                    <option value="Nacimientos">Nacimientos</option>
+                                    <option value="Tulipanes">Tulipanes</option>
+                                    <option value="Novias">Novias</option>
+                                    <option value="Flores exóticas">Flores exóticas</option>
+                                    <option value="Peonías">Peonías</option>
+                                    <option value="Pureza">Pureza</option>
+                                    <option value="Buchiramos">Buchiramos</option>
+                                </select>
+
+                                <small class="small-muted d-block mt-2">
+                                    Esta categoría determina en qué sección aparecerá el arreglo dentro del catálogo
+                                    público.
+                                </small>
                             </div>
 
                             <div class="mb-3">
@@ -835,6 +898,148 @@
                         <i class="bi bi-save"></i> Guardar producto
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+     MODAL FECHA ESPECIAL
+    ====================================================== -->
+    <div class="modal fade" id="specialDateModal" tabindex="-1">
+        <div class="
+            modal-dialog
+            modal-lg
+            modal-dialog-centered
+            modal-dialog-scrollable
+        ">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <div>
+                        <h3 id="specialDateModalTitle" class="mb-1">
+                            Nueva fecha especial
+                        </h3>
+
+                        <p class="small-muted mb-0">
+                            Configura cuándo avisar
+                            y cuándo cerrar pedidos.
+                        </p>
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input id="specialDateId" type="hidden">
+
+                    <div class="mb-3">
+                        <label>
+                            Nombre
+                        </label>
+
+                        <input id="specialDateName" class="form-control" placeholder="Ej. San Valentín">
+                    </div>
+
+                    <div class="form-grid-2 mb-3">
+
+                        <div>
+                            <label>
+                                Fecha especial
+                            </label>
+
+                            <input id="specialDateEvent" type="datetime-local" class="form-control">
+                        </div>
+
+                        <div>
+                            <label>
+                                Inicio del aviso
+                            </label>
+
+                            <input id="specialDateNoticeStart" type="datetime-local" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <div class="form-grid-2 mb-3">
+
+                        <div>
+                            <label>
+                                Fecha y hora de corte
+                            </label>
+
+                            <input id="specialDateCutoff" type="datetime-local" class="form-control">
+
+                            <small class="small-muted">
+                                Desde este momento ya no
+                                se aceptarán nuevos pedidos.
+                            </small>
+                        </div>
+
+                        <div>
+                            <label>
+                                Reabrir pedidos
+                            </label>
+
+                            <input id="specialDateBlockEnd" type="datetime-local" class="form-control">
+
+                            <small class="small-muted">
+                                Momento en que la página
+                                volverá a aceptar compras.
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label>
+                            Mensaje antes del corte
+                        </label>
+
+                        <textarea id="specialDateNoticeMessage" class="form-control" rows="3"
+                            placeholder="Haz tu pedido con anticipación debido a la alta demanda..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>
+                            Mensaje cuando los pedidos estén cerrados
+                        </label>
+
+                        <textarea id="specialDateBlockedMessage" class="form-control" rows="3"
+                            placeholder="Hemos alcanzado nuestra capacidad de pedidos..."></textarea>
+                    </div>
+
+                    <div>
+                        <label>
+                            Estado
+                        </label>
+
+                        <select id="specialDateActive" class="form-select">
+                            <option value="SI">
+                                Activa
+                            </option>
+
+                            <option value="NO">
+                                Inactiva
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn-soft" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="button" class="btn-gold" onclick="saveSpecialDate()">
+                        <i class="bi bi-save"></i>
+                        Guardar fecha
+                    </button>
+
+                </div>
+
             </div>
         </div>
     </div>
@@ -1148,6 +1353,7 @@
         let selectedProductImages = [];
         let sections = [];
         let gallery = [];
+        let specialDates = [];
         let orders = [];
         let salesDashboard = null;
         let salesAnnualChart = null;
@@ -1190,6 +1396,12 @@
                 productModal = new bootstrap.Modal(
                     document.getElementById(
                         "productModal"
+                    )
+                );
+
+                specialDateModal = new bootstrap.Modal(
+                    document.getElementById(
+                        "specialDateModal"
                     )
                 );
 
@@ -1900,7 +2112,8 @@
                 const [
                     productResult,
                     galleryResult,
-                    settingsResult
+                    settingsResult,
+                    specialDatesResult
                 ] = await Promise.all([
                     apiFetch(
                         '/productos/admin/todos'
@@ -1912,6 +2125,10 @@
 
                     apiFetch(
                         '/configuracion'
+                    ),
+
+                    apiFetch(
+                        '/fechas-especiales/admin/todas'
                     )
                 ]);
 
@@ -2017,6 +2234,14 @@
                         settingsResult.data.googleMapsUrl || ''
                 };
 
+                specialDates =
+                    Array.isArray(
+                        specialDatesResult.data
+                    )
+                        ? specialDatesResult.data
+                        : [];
+
+                renderSpecialDates();
                 renderAll();
                 await loadOrders();
             } catch (error) {
@@ -2188,6 +2413,16 @@
                 .toggle('hidden', tab !== 'gallery');
 
             document
+                .getElementById(
+                    'tabSpecialDates'
+                )
+                .classList
+                .toggle(
+                    'hidden',
+                    tab !== 'specialDates'
+                );
+
+            document
                 .getElementById('tabSettings')
                 .classList
                 .toggle('hidden', tab !== 'settings');
@@ -2236,6 +2471,21 @@
                 mainBtn.innerHTML = '<i class="bi bi-plus-lg"></i> Nueva imagen';
                 mainBtn.onclick = openGalleryModal;
                 mainBtn.classList.remove("hidden");
+            }
+            if (
+                tab === 'specialDates'
+            ) {
+                mainBtn.innerHTML =
+                    '<i class="bi bi-plus-lg"></i> Nueva fecha';
+
+                mainBtn.onclick =
+                    openSpecialDateModal;
+
+                mainBtn.classList.remove(
+                    'hidden'
+                );
+
+                renderSpecialDates();
             }
 
             if (tab === "settings") {
@@ -6079,19 +6329,9 @@
                 .value =
                 p.stock || "";
 
-            document
-                .getElementById(
-                    "productCategory"
-                )
-                .value =
-                p.category || "Ramos";
-
-            document
-                .getElementById(
-                    "productTag"
-                )
-                .value =
-                p.tag || "";
+            document.getElementById(
+                "productCategory"
+            ).value = "Románticos";
 
             document
                 .getElementById(
@@ -6188,10 +6428,6 @@
             ).value = "Ramos";
 
             document.getElementById(
-                "productTag"
-            ).value = "";
-
-            document.getElementById(
                 "productDescription"
             ).value = "";
 
@@ -6271,14 +6507,6 @@
                         'productCategory'
                     )
                     .value;
-
-            const tag =
-                document
-                    .getElementById(
-                        'productTag'
-                    )
-                    .value
-                    .trim();
 
             const priceValue =
                 document
@@ -6530,7 +6758,7 @@
                         category,
 
                     etiqueta:
-                        tag,
+                        null,
 
                     precio:
                         Number(priceValue),
@@ -6986,6 +7214,567 @@
             } catch (error) {
                 console.error(error);
                 alert(error.message);
+            }
+        }
+
+        function formatDateTimeLocal(
+            value
+        ) {
+            if (!value) {
+                return '';
+            }
+
+            const date =
+                new Date(value);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return '';
+            }
+
+            const pad =
+                number =>
+                    String(number)
+                        .padStart(
+                            2,
+                            '0'
+                        );
+
+            return (
+                `${date.getFullYear()}-` +
+                `${pad(date.getMonth() + 1)}-` +
+                `${pad(date.getDate())}T` +
+                `${pad(date.getHours())}:` +
+                `${pad(date.getMinutes())}`
+            );
+        }
+
+
+        function formatSpecialDateForDisplay(
+            value
+        ) {
+            if (!value) {
+                return 'Sin definir';
+            }
+
+            return new Intl.DateTimeFormat(
+                'es-MX',
+                {
+                    timeZone:
+                        MEXICO_TIME_ZONE,
+
+                    dateStyle:
+                        'medium',
+
+                    timeStyle:
+                        'short'
+                }
+            ).format(
+                new Date(value)
+            );
+        }
+
+
+        async function loadSpecialDates() {
+            try {
+
+                const result =
+                    await apiFetch(
+                        '/fechas-especiales/admin/todas'
+                    );
+
+                specialDates =
+                    Array.isArray(
+                        result.data
+                    )
+                        ? result.data
+                        : [];
+
+                renderSpecialDates();
+
+            } catch (error) {
+
+                console.error(
+                    'Error cargando fechas especiales:',
+                    error
+                );
+
+                document.getElementById(
+                    'specialDatesList'
+                ).innerHTML = `
+            <div class="empty-state">
+                No fue posible cargar las fechas especiales.
+            </div>
+        `;
+            }
+        }
+
+
+        function renderSpecialDates() {
+
+            const container =
+                document.getElementById(
+                    'specialDatesList'
+                );
+
+            if (!specialDates.length) {
+
+                container.innerHTML = `
+            <div class="empty-state">
+                <i class="bi bi-calendar-plus"></i>
+
+                <h4>
+                    Todavía no hay fechas especiales
+                </h4>
+
+                <p>
+                    Crea la primera fecha para
+                    configurar avisos y cierres
+                    automáticos de pedidos.
+                </p>
+            </div>
+        `;
+
+                return;
+            }
+
+            container.innerHTML =
+                specialDates
+                    .map(
+                        fecha => `
+                    <article class="special-date-admin-card">
+
+                        <div class="special-date-admin-main">
+
+                            <div
+                                class="
+                                    special-date-admin-icon
+                                "
+                            >
+                                <i class="bi bi-calendar-heart"></i>
+                            </div>
+
+                            <div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                                    <h3 class="mb-0">
+                                        ${escapeHtml(fecha.nombre)}
+                                    </h3>
+
+                                    <span
+                                        class="
+                                            badge
+                                            ${fecha.activo
+                                ? 'text-bg-success'
+                                : 'text-bg-secondary'}
+                                        "
+                                    >
+                                        ${fecha.activo
+                                ? 'Activa'
+                                : 'Inactiva'}
+                                    </span>
+
+                                </div>
+
+                                <div class="special-date-admin-dates">
+
+                                    <span>
+                                        <strong>
+                                            Evento:
+                                        </strong>
+
+                                        ${formatSpecialDateForDisplay(
+                                    fecha.fechaEspecial
+                                )}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Aviso:
+                                        </strong>
+
+                                        ${formatSpecialDateForDisplay(
+                                    fecha.inicioAviso
+                                )}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Corte:
+                                        </strong>
+
+                                        ${formatSpecialDateForDisplay(
+                                    fecha.fechaCorte
+                                )}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            Reapertura:
+                                        </strong>
+
+                                        ${formatSpecialDateForDisplay(
+                                    fecha.finBloqueo
+                                )}
+                                    </span>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="special-date-admin-actions">
+
+                            <button
+                                type="button"
+                                class="btn-soft"
+                                onclick="editSpecialDate(${fecha.id})"
+                            >
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn-soft"
+                                onclick="deleteSpecialDate(${fecha.id})"
+                            >
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </button>
+
+                        </div>
+
+                    </article>
+                `
+                    )
+                    .join('');
+        }
+
+
+        function clearSpecialDateForm() {
+
+            document.getElementById(
+                'specialDateId'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateName'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateEvent'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateNoticeStart'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateCutoff'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateBlockEnd'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateNoticeMessage'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateBlockedMessage'
+            ).value = '';
+
+            document.getElementById(
+                'specialDateActive'
+            ).value = 'SI';
+        }
+
+
+        function openSpecialDateModal() {
+
+            clearSpecialDateForm();
+
+            document.getElementById(
+                'specialDateModalTitle'
+            ).textContent =
+                'Nueva fecha especial';
+
+            specialDateModal.show();
+        }
+
+
+        function editSpecialDate(
+            id
+        ) {
+
+            const fecha =
+                specialDates.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(id)
+                );
+
+            if (!fecha) {
+                return;
+            }
+
+            document.getElementById(
+                'specialDateModalTitle'
+            ).textContent =
+                'Editar fecha especial';
+
+            document.getElementById(
+                'specialDateId'
+            ).value =
+                fecha.id;
+
+            document.getElementById(
+                'specialDateName'
+            ).value =
+                fecha.nombre || '';
+
+            document.getElementById(
+                'specialDateEvent'
+            ).value =
+                formatDateTimeLocal(
+                    fecha.fechaEspecial
+                );
+
+            document.getElementById(
+                'specialDateNoticeStart'
+            ).value =
+                formatDateTimeLocal(
+                    fecha.inicioAviso
+                );
+
+            document.getElementById(
+                'specialDateCutoff'
+            ).value =
+                formatDateTimeLocal(
+                    fecha.fechaCorte
+                );
+
+            document.getElementById(
+                'specialDateBlockEnd'
+            ).value =
+                formatDateTimeLocal(
+                    fecha.finBloqueo
+                );
+
+            document.getElementById(
+                'specialDateNoticeMessage'
+            ).value =
+                fecha.mensajeAviso || '';
+
+            document.getElementById(
+                'specialDateBlockedMessage'
+            ).value =
+                fecha.mensajeBloqueo || '';
+
+            document.getElementById(
+                'specialDateActive'
+            ).value =
+                fecha.activo
+                    ? 'SI'
+                    : 'NO';
+
+            specialDateModal.show();
+        }
+
+
+        function mexicoLocalDateTimeToIso(
+            value
+        ) {
+            if (!value) {
+                return null;
+            }
+
+            /*
+             * Para México centro:
+             * UTC-06:00.
+             *
+             * datetime-local no incluye zona,
+             * así que la agregamos antes
+             * de mandarla al backend.
+             */
+            return `${value}:00-06:00`;
+        }
+
+        async function saveSpecialDate() {
+
+            const id =
+                document.getElementById(
+                    'specialDateId'
+                ).value;
+
+            const payload = {
+
+                nombre:
+                    document.getElementById(
+                        'specialDateName'
+                    ).value.trim(),
+
+                fechaEspecial:
+                    mexicoLocalDateTimeToIso(
+                        document.getElementById(
+                            'specialDateEvent'
+                        ).value
+                    ),
+
+                inicioAviso:
+                    mexicoLocalDateTimeToIso(
+                        document.getElementById(
+                            'specialDateNoticeStart'
+                        ).value
+                    ),
+
+                fechaCorte:
+                    mexicoLocalDateTimeToIso(
+                        document.getElementById(
+                            'specialDateCutoff'
+                        ).value
+                    ),
+
+                finBloqueo:
+                    mexicoLocalDateTimeToIso(
+                        document.getElementById(
+                            'specialDateBlockEnd'
+                        ).value
+                    ),
+
+                mensajeAviso:
+                    document.getElementById(
+                        'specialDateNoticeMessage'
+                    ).value.trim(),
+
+                mensajeBloqueo:
+                    document.getElementById(
+                        'specialDateBlockedMessage'
+                    ).value.trim(),
+
+                activo:
+                    document.getElementById(
+                        'specialDateActive'
+                    ).value === 'SI'
+            };
+
+
+            if (!payload.nombre) {
+                alert(
+                    'Escribe el nombre de la fecha especial.'
+                );
+                return;
+            }
+
+
+            if (
+                !payload.fechaEspecial ||
+                !payload.fechaCorte ||
+                !payload.finBloqueo
+            ) {
+                alert(
+                    'Debes definir la fecha especial, el corte y la reapertura.'
+                );
+
+                return;
+            }
+
+
+            try {
+
+                await apiFetch(
+                    id
+                        ? `/fechas-especiales/${id}`
+                        : '/fechas-especiales',
+                    {
+                        method:
+                            id
+                                ? 'PUT'
+                                : 'POST',
+
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+                specialDateModal.hide();
+
+                await loadSpecialDates();
+
+                alert(
+                    id
+                        ? 'Fecha especial actualizada correctamente.'
+                        : 'Fecha especial creada correctamente.'
+                );
+
+            } catch (error) {
+
+                console.error(
+                    'Error guardando fecha especial:',
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    'No fue posible guardar la fecha especial.'
+                );
+            }
+        }
+
+
+        async function deleteSpecialDate(
+            id
+        ) {
+
+            const fecha =
+                specialDates.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(id)
+                );
+
+            if (!fecha) {
+                return;
+            }
+
+            const confirmed =
+                confirm(
+                    `¿Eliminar la fecha especial "${fecha.nombre}"?`
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+
+                await apiFetch(
+                    `/fechas-especiales/${id}`,
+                    {
+                        method:
+                            'DELETE'
+                    }
+                );
+
+                await loadSpecialDates();
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    'No fue posible eliminar la fecha especial.'
+                );
             }
         }
 

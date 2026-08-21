@@ -27,12 +27,66 @@
 
   <main class="cart-page">
     <div class="container">
-      <div class="mb-5">
-        <div class="eyebrow">Pedido floral</div>
-        <h1 class="page-title">Tu carrito está casi listo.</h1>
-        <p class="page-copy">
-          Revisa tus arreglos, elige entrega y confirma el pago. Después podrás enviar el resumen por WhatsApp.
-        </p>
+      <div class="special-date-banner mb-4" id="specialDateBanner" style="display:none;">
+        <div class="special-date-banner-icon">
+          <i class="bi bi-calendar-heart"></i>
+        </div>
+
+        <div>
+          <strong id="specialDateBannerTitle">
+            Se acerca una fecha especial
+          </strong>
+
+          <p id="specialDateBannerText" class="mb-0"></p>
+        </div>
+      </div>
+      <div class="cart-page-header row g-4 align-items-center mb-5">
+
+        <!-- TÍTULO DEL CARRITO -->
+        <div class="col-lg-7">
+          <div class="eyebrow">
+            Pedido floral
+          </div>
+
+          <h1 class="page-title">
+            Tu carrito está casi listo.
+          </h1>
+
+          <p class="page-copy">
+            Revisa tus arreglos, elige entrega y confirma el pago.
+            Después podrás enviar el resumen por WhatsApp.
+          </p>
+        </div>
+
+
+        <!-- AVISO: CADA RAMO ES ÚNICO -->
+        <div class="col-lg-5">
+
+          <div class="cart-unique-note">
+
+            <div class="cart-unique-note-icon">
+              <i class="bi bi-stars"></i>
+            </div>
+
+            <div class="cart-unique-note-content">
+
+              <strong>
+                Cada ramo es único.
+              </strong>
+
+              <p class="mb-0">
+                Trabajamos con flores naturales y seleccionamos cada pieza
+                de manera artesanal. Por ello, tu arreglo conservará el estilo,
+                colores y esencia del diseño elegido, aunque puede presentar
+                pequeñas variaciones respecto a la fotografía.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
       <div class="row g-4 align-items-start">
@@ -99,6 +153,66 @@
             <div class="mb-0">
               <label class="form-label">Fecha de entrega</label>
               <input class="form-control" id="deliveryDate" type="date">
+            </div>
+            <div class="shipping-policy-box mt-4">
+              <button class="shipping-policy-toggle" type="button" data-bs-toggle="collapse"
+                data-bs-target="#shippingPolicyContent" aria-expanded="false" aria-controls="shippingPolicyContent">
+                <span>
+                  <i class="bi bi-truck me-2"></i>
+                  Políticas de envío
+                </span>
+
+                <i class="bi bi-chevron-down"></i>
+              </button>
+
+              <div class="collapse" id="shippingPolicyContent">
+                <div class="shipping-policy-content">
+
+                  <p>
+                    Para que tus flores lleguen en las mejores condiciones,
+                    considera lo siguiente:
+                  </p>
+
+                  <ul>
+                    <li>
+                      Las entregas se realizan dentro de las zonas de cobertura
+                      disponibles de Floristería Magno.
+                    </li>
+
+                    <li>
+                      El costo estándar de entrega mostrado en el carrito es de
+                      <strong>$120 MXN</strong>.
+                    </li>
+
+                    <li>
+                      La entrega se realizará dentro del horario seleccionado;
+                      el horario representa una ventana aproximada y no una hora exacta.
+                    </li>
+
+                    <li>
+                      Es responsabilidad del comprador proporcionar correctamente
+                      el nombre, teléfono y dirección de quien recibirá el arreglo.
+                    </li>
+
+                    <li>
+                      Si no es posible localizar al destinatario o acceder al domicilio,
+                      la entrega deberá coordinarse nuevamente y podría generar
+                      un costo adicional.
+                    </li>
+
+                    <li>
+                      En fechas de alta demanda como San Valentín y Día de las Madres,
+                      los pedidos pueden cerrar anticipadamente debido a disponibilidad
+                      y capacidad de entrega.
+                    </li>
+                  </ul>
+
+                  <small>
+                    Al realizar tu pedido confirmas que los datos de entrega son correctos.
+                  </small>
+
+                </div>
+              </div>
             </div>
           </section>
 
@@ -214,6 +328,23 @@
     const BACKEND_CREATE_PREFERENCE_URL =
       `${BACKEND_BASE_URL}/api/mercadopago/create-preference`;
 
+
+    const SPECIAL_DATES_STATUS_URL =
+      `${BACKEND_BASE_URL}/api/floristeria-magno/fechas-especiales/estado`;
+
+    let specialDateStatus = {
+      estado:
+        'NORMAL',
+
+      bloqueado:
+        false,
+
+      mostrarAviso:
+        false,
+
+      fecha:
+        null
+    };
     function money(value) {
       return new Intl.NumberFormat('es-MX', {
         style: 'currency',
@@ -437,7 +568,190 @@
       mercadoPagoMessage.dataset.type = type;
     }
 
+    async function loadSpecialDateStatus() {
+
+      try {
+
+        const response =
+          await fetch(
+            SPECIAL_DATES_STATUS_URL,
+            {
+              headers: {
+                Accept:
+                  'application/json'
+              }
+            }
+          );
+
+        const result =
+          await response.json();
+
+        if (
+          !response.ok ||
+          !result.ok
+        ) {
+          throw new Error(
+            result.message ||
+            'No fue posible consultar las fechas especiales.'
+          );
+        }
+
+        specialDateStatus =
+          result.data || {
+            estado:
+              'NORMAL',
+
+            bloqueado:
+              false,
+
+            mostrarAviso:
+              false,
+
+            fecha:
+              null
+          };
+
+      } catch (error) {
+
+        console.error(
+          'Error consultando fechas especiales:',
+          error
+        );
+
+        /*
+         * Si falla esta consulta NO bloqueamos
+         * las ventas únicamente desde frontend.
+         *
+         * El backend de Mercado Pago será
+         * nuestra protección definitiva.
+         */
+        specialDateStatus = {
+          estado:
+            'NORMAL',
+
+          bloqueado:
+            false,
+
+          mostrarAviso:
+            false,
+
+          fecha:
+            null
+        };
+      }
+    }
+
+    function applySpecialDateRules() {
+
+      const status =
+        specialDateStatus;
+
+      const specialBanner =
+        document.getElementById(
+          'specialDateBanner'
+        );
+
+      const closedBanner =
+        document.getElementById(
+          'orderClosedBanner'
+        );
+
+      const closedTitle =
+        document.getElementById(
+          'orderClosedTitle'
+        );
+
+      const closedText =
+        document.getElementById(
+          'orderClosedText'
+        );
+
+      const bannerTitle =
+        document.getElementById(
+          'specialDateBannerTitle'
+        );
+
+      const bannerText =
+        document.getElementById(
+          'specialDateBannerText'
+        );
+
+
+      specialBanner.style.display =
+        'none';
+
+      closedBanner.style.display =
+        'none';
+
+
+      /*
+       * Recuperamos estado normal
+       * antes de aplicar restricciones.
+       */
+      mercadoPagoBtn.disabled =
+        false;
+
+      whatsappConfirm.style.display =
+        '';
+
+
+      if (
+        status.mostrarAviso &&
+        status.fecha
+      ) {
+
+        bannerTitle.textContent =
+          `${status.fecha.nombre} se acerca`;
+
+        bannerText.textContent =
+          status.fecha.mensajeAviso ||
+          'Haz tu pedido con anticipación debido a la alta demanda.';
+
+        specialBanner.style.display =
+          'flex';
+      }
+
+
+      if (
+        status.bloqueado &&
+        status.fecha
+      ) {
+
+        closedTitle.textContent =
+          `Pedidos cerrados para ${status.fecha.nombre}`;
+
+        closedText.textContent =
+          status.fecha.mensajeBloqueo ||
+          'Hemos alcanzado nuestra capacidad de producción y entrega para esta fecha especial. Gracias por tu comprensión.';
+
+        closedBanner.style.display =
+          'flex';
+
+        mercadoPagoBtn.disabled =
+          true;
+
+        mercadoPagoBtn.innerHTML = `
+            <i class="bi bi-calendar-x me-2"></i>
+            Pedidos temporalmente cerrados
+        `;
+
+        whatsappConfirm.style.display =
+          'none';
+      }
+    }
+
     function validateCheckout(items) {
+
+      if (
+        specialDateStatus.bloqueado &&
+        specialDateStatus.fecha
+      ) {
+        return (
+          `Los pedidos para ${specialDateStatus.fecha.nombre} ` +
+          `se encuentran temporalmente cerrados debido a la alta demanda.`
+        );
+      }
+
       if (!items.length) {
         return 'Agrega al menos un producto al carrito.';
       }
@@ -596,9 +910,19 @@
     const todayIso = new Date().toLocaleDateString('en-CA', {
       timeZone: 'America/Mexico_City'
     });
+
     deliveryDate.min = todayIso;
 
-    renderCart();
+    async function initializeCartPage() {
+
+      await loadSpecialDateStatus();
+
+      renderCart();
+
+      applySpecialDateRules();
+    }
+
+    initializeCartPage();
   </script>
   <script type="module" src="components/site-header.js"></script>
   <script src="assets/js/mobile-nav.js"></script>

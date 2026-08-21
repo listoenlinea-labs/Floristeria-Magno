@@ -19,7 +19,8 @@ const {
     Producto,
     Pedido,
     DetallePedido,
-    HistorialPedido
+    HistorialPedido,
+    FechaEspecial
 } = require('../models');
 
 const {
@@ -42,6 +43,53 @@ function createHttpError(message, status = 400) {
 
 function configurationError(message) {
     return createHttpError(message, 500);
+}
+
+async function verificarCierreDePedidos() {
+
+    const now =
+        new Date();
+
+    const fechaBloqueada =
+        await FechaEspecial.findOne({
+            where: {
+                activo:
+                    true,
+
+                fechaCorte: {
+                    [Op.lte]:
+                        now
+                },
+
+                finBloqueo: {
+                    [Op.gte]:
+                        now
+                }
+            },
+
+            order: [
+                [
+                    'fechaCorte',
+                    'ASC'
+                ]
+            ]
+        });
+
+
+    if (!fechaBloqueada) {
+        return;
+    }
+
+
+    const message =
+        fechaBloqueada.mensajeBloqueo ||
+        `Los pedidos para ${fechaBloqueada.nombre} se encuentran cerrados temporalmente debido a la alta demanda.`;
+
+
+    throw createHttpError(
+        message,
+        409
+    );
 }
 
 function getClient() {
@@ -510,10 +558,23 @@ function chooseRedirectUrl(preferenceResponse) {
     return redirectUrl;
 }
 
-async function crearPreferencia(req, res, next) {
+async function crearPreferencia(
+    req,
+    res,
+    next
+) {
     let transaction;
 
     try {
+
+        /*
+         * Antes de consultar productos,
+         * crear pedidos o comunicarnos
+         * con Mercado Pago comprobamos
+         * si las ventas están cerradas.
+         */
+        await verificarCierreDePedidos();
+
         const productItems =
             await buildPreferenceItems(
                 req.body?.items

@@ -102,13 +102,37 @@
   <main>
     <section class="section-padding collection-section pt-5" id="productos">
       <div class="container">
-        <div class="catalog-toolbar mb-5 reveal visible" id="catalogToolbar">
+        <div class="catalog-toolbar mb-4 reveal visible" id="catalogToolbar">
           <button class="filter-chip active" data-filter="all">Todos</button>
-          <button class="filter-chip" data-filter="romantico">Románticos</button>
-          <button class="filter-chip" data-filter="premium">Premium</button>
-          <button class="filter-chip" data-filter="regalo">Regalos</button>
-          <button class="filter-chip" data-filter="eventos">Eventos</button>
-          <button class="filter-chip" data-filter="alegre">Alegres</button>
+          <button class="filter-chip" data-filter="romanticos">Románticos</button>
+          <button class="filter-chip" data-filter="cumpleanos">Cumpleaños</button>
+          <button class="filter-chip" data-filter="nacimientos">Nacimientos</button>
+          <button class="filter-chip" data-filter="tulipanes">Tulipanes</button>
+          <button class="filter-chip" data-filter="novias">Novias</button>
+          <button class="filter-chip" data-filter="flores-exoticas">Flores exóticas</button>
+          <button class="filter-chip" data-filter="peonias">Peonías</button>
+          <button class="filter-chip" data-filter="pureza">Pureza</button>
+          <button class="filter-chip" data-filter="buchiramos">Buchiramos</button>
+        </div>
+        <div class="category-story-banner mb-4" id="categoryStoryBanner">
+          <div class="category-story-icon" id="categoryStoryIcon">
+            <i class="bi bi-flower1"></i>
+          </div>
+
+          <div class="category-story-content">
+            <div class="category-story-eyebrow" id="categoryStoryEyebrow">
+              Nuestro catálogo
+            </div>
+
+            <h2 id="categoryStoryTitle">
+              Flores para cada historia.
+            </h2>
+
+            <p id="categoryStoryText">
+              Cada arreglo nace de una emoción, una ocasión y una intención diferente.
+              Explora nuestras colecciones y encuentra la forma perfecta de decirlo con flores.
+            </p>
+          </div>
         </div>
         <div class="row g-4" id="productGrid">
           <div class="col-12 text-center py-5">
@@ -256,7 +280,6 @@
 
         grid.innerHTML = items.map(product => {
           const category = normalizeCategory(
-            product.etiqueta ||
             product.categoria ||
             "general"
           );
@@ -708,16 +731,116 @@
     setSeason(getSeasonByDate());
     document.querySelectorAll('.season-btn').forEach(btn => btn.addEventListener('click', () => setSeason(btn.dataset.season)));
 
+    const categoryStories = {
+      all: {
+        eyebrow: 'Nuestro catálogo',
+        title: 'Flores para cada historia.',
+        text: 'Cada arreglo nace de una emoción, una ocasión y una intención diferente. Explora nuestras colecciones y encuentra la forma perfecta de decirlo con flores.',
+        icon: 'bi-flower1'
+      },
+
+      romanticos: {
+        eyebrow: 'Románticos',
+        title: 'Hay sentimientos que florecen mejor.',
+        text: 'Rosas, tonos intensos y composiciones delicadas han acompañado al romance durante generaciones. Esta colección está pensada para decir “te amo”, celebrar una historia o recordar a alguien lo especial que es.',
+        icon: 'bi-heart-fill'
+      },
+
+      cumpleanos: {
+        eyebrow: 'Cumpleaños',
+        title: 'Celebra un año más de su historia.',
+        text: 'Colores alegres, flores llenas de vida y combinaciones que transmiten felicidad. Diseños creados para convertir un cumpleaños en un recuerdo todavía más especial.',
+        icon: 'bi-gift-fill'
+      },
+
+      nacimientos: {
+        eyebrow: 'Nacimientos',
+        title: 'Una nueva vida merece flores.',
+        text: 'Composiciones suaves y delicadas para celebrar una de las noticias más bonitas: la llegada de alguien nuevo. Flores que transmiten ternura, alegría y buenos deseos.',
+        icon: 'bi-balloon-heart-fill'
+      },
+
+      tulipanes: {
+        eyebrow: 'Tulipanes',
+        title: 'Elegancia que no necesita explicación.',
+        text: 'Los tulipanes representan cariño sincero, elegancia y nuevos comienzos. Su forma limpia y delicada los convierte en un detalle moderno, especial y difícil de olvidar.',
+        icon: 'bi-flower2'
+      },
+
+      novias: {
+        eyebrow: 'Novias',
+        title: 'Flores para uno de los días más importantes.',
+        text: 'Cada ramo de novia acompaña una historia irrepetible. Diseñamos composiciones elegantes y especiales para complementar tu estilo y formar parte de un momento que recordarás toda la vida.',
+        icon: 'bi-heart'
+      },
+
+      'flores-exoticas': {
+        eyebrow: 'Flores exóticas',
+        title: 'Para quienes nunca pasan desapercibidos.',
+        text: 'Formas inesperadas, texturas extraordinarias y flores fuera de lo cotidiano. Esta colección está pensada para sorprender y regalar algo realmente diferente.',
+        icon: 'bi-stars'
+      },
+
+      peonias: {
+        eyebrow: 'Peonías',
+        title: 'Belleza, abundancia y romance.',
+        text: 'Las peonías son apreciadas por sus pétalos abundantes y su apariencia delicada. Tradicionalmente asociadas con el romance y la prosperidad, transforman cualquier arreglo en una pieza extraordinaria.',
+        icon: 'bi-flower3'
+      },
+
+      pureza: {
+        eyebrow: 'Pureza',
+        title: 'La elegancia también puede hablar en blanco.',
+        text: 'Las flores blancas transmiten serenidad, sinceridad y elegancia. Una colección luminosa y atemporal para expresar sentimientos profundos con una estética limpia y sofisticada.',
+        icon: 'bi-brightness-high'
+      },
+
+      buchiramos: {
+        eyebrow: 'Buchiramos',
+        title: 'Para tu patrona. Porque poquito no era opción.',
+        text: 'Más flores, más presencia y cero discreción. Los buchiramos son para cuando quieres llegar diciendo “obviamente pensé en ti” sin necesidad de decir una sola palabra.',
+        icon: 'bi-fire'
+      }
+    };
+
+    function updateCategoryStory(filter) {
+      const story = categoryStories[filter] || categoryStories.all;
+
+      document.getElementById('categoryStoryEyebrow').textContent = story.eyebrow;
+      document.getElementById('categoryStoryTitle').textContent = story.title;
+      document.getElementById('categoryStoryText').textContent = story.text;
+
+      document.getElementById('categoryStoryIcon').innerHTML =
+        `<i class="bi ${story.icon}"></i>`;
+    }
+
     document.querySelectorAll('.filter-chip').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-chip').forEach(b => {
+          b.classList.remove('active');
+        });
+
         btn.classList.add('active');
+
         const filter = btn.dataset.filter;
+
         document.querySelectorAll('.product-col').forEach(col => {
-          col.style.display = filter === 'all' || col.dataset.category === filter ? '' : 'none';
+          col.style.display =
+            filter === 'all' || col.dataset.category === filter
+              ? ''
+              : 'none';
+        });
+
+        updateCategoryStory(filter);
+
+        document.getElementById('categoryStoryBanner')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
         });
       });
     });
+
+    updateCategoryStory('all');
 
     const CART_KEY = 'jhmagno_cart';
 

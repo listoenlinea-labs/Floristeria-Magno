@@ -21,6 +21,8 @@ const whatsappLeadsRoutes = require(
 );
 const configuracionRoutes = require('./routes/configuracion.routes');
 const rastreoRoutes = require('./routes/rastreo.routes');
+const fechasEspecialesRoutes =
+    require('./routes/fechas-especiales.routes');
 const rastreoUbicacionRoutes = require('./routes/rastreo-ubicacion.routes');
 const repartidorEntregasRoutes = require(
     './routes/repartidor-entregas.routes'
@@ -277,6 +279,15 @@ app.use(
 );
 
 /*
+ * Fechas especiales,
+ * avisos y cierres automáticos de pedidos.
+ */
+app.use(
+    '/api/floristeria-magno/fechas-especiales',
+    fechasEspecialesRoutes
+);
+
+/*
  * Panel operativo del repartidor.
  */
 app.use(
@@ -308,10 +319,15 @@ app.use((req, res) => {
 app.use((error, req, res, next) => {
     console.error('Error API:', error);
 
-    res.status(error.status || 500).json({
+    const status =
+        error.status || 500;
+
+    res.status(status).json({
         ok: false,
+
         message:
-            process.env.NODE_ENV === 'production'
+            status >= 500 &&
+                process.env.NODE_ENV === 'production'
                 ? 'Ocurrió un error en el servidor'
                 : error.message
     });

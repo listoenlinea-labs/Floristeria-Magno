@@ -17526,3 +17526,617 @@ body.page-index .google-review-card .review-text {
         max-width: 20%;
     }
 }
+
+/* =========================================================
+   MAGNO — CATEGORÍAS Y MENSAJES DEL CATÁLOGO
+========================================================= */
+
+body.page-catalogo .category-story-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+
+    padding: 26px 30px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 92% 15%, rgba(231, 184, 192, .30), transparent 32%),
+        linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
+
+    border: 1px solid rgba(39, 21, 27, .08);
+    border-radius: 28px;
+
+    box-shadow: 0 18px 55px rgba(39, 21, 27, .08);
+}
+
+body.page-catalogo .category-story-icon {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #FFE8E8;
+    color: #27151b;
+
+    font-size: 1.55rem;
+}
+
+body.page-catalogo .category-story-eyebrow {
+    margin-bottom: 4px;
+
+    color: #9a6c78;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+
+body.page-catalogo .category-story-content h2 {
+    margin: 0 0 6px;
+
+    color: #27151b;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: 800;
+}
+
+body.page-catalogo .category-story-content p {
+    max-width: 900px;
+    margin: 0;
+
+    color: #75686d;
+    font-size: .95rem;
+    line-height: 1.65;
+}
+
+
+/* Cada ramo es único */
+
+body.page-catalogo .catalog-unique-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 16px 20px;
+
+    background: rgba(255, 255, 255, .72);
+    border: 1px solid rgba(39, 21, 27, .08);
+    border-radius: 20px;
+}
+
+body.page-catalogo .catalog-unique-note-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+    background: #FFE8E8;
+
+    color: #8d5967;
+}
+
+body.page-catalogo .catalog-unique-note strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #27151b;
+}
+
+body.page-catalogo .catalog-unique-note p {
+    color: #75686d;
+    font-size: .84rem;
+    line-height: 1.55;
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 767px) {
+
+    body.page-catalogo .category-story-banner {
+        align-items: flex-start;
+        gap: 13px;
+
+        padding: 18px 16px;
+        border-radius: 22px;
+    }
+
+    body.page-catalogo .category-story-icon {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+
+        font-size: 1rem;
+    }
+
+    body.page-catalogo .category-story-content h2 {
+        font-size: 1.25rem;
+        line-height: 1.05;
+    }
+
+    body.page-catalogo .category-story-content p {
+        font-size: .78rem;
+        line-height: 1.45;
+    }
+
+    body.page-catalogo .catalog-unique-note {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    body.page-catalogo .catalog-unique-note p {
+        font-size: .75rem;
+    }
+}
+
+/* =========================================================
+   MAGNO — POLÍTICAS DE ENVÍO
+========================================================= */
+
+body.page-carrito .shipping-policy-box {
+    overflow: hidden;
+
+    background: #fff8f8;
+    border: 1px solid rgba(39, 21, 27, .09);
+    border-radius: 18px;
+}
+
+body.page-carrito .shipping-policy-toggle {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 16px;
+
+    border: 0;
+    background: transparent;
+
+    color: #27151b;
+    font-weight: 800;
+    text-align: left;
+}
+
+body.page-carrito .shipping-policy-toggle:hover {
+    background: rgba(255, 232, 232, .45);
+}
+
+body.page-carrito .shipping-policy-content {
+    padding: 0 18px 18px;
+
+    color: #75686d;
+    font-size: .84rem;
+    line-height: 1.55;
+}
+
+body.page-carrito .shipping-policy-content p {
+    margin-bottom: 10px;
+}
+
+body.page-carrito .shipping-policy-content ul {
+    margin: 0 0 10px;
+    padding-left: 20px;
+}
+
+body.page-carrito .shipping-policy-content li {
+    margin-bottom: 7px;
+}
+
+body.page-carrito .shipping-policy-content strong {
+    color: #27151b !important;
+}
+
+body.page-carrito .shipping-policy-content small {
+    display: block;
+
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(39, 21, 27, .08);
+
+    color: #9a6c78;
+}
+
+/* =========================================================
+   MAGNO — FECHAS ESPECIALES
+========================================================= */
+
+body.page-carrito .special-date-banner,
+body.page-carrito .order-closed-banner {
+    align-items: center;
+    gap: 18px;
+
+    padding: 20px 24px;
+
+    border-radius: 24px;
+}
+
+body.page-carrito .special-date-banner {
+    background:
+        linear-gradient(135deg,
+            #fff7f7 0%,
+            #FFE8E8 100%);
+
+    border: 1px solid rgba(39, 21, 27, .08);
+
+    box-shadow: 0 14px 40px rgba(39, 21, 27, .07);
+
+    color: #27151b;
+}
+
+body.page-carrito .special-date-banner-icon {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    font-size: 1.25rem;
+    color: #9a596c;
+}
+
+body.page-carrito .special-date-banner strong {
+    display: block;
+    margin-bottom: 3px;
+
+    font-size: 1rem;
+}
+
+body.page-carrito .special-date-banner p {
+    color: #75686d;
+    font-size: .86rem;
+    line-height: 1.5;
+}
+
+
+/* PEDIDOS CERRADOS */
+
+body.page-carrito .order-closed-banner {
+    background:
+        radial-gradient(circle at 90% 10%,
+            rgba(255, 255, 255, .15),
+            transparent 30%),
+        linear-gradient(135deg,
+            #4d1725,
+            #27151b);
+
+    color: #ffffff;
+
+    box-shadow: 0 20px 60px rgba(39, 21, 27, .20);
+}
+
+body.page-carrito .order-closed-icon {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .10);
+
+    font-size: 1.45rem;
+}
+
+body.page-carrito .order-closed-banner h2 {
+    margin: 0 0 5px;
+
+    color: #ffffff !important;
+
+    font-family: "Playfair Display", serif;
+    font-size: 1.55rem;
+}
+
+body.page-carrito .order-closed-banner p {
+    color: rgba(255, 255, 255, .75);
+    font-size: .86rem;
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 767px) {
+
+    body.page-carrito .special-date-banner,
+    body.page-carrito .order-closed-banner {
+        align-items: flex-start;
+
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    body.page-carrito .special-date-banner-icon,
+    body.page-carrito .order-closed-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+
+        font-size: 1rem;
+    }
+
+    body.page-carrito .order-closed-banner h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* =========================================================
+   ADMIN — FECHAS ESPECIALES
+========================================================= */
+
+body.page-admin .special-dates-admin-help {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 18px 20px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255, 232, 232, .55);
+
+    border:
+        1px solid rgba(39, 21, 27, .08);
+}
+
+body.page-admin .special-dates-admin-help>i {
+    font-size: 1.25rem;
+    color: #9a596c;
+}
+
+body.page-admin .special-dates-admin-help p {
+    margin-top: 3px;
+
+    color: #75686d;
+
+    font-size: .86rem;
+    line-height: 1.5;
+}
+
+
+body.page-admin .special-dates-admin-list {
+    display: grid;
+    gap: 14px;
+}
+
+
+body.page-admin .special-date-admin-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 20px;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    border:
+        1px solid rgba(39, 21, 27, .08);
+
+    box-shadow:
+        0 14px 40px rgba(39, 21, 27, .06);
+}
+
+
+body.page-admin .special-date-admin-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+
+body.page-admin .special-date-admin-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #FFE8E8;
+
+    color: #8d5967;
+
+    font-size: 1.2rem;
+}
+
+
+body.page-admin .special-date-admin-card h3 {
+    color: #27151b;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 1.35rem;
+}
+
+
+body.page-admin .special-date-admin-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+
+    margin-top: 8px;
+
+    color: #75686d;
+
+    font-size: .82rem;
+}
+
+
+body.page-admin .special-date-admin-dates span {
+    display: inline-flex;
+    gap: 5px;
+}
+
+
+body.page-admin .special-date-admin-actions {
+    display: flex;
+    gap: 8px;
+
+    flex: 0 0 auto;
+}
+
+
+@media (max-width: 767px) {
+
+    body.page-admin .special-date-admin-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    body.page-admin .special-date-admin-actions {
+        width: 100%;
+    }
+
+    body.page-admin .special-date-admin-actions button {
+        flex: 1;
+    }
+
+    body.page-admin .special-date-admin-dates {
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   CARRITO — AVISO CADA RAMO ES ÚNICO
+========================================================= */
+
+body.page-carrito .cart-page-header {
+    position: relative;
+}
+
+
+/* Tarjeta */
+
+body.page-carrito .cart-unique-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    width: 100%;
+
+    padding: 22px 24px;
+
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, .92),
+            rgba(255, 248, 248, .95));
+
+    border:
+        1px solid rgba(39, 21, 27, .09);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 18px 50px rgba(39, 21, 27, .07);
+}
+
+
+/* Icono */
+
+body.page-carrito .cart-unique-note-icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #FFE8E8;
+
+    color: #9a596c;
+
+    font-size: 1.05rem;
+}
+
+
+/* Contenido */
+
+body.page-carrito .cart-unique-note-content {
+    min-width: 0;
+}
+
+
+body.page-carrito .cart-unique-note-content strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #27151b !important;
+
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+
+body.page-carrito .cart-unique-note-content p {
+    margin: 0;
+
+    color: #75686d !important;
+
+    font-size: .84rem;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 991px) {
+
+    body.page-carrito .cart-page-header {
+        margin-bottom: 24px !important;
+    }
+
+    body.page-carrito .cart-unique-note {
+        padding: 16px;
+
+        border-radius: 20px;
+    }
+
+    body.page-carrito .cart-unique-note-icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+
+        font-size: .9rem;
+    }
+
+    body.page-carrito .cart-unique-note-content strong {
+        font-size: .9rem;
+    }
+
+    body.page-carrito .cart-unique-note-content p {
+        font-size: .76rem;
+        line-height: 1.45;
+    }
+}
