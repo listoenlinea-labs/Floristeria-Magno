@@ -201,6 +201,62 @@
       </div>
     </div>
   </div>
+  <!-- =====================================================
+     LIGHTBOX DE PRODUCTO
+====================================================== -->
+  <div class="modal fade product-lightbox-modal" id="productLightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content product-lightbox-content">
+
+        <button type="button" class="btn-close product-lightbox-close" data-bs-dismiss="modal"
+          aria-label="Cerrar"></button>
+
+        <div class="product-lightbox-layout">
+
+          <div class="product-lightbox-main">
+
+            <button type="button" class="product-lightbox-arrow product-lightbox-prev" id="productLightboxPrev"
+              aria-label="Imagen anterior">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <img id="productLightboxImage" src="" alt="">
+
+            <button type="button" class="product-lightbox-arrow product-lightbox-next" id="productLightboxNext"
+              aria-label="Siguiente imagen">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+
+            <div class="product-lightbox-counter" id="productLightboxCounter">
+              1 / 1
+            </div>
+
+          </div>
+
+          <div class="product-lightbox-info">
+
+            <div class="eyebrow">
+              Vista del arreglo
+            </div>
+
+            <h2 class="serif" id="productLightboxTitle">
+              Arreglo floral
+            </h2>
+
+            <p class="text-muted-custom">
+              Desliza o utiliza las flechas para conocer
+              los diferentes ángulos de este arreglo.
+            </p>
+
+            <div class="product-lightbox-thumbnails" id="productLightboxThumbnails"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
   <footer id="contacto">
     <div class="container">
       <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small text-white-50">
@@ -359,15 +415,18 @@
             }
 
     <img
-        class="product-gallery-main-image"
-        src="${escapeHtml(imageUrl)}"
-        data-gallery-index="0"
-        alt="${escapeHtml(product.nombre)}"
-        loading="lazy"
-        onerror="
-            this.onerror = null;
-            this.src = 'https://placehold.co/900x900?text=Sin+imagen';
-        "
+    class="product-gallery-main-image product-lightbox-trigger"
+    src="${escapeHtml(imageUrl)}"
+    data-gallery-index="0"
+    data-product-name="${escapeHtml(product.nombre)}"
+    data-gallery-images='${JSON.stringify(safeImages).replace(/'/g, "&#39;")}'
+    alt="${escapeHtml(product.nombre)}"
+    loading="lazy"
+    title="Haz clic para ampliar"
+    onerror="
+        this.onerror = null;
+        this.src = 'https://placehold.co/900x900?text=Sin+imagen';
+    "
     >
 
     ${safeImages.length > 1
@@ -664,6 +723,334 @@
 
     const catalogHero = document.querySelector('.catalog-hero');
     const catalogMouseLight = document.getElementById('catalogMouseLight');
+
+    const productLightboxElement =
+      document.getElementById(
+        'productLightboxModal'
+      );
+
+    const productLightbox =
+      new bootstrap.Modal(
+        productLightboxElement
+      );
+
+    productLightboxElement.addEventListener(
+      'show.bs.modal',
+      () => {
+        document.body.classList.add(
+          'product-lightbox-open'
+        );
+      }
+    );
+
+
+    productLightboxElement.addEventListener(
+      'hidden.bs.modal',
+      () => {
+        document.body.classList.remove(
+          'product-lightbox-open'
+        );
+      }
+    );
+
+    const productLightboxImage =
+      document.getElementById(
+        'productLightboxImage'
+      );
+
+    const productLightboxTitle =
+      document.getElementById(
+        'productLightboxTitle'
+      );
+
+    const productLightboxCounter =
+      document.getElementById(
+        'productLightboxCounter'
+      );
+
+    const productLightboxThumbnails =
+      document.getElementById(
+        'productLightboxThumbnails'
+      );
+
+    const productLightboxPrev =
+      document.getElementById(
+        'productLightboxPrev'
+      );
+
+    const productLightboxNext =
+      document.getElementById(
+        'productLightboxNext'
+      );
+
+
+    let productLightboxImages = [];
+    let productLightboxIndex = 0;
+
+    function renderProductLightboxImage(
+      index
+    ) {
+
+      if (
+        !productLightboxImages.length
+      ) {
+        return;
+      }
+
+      if (index < 0) {
+        index =
+          productLightboxImages.length - 1;
+      }
+
+      if (
+        index >=
+        productLightboxImages.length
+      ) {
+        index = 0;
+      }
+
+      productLightboxIndex =
+        index;
+
+      productLightboxImage.src =
+        productLightboxImages[
+        productLightboxIndex
+        ];
+
+      productLightboxCounter.textContent =
+        `${productLightboxIndex + 1} / ${productLightboxImages.length}`;
+
+
+      /*
+       * Ocultar flechas si sólo hay
+       * una fotografía.
+       */
+      const hasMultipleImages =
+        productLightboxImages.length > 1;
+
+      productLightboxPrev.style.display =
+        hasMultipleImages
+          ? ''
+          : 'none';
+
+      productLightboxNext.style.display =
+        hasMultipleImages
+          ? ''
+          : 'none';
+
+
+      productLightboxThumbnails
+        .querySelectorAll(
+          '.product-lightbox-thumbnail'
+        )
+        .forEach(
+          (
+            thumbnail,
+            thumbnailIndex
+          ) => {
+
+            thumbnail.classList.toggle(
+              'active',
+              thumbnailIndex ===
+              productLightboxIndex
+            );
+          }
+        );
+    }
+
+    function openProductLightbox(
+      imageElement
+    ) {
+
+      let images = [];
+
+      try {
+        images =
+          JSON.parse(
+            imageElement.dataset
+              .galleryImages ||
+            '[]'
+          );
+      } catch (error) {
+        console.error(
+          'No fue posible leer las imágenes del producto:',
+          error
+        );
+      }
+
+
+      if (!images.length) {
+        images = [
+          imageElement.src
+        ];
+      }
+
+
+      productLightboxImages =
+        images.filter(Boolean);
+
+
+      productLightboxIndex =
+        Number(
+          imageElement.dataset
+            .galleryIndex || 0
+        );
+
+
+      productLightboxTitle.textContent =
+        imageElement.dataset
+          .productName ||
+        imageElement.alt ||
+        'Arreglo floral';
+
+
+      productLightboxImage.alt =
+        productLightboxTitle.textContent;
+
+
+      productLightboxThumbnails.innerHTML =
+        productLightboxImages
+          .map(
+            (
+              imageUrl,
+              index
+            ) => `
+                    <button
+                        type="button"
+                        class="
+                            product-lightbox-thumbnail
+                            ${index === productLightboxIndex
+                ? 'active'
+                : ''}
+                        "
+                        data-index="${index}"
+                        aria-label="Ver fotografía ${index + 1}"
+                    >
+                        <img
+                            src="${escapeHtml(imageUrl)}"
+                            alt=""
+                        >
+                    </button>
+                `
+          )
+          .join('');
+
+
+      renderProductLightboxImage(
+        productLightboxIndex
+      );
+
+      productLightbox.show();
+    }
+
+    document.addEventListener(
+      'click',
+      event => {
+
+        const image =
+          event.target.closest(
+            '.product-lightbox-trigger'
+          );
+
+        if (!image) {
+          return;
+        }
+
+        /*
+         * Si el usuario hizo clic
+         * sobre una flecha o miniatura
+         * del carrusel pequeño,
+         * no abrimos el modal.
+         */
+        if (
+          event.target.closest(
+            '.product-gallery-arrow'
+          ) ||
+          event.target.closest(
+            '.product-gallery-thumbnail'
+          )
+        ) {
+          return;
+        }
+
+        openProductLightbox(
+          image
+        );
+      }
+    );
+
+    productLightboxPrev.addEventListener(
+      'click',
+      () => {
+
+        renderProductLightboxImage(
+          productLightboxIndex - 1
+        );
+      }
+    );
+
+
+    productLightboxNext.addEventListener(
+      'click',
+      () => {
+
+        renderProductLightboxImage(
+          productLightboxIndex + 1
+        );
+      }
+    );
+
+    productLightboxThumbnails.addEventListener(
+      'click',
+      event => {
+
+        const thumbnail =
+          event.target.closest(
+            '.product-lightbox-thumbnail'
+          );
+
+        if (!thumbnail) {
+          return;
+        }
+
+        renderProductLightboxImage(
+          Number(
+            thumbnail.dataset.index
+          )
+        );
+      }
+    );
+
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          !productLightboxElement.classList
+            .contains('show')
+        ) {
+          return;
+        }
+
+        if (
+          event.key ===
+          'ArrowLeft'
+        ) {
+          renderProductLightboxImage(
+            productLightboxIndex - 1
+          );
+        }
+
+        if (
+          event.key ===
+          'ArrowRight'
+        ) {
+          renderProductLightboxImage(
+            productLightboxIndex + 1
+          );
+        }
+      }
+    );
 
     loadCatalogProducts();
 

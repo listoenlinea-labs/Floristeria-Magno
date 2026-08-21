@@ -2864,6 +2864,21 @@ body.page-catalogo .season-particles {
     overflow: hidden;
 }
 
+body.page-catalogo.product-lightbox-open .season-preview-panel,
+
+body.page-catalogo.product-lightbox-open .season-particles,
+
+body.page-catalogo.product-lightbox-open .cart-float,
+
+body.page-catalogo.product-lightbox-open .whatsapp-float {
+
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+
+
 body.page-catalogo .season-particle {
     position: absolute;
     top: -10vh;
@@ -3061,8 +3076,7 @@ body.page-catalogo main,
 body.page-catalogo header,
 body.page-catalogo section,
 body.page-catalogo footer,
-body.page-catalogo nav,
-body.page-catalogo .modal {
+body.page-catalogo nav {
     position: relative;
     z-index: 4;
 }
@@ -18139,4 +18153,378 @@ body.page-carrito .cart-unique-note-content p {
         font-size: .76rem;
         line-height: 1.45;
     }
+}
+
+/* =========================================================
+   CATÁLOGO — LIGHTBOX DE PRODUCTOS
+========================================================= */
+
+body.page-catalogo .product-lightbox-trigger {
+    cursor: zoom-in;
+}
+
+
+/* Modal */
+
+.product-lightbox-modal .modal-dialog {
+    width: calc(100% - 40px);
+    max-width: 1180px;
+
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+
+.product-lightbox-content {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 0;
+    border-radius: 30px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 35px 100px rgba(39, 21, 27, .24);
+}
+
+
+/* Cerrar */
+
+.product-lightbox-close {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    z-index: 20;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    background-color:
+        rgba(255, 255, 255, .92);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, .12);
+}
+
+
+/* Layout */
+
+.product-lightbox-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr) minmax(280px, .65fr);
+
+    min-height: 0;
+    height: min(680px, 82vh);
+}
+
+
+/* Imagen principal */
+
+.product-lightbox-main {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(135deg,
+            #f8f8f8,
+            #eeeeee);
+}
+
+
+.product-lightbox-main>img {
+    display: block;
+
+    width: 100%;
+    height: 620px;
+
+    object-fit: contain;
+
+    padding: 24px;
+}
+
+
+/* Flechas */
+
+.product-lightbox-arrow {
+    position: absolute;
+
+    top: 50%;
+
+    z-index: 10;
+
+    width: 50px;
+    height: 50px;
+
+    display: grid;
+    place-items: center;
+
+    transform:
+        translateY(-50%);
+
+    border: 0;
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, .92);
+
+    color: #27151b;
+
+    font-size: 1.15rem;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .13);
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+
+.product-lightbox-arrow:hover {
+    transform:
+        translateY(-50%) scale(1.06);
+
+    background:
+        #ffffff;
+}
+
+
+.product-lightbox-prev {
+    left: 20px;
+}
+
+
+.product-lightbox-next {
+    right: 20px;
+}
+
+
+/* Contador */
+
+.product-lightbox-counter {
+    position: absolute;
+
+    right: 20px;
+    bottom: 20px;
+
+    padding:
+        8px 13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(39, 21, 27, .78);
+
+    color: #ffffff;
+
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+
+/* Panel información */
+
+.product-lightbox-info {
+    padding:
+        72px 30px 32px;
+
+    background:
+        linear-gradient(180deg,
+            #ffffff,
+            #fff8f8);
+}
+
+
+.product-lightbox-info h2 {
+    margin-bottom: 10px;
+
+    color: #27151b;
+
+    font-size:
+        clamp(2rem,
+            3vw,
+            3rem);
+}
+
+
+/* Miniaturas */
+
+.product-lightbox-thumbnails {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,
+            minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+
+.product-lightbox-thumbnail {
+    position: relative;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    aspect-ratio: 1;
+
+    border:
+        2px solid transparent;
+
+    border-radius: 14px;
+
+    background: #f3f3f3;
+
+    opacity: .65;
+
+    transition:
+        opacity .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+
+.product-lightbox-thumbnail:hover {
+    opacity: 1;
+
+    transform:
+        translateY(-2px);
+}
+
+
+.product-lightbox-thumbnail.active {
+    opacity: 1;
+
+    border-color:
+        #27151b;
+}
+
+
+.product-lightbox-thumbnail img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   TABLET / MÓVIL
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .product-lightbox-modal .modal-dialog {
+        margin:
+            12px;
+    }
+
+
+    .product-lightbox-layout {
+        display: block;
+
+        min-height: 0;
+    }
+
+
+    .product-lightbox-main>img {
+        height:
+            min(62vh,
+                520px);
+
+        padding: 12px;
+    }
+
+
+    .product-lightbox-info {
+        padding:
+            22px 18px 24px;
+    }
+
+
+    .product-lightbox-info h2 {
+        font-size: 1.7rem;
+    }
+
+
+    .product-lightbox-thumbnails {
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 8px;
+
+        padding-bottom: 6px;
+    }
+
+
+    .product-lightbox-thumbnail {
+        width: 68px;
+
+        flex:
+            0 0 68px;
+    }
+
+
+    .product-lightbox-arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .product-lightbox-prev {
+        left: 10px;
+    }
+
+
+    .product-lightbox-next {
+        right: 10px;
+    }
+}
+
+/* =========================================================
+   FIX DEFINITIVO — Z-INDEX LIGHTBOX CATÁLOGO
+========================================================= */
+
+body.page-catalogo .product-lightbox-modal {
+    position: fixed !important;
+    z-index: 2000 !important;
+}
+
+body.page-catalogo .modal-backdrop {
+    z-index: 1990 !important;
+}
+
+/* Ocultar UI flotante mientras vemos un producto */
+
+body.page-catalogo.product-lightbox-open .season-preview-panel,
+
+body.page-catalogo.product-lightbox-open .cart-float,
+
+body.page-catalogo.product-lightbox-open .whatsapp-float {
+
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
