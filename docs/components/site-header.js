@@ -409,7 +409,6 @@ class SiteHeader extends HTMLElement {
           <nav class="nav-menu" id="siteHeaderMenu" aria-label="Navegación principal">
             <a class="nav-link" href="${pageUrl('index.html', 'inicio')}" data-section="inicio">Inicio</a>
             <a class="nav-link" href="${pageUrl('index.html', 'momentos')}" data-section="momentos">Momentos</a>
-            <a class="nav-link" href="${pageUrl('index.html', 'servicios')}" data-section="servicios">Servicios</a>
             <a class="nav-link" href="${pageUrl('catalogo.html')}" data-page="catalogo">Catálogo</a>
             <a class="nav-link" href="${pageUrl('rastreo.html')}" data-page="rastreo">Rastrea tu pedido</a>
             <a
