@@ -18528,3 +18528,236 @@ body.page-catalogo.product-lightbox-open .whatsapp-float {
     visibility: hidden !important;
     pointer-events: none !important;
 }
+
+/* =========================================================
+   MAGNO — FOOTER Y REDES SOCIALES
+========================================================= */
+
+body.page-catalogo .magno-footer {
+    padding:
+        64px 0 28px;
+
+    background:
+        #111111;
+
+    color:
+        #ffffff;
+}
+
+
+/* Contenido principal */
+
+body.page-catalogo .magno-footer-main {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 40px;
+
+    padding-bottom: 42px;
+}
+
+
+/* Marca */
+
+body.page-catalogo .magno-footer-brand {
+    max-width: 540px;
+}
+
+
+body.page-catalogo .magno-footer-brand .eyebrow {
+    color:
+        rgba(255, 255, 255, .55);
+}
+
+
+body.page-catalogo .magno-footer-brand h3 {
+    margin:
+        8px 0 12px;
+
+    color:
+        #ffffff;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        clamp(2rem,
+            4vw,
+            3.4rem);
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -.045em;
+}
+
+
+body.page-catalogo .magno-footer-brand p {
+    max-width:
+        470px;
+
+    margin: 0;
+
+    color:
+        rgba(255, 255, 255, .58);
+
+    font-size:
+        .9rem;
+
+    line-height:
+        1.65;
+}
+
+
+/* Redes */
+
+body.page-catalogo .magno-footer-social {
+    text-align: right;
+}
+
+
+body.page-catalogo .magno-footer-social-title {
+    display: block;
+
+    margin-bottom:
+        12px;
+
+    color:
+        rgba(255, 255, 255, .55);
+
+    font-size:
+        .72rem;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        .14em;
+
+    text-transform:
+        uppercase;
+}
+
+
+body.page-catalogo .magno-social-links {
+    display: flex;
+
+    justify-content:
+        flex-end;
+
+    gap: 10px;
+}
+
+
+body.page-catalogo .magno-social-links a {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    border:
+        1px solid rgba(255, 255, 255, .17);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(255, 255, 255, .07);
+
+    color:
+        #ffffff;
+
+    font-size:
+        1.1rem;
+
+    text-decoration:
+        none;
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+
+body.page-catalogo .magno-social-links a:hover {
+    transform:
+        translateY(-4px);
+
+    background:
+        #ffffff;
+
+    border-color:
+        #ffffff;
+
+    color:
+        #111111;
+}
+
+
+/* Parte inferior */
+
+body.page-catalogo .magno-footer-bottom {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    gap: 20px;
+
+    padding-top:
+        24px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, .10);
+
+    color:
+        rgba(255, 255, 255, .45);
+
+    font-size:
+        .76rem;
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 767px) {
+
+    body.page-catalogo .magno-footer {
+        padding:
+            44px 0 100px;
+    }
+
+    body.page-catalogo .magno-footer-main {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            28px;
+    }
+
+    body.page-catalogo .magno-footer-social {
+        text-align:
+            left;
+    }
+
+    body.page-catalogo .magno-social-links {
+        justify-content:
+            flex-start;
+    }
+
+    body.page-catalogo .magno-footer-bottom {
+        flex-direction:
+            column;
+
+        gap:
+            6px;
+    }
+}

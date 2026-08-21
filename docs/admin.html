@@ -733,8 +733,35 @@
                             </div>
 
                             <div class="mb-3">
-                                <label>Instagram / Facebook</label>
-                                <input id="settingSocial" class="form-control">
+                                <label>
+                                    <i class="bi bi-facebook me-1"></i>
+                                    Facebook
+                                </label>
+
+                                <input id="settingFacebook" type="url" class="form-control"
+                                    placeholder="https://www.facebook.com/...">
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label>
+                                    <i class="bi bi-instagram me-1"></i>
+                                    Instagram
+                                </label>
+
+                                <input id="settingInstagram" type="url" class="form-control"
+                                    placeholder="https://www.instagram.com/...">
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label>
+                                    <i class="bi bi-tiktok me-1"></i>
+                                    TikTok
+                                </label>
+
+                                <input id="settingTiktok" type="url" class="form-control"
+                                    placeholder="https://www.tiktok.com/@...">
                             </div>
                         </div>
                     </div>
@@ -6262,14 +6289,56 @@
         }
 
         function renderSettings() {
-            document.getElementById("settingBusinessName").value = settings.businessName || "";
-            document.getElementById("settingWhatsapp").value = settings.whatsapp || "";
-            document.getElementById("settingAddress").value = settings.address || "";
-            document.getElementById("settingHours").value = settings.hours || "";
-            document.getElementById("settingHeroTitle").value = settings.heroTitle || "";
-            document.getElementById("settingHeroSubtitle").value = settings.heroSubtitle || "";
-            document.getElementById("settingHeroButton").value = settings.heroButton || "";
-            document.getElementById("settingSocial").value = settings.social || "";
+
+            document.getElementById(
+                "settingBusinessName"
+            ).value =
+                settings.businessName || "";
+
+            document.getElementById(
+                "settingWhatsapp"
+            ).value =
+                settings.whatsapp || "";
+
+            document.getElementById(
+                "settingAddress"
+            ).value =
+                settings.address || "";
+
+            document.getElementById(
+                "settingHours"
+            ).value =
+                settings.hours || "";
+
+            document.getElementById(
+                "settingHeroTitle"
+            ).value =
+                settings.heroTitle || "";
+
+            document.getElementById(
+                "settingHeroSubtitle"
+            ).value =
+                settings.heroSubtitle || "";
+
+            document.getElementById(
+                "settingHeroButton"
+            ).value =
+                settings.heroButton || "";
+
+            document.getElementById(
+                "settingFacebook"
+            ).value =
+                settings.facebook || "";
+
+            document.getElementById(
+                "settingInstagram"
+            ).value =
+                settings.instagram || "";
+
+            document.getElementById(
+                "settingTiktok"
+            ).value =
+                settings.tiktok || "";
         }
 
         function fillProductOptions() {
@@ -7830,9 +7899,23 @@
                         .value
                         .trim(),
 
+                    facebookUrl: document
+                        .getElementById(
+                            'settingFacebook'
+                        )
+                        .value
+                        .trim(),
+
                     instagramUrl: document
                         .getElementById(
-                            'settingSocial'
+                            'settingInstagram'
+                        )
+                        .value
+                        .trim(),
+
+                    tiktokUrl: document
+                        .getElementById(
+                            'settingTiktok'
                         )
                         .value
                         .trim()

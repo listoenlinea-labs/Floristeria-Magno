@@ -257,13 +257,79 @@
       </div>
     </div>
   </div>
-  <footer id="contacto">
+  <footer id="contacto" class="magno-footer">
+
     <div class="container">
-      <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small text-white-50">
-        <span>© 2026 Floristería Magno.</span>
-        <span>Desarrollado por Listo en Línea</span>
+
+      <div class="magno-footer-main">
+
+        <!-- MARCA -->
+        <div class="magno-footer-brand">
+
+          <div class="eyebrow">
+            Floristería Magno
+          </div>
+
+          <h3>
+            Flores para cada historia.
+          </h3>
+
+          <p>
+            Diseño floral contemporáneo,
+            detalles especiales y momentos
+            que merecen ser recordados.
+          </p>
+
+        </div>
+
+
+        <!-- REDES SOCIALES -->
+        <div class="magno-footer-social">
+
+          <span class="magno-footer-social-title">
+            Síguenos
+          </span>
+
+          <div class="magno-social-links">
+
+            <a id="footerFacebook" href="https://www.facebook.com/nanotrance" target="_blank" rel="noopener noreferrer"
+              aria-label="Facebook de Floristería Magno" title="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+
+
+            <a id="footerInstagram" href="https://www.instagram.com/floristeria_magno_oficial/" target="_blank"
+              rel="noopener noreferrer" aria-label="Instagram de Floristería Magno" title="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+
+
+            <a id="footerTiktok" href="https://www.tiktok.com/@floristeriamagno" target="_blank"
+              rel="noopener noreferrer" aria-label="TikTok de Floristería Magno" title="TikTok">
+              <i class="bi bi-tiktok"></i>
+            </a>
+
+          </div>
+
+        </div>
+
       </div>
+
+
+      <div class="magno-footer-bottom">
+
+        <span>
+          © 2026 Floristería Magno.
+        </span>
+
+        <span>
+          Desarrollado por Listo en Línea
+        </span>
+
+      </div>
+
     </div>
+
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -273,6 +339,94 @@
         window.location.hostname === "127.0.0.1"
         ? "http://localhost:3000/api/floristeria-magno"
         : "https://api.listoenlinea.host/api/floristeria-magno";
+
+    async function loadSocialNetworks() {
+
+      try {
+
+        const response =
+          await fetch(
+            `${API_BASE_URL}/configuracion`,
+            {
+              headers: {
+                Accept:
+                  'application/json'
+              }
+            }
+          );
+
+        const result =
+          await response.json();
+
+        if (
+          !response.ok ||
+          !result.ok
+        ) {
+          throw new Error(
+            result.message ||
+            'No se pudo cargar la configuración.'
+          );
+        }
+
+
+        const config =
+          result.data || {};
+
+
+        updateSocialLink(
+          'footerFacebook',
+          config.facebookUrl
+        );
+
+        updateSocialLink(
+          'footerInstagram',
+          config.instagramUrl
+        );
+
+        updateSocialLink(
+          'footerTiktok',
+          config.tiktokUrl
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Error cargando redes sociales:',
+          error
+        );
+      }
+    }
+
+
+    function updateSocialLink(
+      elementId,
+      url
+    ) {
+
+      const element =
+        document.getElementById(
+          elementId
+        );
+
+      if (!element) {
+        return;
+      }
+
+
+      if (!url) {
+        element.style.display =
+          'none';
+
+        return;
+      }
+
+
+      element.href =
+        url;
+
+      element.style.display =
+        '';
+    }
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -1053,6 +1207,7 @@
     );
 
     loadCatalogProducts();
+    loadSocialNetworks();
 
 
 
