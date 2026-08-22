@@ -175,8 +175,8 @@
                 Actualmente entregamos únicamente dentro del Área Metropolitana de Guadalajara.
               </small>
 
-              <div id="deliveryAreaNotice" class="alert alert-danger mt-3 mb-0" role="alert" hidden>
-                Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.
+              <div id="deliveryAreaNotice" class="alert alert-warning mt-3 mb-0" role="alert" hidden>
+                Actualmente solo realizamos entregas dentro del Área Metropolitana de Guadalajara. Sin embargo, dependiendo de tu pedido, podríamos hacer una excepción. Contáctanos mediante el botón de WhatsApp para revisar qué podemos hacer por ti. ¡Gracias!
               </div>
             </div>
 
@@ -367,7 +367,7 @@
 
     const OUTSIDE_DELIVERY_AREA_VALUE = 'FUERA_AMG';
     const DELIVERY_AREA_UNAVAILABLE_MESSAGE =
-      'Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.';
+      'Actualmente solo realizamos entregas dentro del Área Metropolitana de Guadalajara. Sin embargo, dependiendo de tu pedido, podríamos hacer una excepción. Contáctanos mediante el botón de WhatsApp para revisar qué podemos hacer por ti. ¡Gracias!';
 
     const SPECIAL_DATES_STATUS_URL =
       `${BACKEND_BASE_URL}/api/floristeria-magno/fechas-especiales/estado`;
@@ -548,8 +548,14 @@
 
         event.preventDefault();
 
+        const isOutsideDeliveryArea =
+          deliveryMunicipality.value ===
+          OUTSIDE_DELIVERY_AREA_VALUE;
+
         const deliveryValidationMessage =
-          validateDeliveryLocation();
+          isOutsideDeliveryArea
+            ? ''
+            : validateDeliveryLocation();
 
         if (deliveryValidationMessage) {
           setCheckoutMessage(
@@ -591,7 +597,9 @@
           await window
             .openTrackedWhatsapp({
               source:
-                'carrito-confirmar'
+                isOutsideDeliveryArea
+                  ? 'carrito-fuera-amg'
+                  : 'carrito-confirmar'
             });
 
         } catch (error) {
@@ -822,10 +830,15 @@
       deliveryAreaNotice.hidden =
         !isOutsideDeliveryArea;
 
+      whatsappConfirm.textContent =
+        isOutsideDeliveryArea
+          ? 'Consultar posible entrega por WhatsApp'
+          : 'O confirmar pedido por WhatsApp';
+
       if (isOutsideDeliveryArea) {
         setCheckoutMessage(
           DELIVERY_AREA_UNAVAILABLE_MESSAGE,
-          'error'
+          'info'
         );
       } else if (
         mercadoPagoMessage.textContent ===
