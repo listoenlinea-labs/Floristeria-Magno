@@ -36,7 +36,9 @@ const ALLOWED_DELIVERY_SLOTS = new Set([
 ]);
 
 const DELIVERY_AREA_UNAVAILABLE_MESSAGE =
-    'Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.';
+    'Actualmente solo realizamos entregas dentro del Área Metropolitana de Guadalajara. ' +
+    'Sin embargo, dependiendo de tu pedido, podríamos hacer una excepción. ' +
+    'Contáctanos mediante el botón de WhatsApp para revisar qué podemos hacer por ti. ¡Gracias!';
 
 const ALLOWED_DELIVERY_MUNICIPALITIES = new Map([
     ['guadalajara', 'Guadalajara'],
