@@ -35,6 +35,24 @@ const ALLOWED_DELIVERY_SLOTS = new Set([
     '3:00 pm – 7:00 pm'
 ]);
 
+const DELIVERY_AREA_UNAVAILABLE_MESSAGE =
+    'Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.';
+
+const ALLOWED_DELIVERY_MUNICIPALITIES = new Map([
+    ['guadalajara', 'Guadalajara'],
+    ['zapopan', 'Zapopan'],
+    ['san pedro tlaquepaque', 'San Pedro Tlaquepaque'],
+    ['tonala', 'Tonalá'],
+    ['tlajomulco de zuniga', 'Tlajomulco de Zúñiga'],
+    ['el salto', 'El Salto'],
+    ['juanacatlan', 'Juanacatlán'],
+    [
+        'ixtlahuacan de los membrillos',
+        'Ixtlahuacán de los Membrillos'
+    ],
+    ['zapotlanejo', 'Zapotlanejo']
+]);
+
 function createHttpError(message, status = 400) {
     const error = new Error(message);
     error.status = status;
@@ -139,6 +157,17 @@ function normalizeText(value, maxLength) {
     return String(value ?? '').trim().slice(0, maxLength);
 }
 
+function normalizeForComparison(value) {
+    return normalizeText(
+        value,
+        80
+    )
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ');
+}
+
 function validateDelivery(delivery) {
     const receiverName = normalizeText(
         delivery?.receiverName,
@@ -152,7 +181,12 @@ function validateDelivery(delivery) {
 
     const address = normalizeText(
         delivery?.address,
-        300
+        220
+    );
+
+    const municipalityInput = normalizeText(
+        delivery?.municipality,
+        80
     );
 
     const date = normalizeText(
@@ -186,6 +220,29 @@ function validateDelivery(delivery) {
         );
     }
 
+    if (!municipalityInput) {
+        throw createHttpError(
+            'Selecciona el municipio de entrega'
+        );
+    }
+
+    const municipality =
+        ALLOWED_DELIVERY_MUNICIPALITIES.get(
+            normalizeForComparison(
+                municipalityInput
+            )
+        );
+
+    if (!municipality) {
+        throw createHttpError(
+            DELIVERY_AREA_UNAVAILABLE_MESSAGE,
+            422
+        );
+    }
+
+    const fullAddress =
+        `${address}, ${municipality}, Jalisco`;
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         throw createHttpError(
             'Selecciona una fecha de entrega válida'
@@ -201,7 +258,8 @@ function validateDelivery(delivery) {
     return {
         receiverName,
         customerEmail,
-        address,
+        address: fullAddress,
+        municipality,
         date,
         slot
     };
@@ -707,6 +765,8 @@ async function crearPreferencia(
                             delivery.receiverName,
                         delivery_address:
                             delivery.address,
+                        delivery_municipality:
+                            delivery.municipality,
                         delivery_date:
                             delivery.date,
                         delivery_slot:

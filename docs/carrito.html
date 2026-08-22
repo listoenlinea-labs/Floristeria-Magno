@@ -146,8 +146,38 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Dirección de entrega</label>
-              <input class="form-control" id="deliveryAddress" placeholder="Calle, número, colonia">
+              <label class="form-label" for="deliveryAddress">Dirección de entrega</label>
+              <input class="form-control" id="deliveryAddress"
+                placeholder="Calle, número, colonia o fraccionamiento" maxlength="220"
+                autocomplete="street-address">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="deliveryMunicipality">
+                Municipio de entrega
+              </label>
+
+              <select class="form-select" id="deliveryMunicipality">
+                <option value="">Selecciona un municipio</option>
+                <option value="Guadalajara">Guadalajara</option>
+                <option value="Zapopan">Zapopan</option>
+                <option value="San Pedro Tlaquepaque">San Pedro Tlaquepaque</option>
+                <option value="Tonalá">Tonalá</option>
+                <option value="Tlajomulco de Zúñiga">Tlajomulco de Zúñiga</option>
+                <option value="El Salto">El Salto</option>
+                <option value="Juanacatlán">Juanacatlán</option>
+                <option value="Ixtlahuacán de los Membrillos">Ixtlahuacán de los Membrillos</option>
+                <option value="Zapotlanejo">Zapotlanejo</option>
+                <option value="FUERA_AMG">Otro municipio</option>
+              </select>
+
+              <small class="form-text text-muted">
+                Actualmente entregamos únicamente dentro del Área Metropolitana de Guadalajara.
+              </small>
+
+              <div id="deliveryAreaNotice" class="alert alert-danger mt-3 mb-0" role="alert" hidden>
+                Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.
+              </div>
             </div>
 
             <div class="mb-0">
@@ -192,6 +222,11 @@
                     <li>
                       Es responsabilidad del comprador proporcionar correctamente
                       el nombre, teléfono y dirección de quien recibirá el arreglo.
+                    </li>
+
+                    <li>
+                      Las entregas están disponibles únicamente dentro del Área
+                      Metropolitana de Guadalajara.
                     </li>
 
                     <li>
@@ -316,6 +351,8 @@
     const receiverName = document.getElementById('receiverName');
     const customerEmail = document.getElementById('customerEmail');
     const deliveryAddress = document.getElementById('deliveryAddress');
+    const deliveryMunicipality = document.getElementById('deliveryMunicipality');
+    const deliveryAreaNotice = document.getElementById('deliveryAreaNotice');
     const deliveryDate = document.getElementById('deliveryDate');
     const deliverySlot = document.getElementById('deliverySlot');
     const mercadoPagoMessage = document.getElementById('mercadoPagoMessage');
@@ -328,6 +365,9 @@
     const BACKEND_CREATE_PREFERENCE_URL =
       `${BACKEND_BASE_URL}/api/mercadopago/create-preference`;
 
+    const OUTSIDE_DELIVERY_AREA_VALUE = 'FUERA_AMG';
+    const DELIVERY_AREA_UNAVAILABLE_MESSAGE =
+      'Lo sentimos mucho, actualmente no entregamos pedidos a esa dirección.';
 
     const SPECIAL_DATES_STATUS_URL =
       `${BACKEND_BASE_URL}/api/floristeria-magno/fechas-especiales/estado`;
@@ -488,6 +528,7 @@
       receiverName,
       customerEmail,
       deliveryAddress,
+      deliveryMunicipality,
       deliveryDate
     ].forEach(input => {
       input.addEventListener(
@@ -507,6 +548,17 @@
 
         event.preventDefault();
 
+        const deliveryValidationMessage =
+          validateDeliveryLocation();
+
+        if (deliveryValidationMessage) {
+          setCheckoutMessage(
+            deliveryValidationMessage,
+            'error'
+          );
+
+          return;
+        }
 
         if (
           typeof window.openTrackedWhatsapp !==
@@ -740,6 +792,56 @@
       }
     }
 
+    function validateDeliveryLocation() {
+      if (deliveryAddress.value.trim().length < 5) {
+        deliveryAddress.focus();
+        return 'Escribe la dirección completa de entrega.';
+      }
+
+      if (!deliveryMunicipality.value) {
+        deliveryMunicipality.focus();
+        return 'Selecciona el municipio de entrega.';
+      }
+
+      if (
+        deliveryMunicipality.value ===
+        OUTSIDE_DELIVERY_AREA_VALUE
+      ) {
+        deliveryMunicipality.focus();
+        return DELIVERY_AREA_UNAVAILABLE_MESSAGE;
+      }
+
+      return '';
+    }
+
+    function updateDeliveryAreaState() {
+      const isOutsideDeliveryArea =
+        deliveryMunicipality.value ===
+        OUTSIDE_DELIVERY_AREA_VALUE;
+
+      deliveryAreaNotice.hidden =
+        !isOutsideDeliveryArea;
+
+      if (isOutsideDeliveryArea) {
+        setCheckoutMessage(
+          DELIVERY_AREA_UNAVAILABLE_MESSAGE,
+          'error'
+        );
+      } else if (
+        mercadoPagoMessage.textContent ===
+        DELIVERY_AREA_UNAVAILABLE_MESSAGE
+      ) {
+        setCheckoutMessage('', 'info');
+      }
+    }
+
+    deliveryMunicipality.addEventListener(
+      'change',
+      updateDeliveryAreaState
+    );
+
+    updateDeliveryAreaState();
+
     function validateCheckout(items) {
 
       if (
@@ -775,9 +877,11 @@
         return 'Escribe un correo electrónico válido.';
       }
 
-      if (deliveryAddress.value.trim().length < 5) {
-        deliveryAddress.focus();
-        return 'Escribe la dirección completa de entrega.';
+      const deliveryValidationMessage =
+        validateDeliveryLocation();
+
+      if (deliveryValidationMessage) {
+        return deliveryValidationMessage;
       }
 
       if (!deliveryDate.value) {
@@ -866,6 +970,9 @@
 
               address:
                 deliveryAddress.value.trim(),
+
+              municipality:
+                deliveryMunicipality.value,
 
               date:
                 deliveryDate.value,
