@@ -21,6 +21,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('docs/index.html')
           text = path.read_text(encoding='utf-8')
@@ -37,12 +38,14 @@ jobs:
                   raise RuntimeError(f'No se encontró el texto esperado: {old}')
               text = text.replace(old, new)
 
-          old_delivery = '''                            <p class="text-muted-custom mb-0">
-                                Para entregas el mismo día, confirma disponibilidad de flores, horarios y zona por
-                                WhatsApp.
-                            </p>'''
+          delivery_pattern = re.compile(
+              r'<p class="text-muted-custom mb-0">\s*'
+              r'Para entregas el mismo día, confirma disponibilidad de flores, horarios y zona por\s*'
+              r'WhatsApp\.\s*</p>',
+              flags=re.S
+          )
 
-          new_delivery = '''                            <p class="text-muted-custom mb-3">
+          new_delivery = '''<p class="text-muted-custom mb-3">
                                 Para entregas el mismo día, confirma disponibilidad de flores, horarios y zona por
                                 WhatsApp.
                             </p>
@@ -52,10 +55,10 @@ jobs:
                                 Zapotlanejo.
                             </p>'''
 
-          if old_delivery not in text:
+          text, count = delivery_pattern.subn(new_delivery, text, count=1)
+          if count != 1:
               raise RuntimeError('No se encontró el bloque de entregas esperado')
 
-          text = text.replace(old_delivery, new_delivery, 1)
           path.write_text(text, encoding='utf-8')
           PY
 
@@ -70,4 +73,4 @@ jobs:
           git commit -m "SEO Juan 1"
           git push
 
-# trigger
+# trigger 2
