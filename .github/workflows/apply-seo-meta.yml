@@ -110,3 +110,5 @@ jobs:
           git add -A docs .github/workflows/apply-seo-meta.yml
           git commit -m "Agregar metadatos SEO y noindex a paginas internas"
           git push
+
+# trigger
