@@ -69,3 +69,5 @@ jobs:
           git add -A docs/index.html .github/workflows/seo-juan-1.yml
           git commit -m "SEO Juan 1"
           git push
+
+# trigger
