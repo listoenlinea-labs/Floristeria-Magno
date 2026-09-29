@@ -48,7 +48,55 @@
   <!-- Navegación móvil compartida -->
   <div id="mobile-nav-container"></div>
 
-  <header class="catalog-hero catalog-hero-home-style" id="catalogo">
+
+  <main>
+    <section class="section-padding collection-section pt-5" id="productos">
+      <div class="container">
+        <div class="catalog-toolbar mb-4 reveal visible" id="catalogToolbar">
+          <button class="filter-chip active" data-filter="all">Todos</button>
+          <button class="filter-chip" data-filter="romanticos">Románticos</button>
+          <button class="filter-chip" data-filter="cumpleanos">Cumpleaños</button>
+          <button class="filter-chip" data-filter="nacimientos">Nacimientos</button>
+          <button class="filter-chip" data-filter="tulipanes">Tulipanes</button>
+          <button class="filter-chip" data-filter="novias">Novias</button>
+          <button class="filter-chip" data-filter="flores-exoticas">Flores exóticas</button>
+          <button class="filter-chip" data-filter="peonias">Peonías</button>
+          <button class="filter-chip" data-filter="pureza">Pureza</button>
+          <button class="filter-chip" data-filter="buchiramos">Buchiramos</button>
+        </div>
+
+        <div class="row g-4" id="productGrid">
+          <div class="col-12 text-center py-5">
+            <div class="spinner-border" role="status"></div>
+
+            <p class="mt-3">
+              Cargando catálogo...
+            </p>
+          </div>
+        </div>
+        <div class="category-story-banner mt-5" id="categoryStoryBanner">
+          <div class="category-story-icon" id="categoryStoryIcon">
+            <i class="bi bi-flower1"></i>
+          </div>
+
+          <div class="category-story-content">
+            <div class="category-story-eyebrow" id="categoryStoryEyebrow">
+              Nuestro catálogo
+            </div>
+
+            <h2 id="categoryStoryTitle">
+              Flores para cada historia.
+            </h2>
+
+            <p id="categoryStoryText">
+              Cada arreglo nace de una emoción, una ocasión y una intención diferente.
+              Explora nuestras colecciones y encuentra la forma perfecta de decirlo con flores.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  <section class="catalog-hero catalog-hero-home-style" id="catalogo">
     <div class="catalog-mouse-light" id="catalogMouseLight"></div>
     <div class="catalog-ink-layer">
       <div class="catalog-ink-blur one"></div>
@@ -112,54 +160,7 @@
         </div>
       </div>
     </div>
-    <div class="catalog-scroll-indicator">Explorar</div>
-  </header>
-  <main>
-    <section class="section-padding collection-section pt-5" id="productos">
-      <div class="container">
-        <div class="catalog-toolbar mb-4 reveal visible" id="catalogToolbar">
-          <button class="filter-chip active" data-filter="all">Todos</button>
-          <button class="filter-chip" data-filter="romanticos">Románticos</button>
-          <button class="filter-chip" data-filter="cumpleanos">Cumpleaños</button>
-          <button class="filter-chip" data-filter="nacimientos">Nacimientos</button>
-          <button class="filter-chip" data-filter="tulipanes">Tulipanes</button>
-          <button class="filter-chip" data-filter="novias">Novias</button>
-          <button class="filter-chip" data-filter="flores-exoticas">Flores exóticas</button>
-          <button class="filter-chip" data-filter="peonias">Peonías</button>
-          <button class="filter-chip" data-filter="pureza">Pureza</button>
-          <button class="filter-chip" data-filter="buchiramos">Buchiramos</button>
-        </div>
-        <div class="category-story-banner mb-4" id="categoryStoryBanner">
-          <div class="category-story-icon" id="categoryStoryIcon">
-            <i class="bi bi-flower1"></i>
-          </div>
-
-          <div class="category-story-content">
-            <div class="category-story-eyebrow" id="categoryStoryEyebrow">
-              Nuestro catálogo
-            </div>
-
-            <h2 id="categoryStoryTitle">
-              Flores para cada historia.
-            </h2>
-
-            <p id="categoryStoryText">
-              Cada arreglo nace de una emoción, una ocasión y una intención diferente.
-              Explora nuestras colecciones y encuentra la forma perfecta de decirlo con flores.
-            </p>
-          </div>
-        </div>
-        <div class="row g-4" id="productGrid">
-          <div class="col-12 text-center py-5">
-            <div class="spinner-border" role="status"></div>
-
-            <p class="mt-3">
-              Cargando catálogo...
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+  </section>
   </main>
   <a href="carrito.html" class="cart-float" aria-label="Abrir carrito">
     <i class="bi bi-bag-heart"></i>
@@ -1390,10 +1391,6 @@
 
         updateCategoryStory(filter);
 
-        document.getElementById('categoryStoryBanner')?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest'
-        });
       });
     });
 
