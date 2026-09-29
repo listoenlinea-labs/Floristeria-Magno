@@ -1422,7 +1422,7 @@
 
                 container.innerHTML = items.map(item => `
             <div class="col-md-6 moments-card-column reveal visible">
-                <article class="mood-card mood-card-magno">
+                <a href="catalogo.html" class="mood-card mood-card-magno" style="display:block;text-decoration:none;color:inherit" aria-label="Ver catálogo: ${escapeHtml(item.titulo)}">
                     <img
                         src="${escapeHtml(getGalleryImageUrl(item))}"
                         alt="${escapeHtml(getGalleryAlt(item))}"
@@ -1439,7 +1439,7 @@
                             ${escapeHtml(item.descripcion || "")}
                         </p>
                     </div>
-                </article>
+                </a>
             </div>
         `).join("");
 
