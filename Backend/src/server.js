@@ -35,6 +35,12 @@ process.env.TZ =
     process.env.APP_TIME_ZONE ||
     'America/Mexico_City';
 
+const {
+    initializeImageStorage
+} = require(
+    './services/image-storage.service'
+);
+
 const app = require('./app');
 const sequelize = require('./config/database');
 
@@ -141,6 +147,12 @@ app.set('io', io);
 
 async function startServer() {
     try {
+        /*
+         * Las carpetas persistentes y su respaldo deben estar
+         * disponibles antes de aceptar tráfico o subir imágenes.
+         */
+        await initializeImageStorage();
+
         await sequelize.authenticate();
 
         console.log(
