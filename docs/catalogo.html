@@ -32,9 +32,23 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
+  <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=1">
 </head>
 
 <body class="theme-spring page-catalogo">
+  <div class="catalog-entry-animation" id="catalogEntryAnimation" aria-hidden="true">
+    <div class="catalog-opening-flower catalog-entry-flower">
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-petal"></div>
+      <div class="catalog-flower-core"></div>
+    </div>
+  </div>
   <div class="season-particles" id="seasonParticles" aria-hidden="true"></div>
   <div class="season-preview-panel" id="seasonPreviewPanel" aria-label="Previsualizar tema de temporada">
     <button class="season-btn" data-season="spring">Primavera</button>
@@ -52,17 +66,27 @@
   <main>
     <section class="section-padding collection-section pt-5" id="productos" style="padding-top: 120px !important; scroll-margin-top: 90px;">
       <div class="container">
-        <div class="catalog-toolbar mb-4 reveal visible" id="catalogToolbar">
-          <button class="filter-chip active" data-filter="all">Todos</button>
-          <button class="filter-chip" data-filter="romanticos">Románticos</button>
-          <button class="filter-chip" data-filter="cumpleanos">Cumpleaños</button>
-          <button class="filter-chip" data-filter="nacimientos">Nacimientos</button>
-          <button class="filter-chip" data-filter="tulipanes">Tulipanes</button>
-          <button class="filter-chip" data-filter="novias">Novias</button>
-          <button class="filter-chip" data-filter="flores-exoticas">Flores exóticas</button>
-          <button class="filter-chip" data-filter="peonias">Peonías</button>
-          <button class="filter-chip" data-filter="pureza">Pureza</button>
-          <button class="filter-chip" data-filter="buchiramos">Buchiramos</button>
+        <div class="catalog-controls mb-4 reveal visible" id="catalogControls">
+          <label class="catalog-search" for="catalogSearchInput">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input
+              id="catalogSearchInput"
+              type="search"
+              inputmode="search"
+              autocomplete="off"
+              placeholder="Buscar por nombre o descripción"
+              aria-label="Buscar arreglos por nombre o descripción"
+            >
+          </label>
+
+          <label class="catalog-sort" for="catalogSortSelect">
+            <span>Ordenar</span>
+            <select id="catalogSortSelect" aria-label="Ordenar catálogo por precio">
+              <option value="default">Precio</option>
+              <option value="price-desc">Mayor a menor</option>
+              <option value="price-asc">Menor a mayor</option>
+            </select>
+          </label>
         </div>
 
         <div class="row g-4" id="productGrid">
@@ -74,6 +98,13 @@
             </p>
           </div>
         </div>
+
+        <div class="catalog-empty-state d-none" id="catalogEmptyState" role="status">
+          <i class="bi bi-search"></i>
+          <strong>No encontramos arreglos con esa búsqueda.</strong>
+          <span>Prueba con otro nombre o una palabra de la descripción.</span>
+        </div>
+
         <div class="category-story-banner mt-5" id="categoryStoryBanner">
           <div class="category-story-icon" id="categoryStoryIcon">
             <i class="bi bi-flower1"></i>
@@ -463,6 +494,69 @@
         .replace(/^-|-$/g, "");
     }
 
+    function normalizeCatalogSearch(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function applyCatalogControls() {
+      const grid = document.getElementById("productGrid");
+      const searchInput = document.getElementById("catalogSearchInput");
+      const sortSelect = document.getElementById("catalogSortSelect");
+      const emptyState = document.getElementById("catalogEmptyState");
+
+      if (!grid) {
+        return;
+      }
+
+      const query = normalizeCatalogSearch(searchInput?.value || "");
+      const sortMode = sortSelect?.value || "default";
+      const productColumns = Array.from(
+        grid.querySelectorAll(".product-col")
+      );
+
+      productColumns.forEach(column => {
+        const searchText = normalizeCatalogSearch(
+          column.dataset.searchText || ""
+        );
+
+        column.hidden = Boolean(
+          query && !searchText.includes(query)
+        );
+      });
+
+      productColumns
+        .sort((a, b) => {
+          if (sortMode === "price-desc") {
+            return Number(b.dataset.productPrice || 0) -
+              Number(a.dataset.productPrice || 0);
+          }
+
+          if (sortMode === "price-asc") {
+            return Number(a.dataset.productPrice || 0) -
+              Number(b.dataset.productPrice || 0);
+          }
+
+          return Number(a.dataset.productIndex || 0) -
+            Number(b.dataset.productIndex || 0);
+        })
+        .forEach(column => grid.appendChild(column));
+
+      const visibleProducts = productColumns.filter(
+        column => !column.hidden
+      ).length;
+
+      if (emptyState) {
+        emptyState.classList.toggle(
+          "d-none",
+          visibleProducts > 0
+        );
+      }
+    }
+
     async function loadCatalogProducts() {
       const grid = document.getElementById(
         "productGrid"
@@ -504,7 +598,7 @@
           return;
         }
 
-        grid.innerHTML = items.map(product => {
+        grid.innerHTML = items.map((product, productIndex) => {
           const category = normalizeCategory(
             product.categoria ||
             "general"
@@ -556,6 +650,15 @@
                 <div
                     class="col-md-6 col-lg-4 reveal visible product-col"
                     data-category="${escapeHtml(category)}"
+                    data-product-price="${Number(product.precio || 0)}"
+                    data-product-index="${productIndex}"
+                    data-search-text="${escapeHtml(
+                      normalizeCatalogSearch(
+                        [product.nombre, product.descripcion]
+                          .filter(Boolean)
+                          .join(" ")
+                      )
+                    )}"
                 >
                     <article
                         class="product-card"
@@ -708,6 +811,8 @@
                 </div>
             `;
         }).join("");
+
+        applyCatalogControls();
       } catch (error) {
         console.error(
           "Error al cargar el catálogo:",
@@ -1221,6 +1326,20 @@
         }
       }
     );
+
+    document
+      .getElementById("catalogSearchInput")
+      ?.addEventListener("input", applyCatalogControls);
+
+    document
+      .getElementById("catalogSortSelect")
+      ?.addEventListener("change", applyCatalogControls);
+
+    window.setTimeout(() => {
+      document
+        .getElementById("catalogEntryAnimation")
+        ?.remove();
+    }, 2200);
 
     loadCatalogProducts();
     loadSocialNetworks();
