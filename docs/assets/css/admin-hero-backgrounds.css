@@ -1,0 +1,262 @@
+/* ==========================================================
+   Admin · Fondos de Hero por temporada
+   UI dedicada para controlar el fondo de index.html.
+========================================================== */
+
+body.page-admin .hero-backgrounds-panel {
+    overflow: hidden;
+}
+
+body.page-admin .hero-backgrounds-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+body.page-admin .hero-backgrounds-heading h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -.045em;
+}
+
+body.page-admin .hero-backgrounds-heading p {
+    max-width: 760px;
+}
+
+body.page-admin .hero-backgrounds-help {
+    max-width: 360px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid rgba(39, 21, 27, .08);
+    border-radius: 16px;
+    background: rgba(255, 248, 248, .82);
+    color: #75686d;
+    font-size: .76rem;
+    line-height: 1.45;
+}
+
+body.page-admin .hero-backgrounds-help i {
+    flex: 0 0 auto;
+    color: #8d6f76;
+    font-size: 1rem;
+}
+
+body.page-admin .hero-backgrounds-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+body.page-admin .hero-season-card {
+    --season-card-accent: #e7b8c0;
+    overflow: hidden;
+    border: 1px solid rgba(39, 21, 27, .09);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, .86);
+    box-shadow: 0 16px 38px rgba(39, 21, 27, .055);
+}
+
+body.page-admin .hero-season-card.is-summer {
+    --season-card-accent: #e3b36d;
+}
+
+body.page-admin .hero-season-card.is-autumn {
+    --season-card-accent: #c98268;
+}
+
+body.page-admin .hero-season-card.is-winter {
+    --season-card-accent: #86a9b8;
+}
+
+body.page-admin .hero-season-preview {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 72% 24%,
+            color-mix(
+                in srgb,
+                var(--season-card-accent) 22%,
+                white 78%
+            ),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            #fff 0%,
+            #f8f2f3 100%
+        );
+}
+
+body.page-admin .hero-season-preview > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+body.page-admin .hero-season-preview.has-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            180deg,
+            transparent 56%,
+            rgba(17, 17, 17, .15) 100%
+        );
+}
+
+body.page-admin .hero-season-preview-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 10px;
+    color: #8d7e82;
+    text-align: center;
+}
+
+body.page-admin .hero-season-preview.has-image
+.hero-season-preview-fallback {
+    display: none;
+}
+
+body.page-admin .hero-season-preview-fallback i {
+    font-size: 2rem;
+    color: var(--season-card-accent);
+}
+
+body.page-admin .hero-season-preview-fallback span {
+    font-size: .78rem;
+    font-weight: 750;
+}
+
+body.page-admin .hero-season-status {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 255, 255, .72);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .88);
+    color: #5d5255;
+    font-size: .68rem;
+    font-weight: 850;
+    box-shadow: 0 8px 20px rgba(39, 21, 27, .08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+body.page-admin .hero-season-status > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #aaa0a3;
+}
+
+body.page-admin .hero-season-status.is-active > span {
+    background: #4aa86a;
+    box-shadow: 0 0 0 4px rgba(74, 168, 106, .12);
+}
+
+body.page-admin .hero-season-content {
+    padding: 20px;
+}
+
+body.page-admin .hero-season-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+body.page-admin .hero-season-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background:
+        color-mix(
+            in srgb,
+            var(--season-card-accent) 18%,
+            white 82%
+        );
+    color: #4f4145;
+    font-size: 1.05rem;
+}
+
+body.page-admin .hero-season-title-row small {
+    display: block;
+    margin-bottom: 2px;
+    color: #9a8d91;
+    font-size: .63rem;
+    font-weight: 800;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+body.page-admin .hero-season-title-row h3 {
+    margin: 0;
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+body.page-admin .hero-season-content > p {
+    min-height: 44px;
+    margin: 0 0 16px;
+    color: #75686d;
+    font-size: .78rem;
+    line-height: 1.55;
+}
+
+body.page-admin .hero-season-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+body.page-admin .hero-season-actions button {
+    min-height: 40px;
+}
+
+body.page-admin .hero-season-primary {
+    flex: 1 1 160px;
+}
+
+@media (max-width: 991.98px) {
+    body.page-admin .hero-backgrounds-heading {
+        flex-direction: column;
+    }
+
+    body.page-admin .hero-backgrounds-help {
+        max-width: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.page-admin .hero-backgrounds-grid {
+        grid-template-columns: 1fr;
+    }
+
+    body.page-admin .hero-season-preview {
+        height: 220px;
+    }
+
+    body.page-admin .hero-season-content {
+        padding: 16px;
+    }
+}
