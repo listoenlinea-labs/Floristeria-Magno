@@ -1,0 +1,336 @@
+/* ==========================================================
+   Floristería Magno · Storefront refresh
+   Catálogo móvil de 2 columnas + controles compactos.
+   Este archivo no reemplaza ni mueve imágenes existentes.
+========================================================== */
+
+body.page-catalogo .catalog-controls {
+    width: min(100%, 780px);
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 9px;
+    border: 1px solid rgba(23, 19, 22, .08);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .82);
+    box-shadow: 0 14px 38px rgba(23, 19, 22, .06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+body.page-catalogo .catalog-search {
+    min-width: 0;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 13px;
+    border: 1px solid rgba(23, 19, 22, .09);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .92);
+    color: #6f6468;
+}
+
+body.page-catalogo .catalog-search i {
+    flex: 0 0 auto;
+    font-size: .92rem;
+}
+
+body.page-catalogo .catalog-search input {
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: .86rem;
+}
+
+body.page-catalogo .catalog-search input::placeholder {
+    color: #9a8e92;
+}
+
+body.page-catalogo .catalog-sort {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding-left: 11px;
+    border: 1px solid rgba(23, 19, 22, .09);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, .92);
+    color: #6f6468;
+    font-size: .7rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+body.page-catalogo .catalog-sort select {
+    height: 40px;
+    max-width: 180px;
+    border: 0;
+    outline: 0;
+    padding: 0 30px 0 4px;
+    background-color: transparent;
+    color: var(--ink);
+    font-size: .76rem;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+body.page-catalogo .catalog-empty-state {
+    margin: 28px auto 0;
+    max-width: 560px;
+    padding: 30px 22px;
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+    text-align: center;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .76);
+    border: 1px solid rgba(23, 19, 22, .08);
+}
+
+body.page-catalogo .catalog-empty-state i {
+    font-size: 1.35rem;
+}
+
+body.page-catalogo .catalog-empty-state span {
+    color: var(--muted);
+    font-size: .84rem;
+}
+
+/* Entrada breve basada en la flor animada de index.html. */
+body.page-catalogo .catalog-entry-animation {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 45%, var(--theme-soft), transparent 26%),
+        var(--theme-gradient);
+    animation: magnoCatalogCurtain 1.9s ease forwards;
+}
+
+body.page-catalogo .catalog-entry-animation .catalog-opening-flower {
+    display: block !important;
+    animation:
+        catalogFlowerAppear .95s ease forwards .05s,
+        catalogFlowerExit .65s ease forwards 1.05s !important;
+}
+
+@keyframes magnoCatalogCurtain {
+    0%, 68% {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.page-catalogo .catalog-controls {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 7px;
+        padding: 7px;
+        margin-bottom: 14px !important;
+        border-radius: 18px;
+    }
+
+    body.page-catalogo .catalog-search {
+        height: 38px;
+        gap: 7px;
+        padding: 0 10px;
+        border-radius: 12px;
+    }
+
+    body.page-catalogo .catalog-search input {
+        font-size: .72rem;
+    }
+
+    body.page-catalogo .catalog-sort {
+        height: 38px;
+        padding-left: 0;
+        border-radius: 12px;
+    }
+
+    body.page-catalogo .catalog-sort > span {
+        display: none;
+    }
+
+    body.page-catalogo .catalog-sort select {
+        width: 116px;
+        max-width: 32vw;
+        height: 36px;
+        padding: 0 24px 0 8px;
+        font-size: .64rem;
+    }
+
+    /* Reemplaza el carrusel horizontal por una cuadrícula vertical. */
+    body.page-catalogo #productGrid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px 10px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 0 102px !important;
+        overflow: visible !important;
+        scroll-snap-type: none !important;
+    }
+
+    body.page-catalogo #productGrid > [class*="col-"] {
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        flex: none !important;
+        padding: 0 !important;
+        scroll-snap-align: unset !important;
+    }
+
+    body.page-catalogo .product-card {
+        min-width: 0;
+        border-radius: 18px !important;
+        box-shadow: 0 14px 34px rgba(23, 19, 22, .09);
+    }
+
+    body.page-catalogo .product-img-wrap {
+        width: 100%;
+        height: auto !important;
+        aspect-ratio: 4 / 5;
+        background: #f5efed;
+    }
+
+    body.page-catalogo .product-img-wrap > img.product-gallery-main-image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+    }
+
+    body.page-catalogo .product-card > .p-4 {
+        padding: 12px 10px 13px !important;
+    }
+
+    body.page-catalogo .product-card h3 {
+        margin-bottom: 5px !important;
+        font-size: clamp(1.18rem, 5.7vw, 1.55rem) !important;
+        line-height: .96 !important;
+        letter-spacing: -.035em !important;
+    }
+
+    body.page-catalogo .product-card .text-muted-custom {
+        display: -webkit-box;
+        min-height: 2.55em;
+        margin-bottom: 10px;
+        overflow: hidden;
+        font-size: .69rem;
+        line-height: 1.32;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    body.page-catalogo .product-card .d-flex.justify-content-between {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        gap: 7px !important;
+        align-items: stretch !important;
+    }
+
+    body.page-catalogo .product-card .price {
+        font-size: .94rem !important;
+        line-height: 1;
+    }
+
+    body.page-catalogo .product-card .btn-luxury.btn-sm {
+        width: 100%;
+        min-height: 32px;
+        padding: 7px 8px;
+        border-radius: 11px;
+        font-size: .65rem;
+    }
+
+    /* Las etiquetas blancas de categoría/destacado se conservan. */
+    body.page-catalogo .product-badge {
+        left: 8px !important;
+        top: 8px !important;
+        max-width: calc(100% - 16px);
+        padding: 5px 8px !important;
+        overflow: hidden;
+        font-size: .56rem !important;
+        line-height: 1.05;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    body.page-catalogo .product-gallery-counter {
+        top: 8px !important;
+        right: 8px !important;
+        font-size: .58rem !important;
+    }
+
+    body.page-catalogo .product-gallery-thumbnails {
+        display: none !important;
+    }
+
+    body.page-catalogo .product-gallery-arrow {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    /* index.html: más aire vertical para apreciar los arreglos en celular. */
+    body.page-index .home-hero-visual,
+    body.page-index .home-card-main,
+    body.page-index .home-hero-carousel,
+    body.page-index .home-hero-carousel .carousel-inner,
+    body.page-index .home-hero-carousel .carousel-item,
+    body.page-index .home-hero-carousel img {
+        height: 220px !important;
+        min-height: 220px !important;
+        max-height: 220px !important;
+    }
+
+    body.page-index #momentos .mood-card {
+        height: 190px !important;
+        min-height: 190px !important;
+    }
+
+    body.page-index #momentos .mood-card img {
+        object-fit: cover !important;
+        object-position: center center !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body.page-catalogo #productGrid {
+        gap: 10px 8px !important;
+    }
+
+    body.page-catalogo .product-card h3 {
+        font-size: 1.08rem !important;
+    }
+
+    body.page-index .home-hero-visual,
+    body.page-index .home-card-main,
+    body.page-index .home-hero-carousel,
+    body.page-index .home-hero-carousel .carousel-inner,
+    body.page-index .home-hero-carousel .carousel-item,
+    body.page-index .home-hero-carousel img {
+        height: 205px !important;
+        min-height: 205px !important;
+        max-height: 205px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.page-catalogo .catalog-entry-animation {
+        display: none !important;
+    }
+}
