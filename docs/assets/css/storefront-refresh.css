@@ -599,3 +599,62 @@ body.page-catalogo .catalog-sort-option > i {
         width: 106px;
     }
 }
+
+
+/* ==========================================================
+   Catálogo desktop · tarjetas alineadas + borde editorial
+   Mantiene intactas todas las imágenes y su lógica de carga.
+========================================================== */
+
+/*
+ * Línea casi imperceptible para separar cada arreglo sin hacer
+ * que la tarjeta se sienta encerrada. El tono toma un matiz
+ * vino/rosa muy suave de la identidad de Floristería Magno.
+ */
+body.page-catalogo .product-card {
+    border: .5px solid rgba(86, 62, 69, .14) !important;
+}
+
+/*
+ * En escritorio cada columna se comporta como un contenedor flex.
+ * Así todas las tarjetas de una misma fila ocupan la misma altura.
+ */
+@media (min-width: 768px) {
+    body.page-catalogo #productGrid > .product-col {
+        display: flex !important;
+        align-self: stretch !important;
+    }
+
+    body.page-catalogo .product-card {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /*
+     * El contenido inferior llena el espacio disponible.
+     * La fila precio + Agregar se empuja hasta el fondo,
+     * por lo que los botones quedan alineados horizontalmente
+     * aunque títulos y descripciones tengan diferente longitud.
+     */
+    body.page-catalogo .product-card > .p-4 {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    body.page-catalogo .product-card .d-flex.justify-content-between {
+        margin-top: auto !important;
+    }
+}
+
+/*
+ * En móvil conservamos el borde todavía más discreto para que
+ * la cuadrícula de dos columnas siga sintiéndose ligera.
+ */
+@media (max-width: 767.98px) {
+    body.page-catalogo .product-card {
+        border-color: rgba(86, 62, 69, .11) !important;
+    }
+}
