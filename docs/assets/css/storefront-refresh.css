@@ -701,3 +701,43 @@ body.page-catalogo .product-card {
         pointer-events: auto !important;
     }
 }
+
+
+/* ==========================================================
+   Catálogo móvil · elimina espacio muerto bajo el header
+   Solo afecta celular. Tablet y desktop conservan su separación.
+========================================================== */
+@media (max-width: 767.98px) {
+    /*
+     * catalogo.html tenía padding-top inline de 120px para compensar
+     * el header fijo. En móvil eso dejaba demasiado aire antes del
+     * buscador. Lo reducimos para que la barra comience apenas debajo
+     * del encabezado, sin tocar el layout de las tarjetas.
+     */
+    body.page-catalogo #productos {
+        padding-top: 84px !important;
+        scroll-margin-top: 76px !important;
+    }
+
+    body.page-catalogo #productos > .container {
+        padding-top: 0 !important;
+    }
+
+    /*
+     * Mantiene el buscador visualmente pegado al encabezado cuando
+     * llega a su posición sticky durante el scroll.
+     */
+    body.page-catalogo .catalog-controls {
+        top: 72px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body.page-catalogo #productos {
+        padding-top: 80px !important;
+    }
+
+    body.page-catalogo .catalog-controls {
+        top: 70px !important;
+    }
+}
