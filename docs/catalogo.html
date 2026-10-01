@@ -32,7 +32,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
-  <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=3">
+  <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=4">
 </head>
 
 <body class="theme-spring page-catalogo">
@@ -1487,6 +1487,145 @@
         closeCatalogSortMenu();
       }
     });
+
+    /*
+     * Desktop + tablet:
+     * - al bajar, el buscador/filtro se oculta;
+     * - con un pequeño gesto hacia arriba vuelve a mostrarse.
+     * En móvil permanece visible como hasta ahora.
+     */
+    const catalogControls =
+      document.getElementById("catalogControls");
+
+    const catalogToolbarMedia =
+      window.matchMedia("(min-width: 768px)");
+
+    let catalogToolbarLastScrollY =
+      window.scrollY;
+
+    let catalogToolbarUpDistance = 0;
+    let catalogToolbarDownDistance = 0;
+
+    function showCatalogToolbar() {
+      catalogControls?.classList.remove(
+        "is-scroll-hidden"
+      );
+    }
+
+    function hideCatalogToolbar() {
+      if (
+        catalogSortButton?.getAttribute(
+          "aria-expanded"
+        ) === "true"
+      ) {
+        closeCatalogSortMenu();
+      }
+
+      catalogControls?.classList.add(
+        "is-scroll-hidden"
+      );
+    }
+
+    function resetCatalogToolbarScrollState() {
+      catalogToolbarLastScrollY =
+        window.scrollY;
+
+      catalogToolbarUpDistance = 0;
+      catalogToolbarDownDistance = 0;
+
+      showCatalogToolbar();
+    }
+
+    function handleCatalogToolbarScroll() {
+      if (
+        !catalogControls ||
+        !catalogToolbarMedia.matches
+      ) {
+        showCatalogToolbar();
+        catalogToolbarLastScrollY =
+          window.scrollY;
+        return;
+      }
+
+      const currentScrollY =
+        Math.max(0, window.scrollY);
+
+      const delta =
+        currentScrollY -
+        catalogToolbarLastScrollY;
+
+      /*
+       * Cerca del inicio siempre se muestra.
+       */
+      if (currentScrollY < 140) {
+        showCatalogToolbar();
+
+        catalogToolbarUpDistance = 0;
+        catalogToolbarDownDistance = 0;
+        catalogToolbarLastScrollY =
+          currentScrollY;
+
+        return;
+      }
+
+      /*
+       * Ignora micro movimientos del navegador.
+       */
+      if (Math.abs(delta) < 2) {
+        return;
+      }
+
+      if (delta > 0) {
+        catalogToolbarDownDistance += delta;
+        catalogToolbarUpDistance = 0;
+
+        /*
+         * Basta una bajada corta para liberar
+         * espacio vertical al catálogo.
+         */
+        if (catalogToolbarDownDistance >= 18) {
+          hideCatalogToolbar();
+          catalogToolbarDownDistance = 0;
+        }
+      } else {
+        catalogToolbarUpDistance +=
+          Math.abs(delta);
+
+        catalogToolbarDownDistance = 0;
+
+        /*
+         * Un pequeño scroll hacia arriba
+         * vuelve a enseñar búsqueda + ordenar.
+         */
+        if (catalogToolbarUpDistance >= 22) {
+          showCatalogToolbar();
+          catalogToolbarUpDistance = 0;
+        }
+      }
+
+      catalogToolbarLastScrollY =
+        currentScrollY;
+    }
+
+    window.addEventListener(
+      "scroll",
+      handleCatalogToolbarScroll,
+      { passive: true }
+    );
+
+    if (
+      typeof catalogToolbarMedia
+        .addEventListener === "function"
+    ) {
+      catalogToolbarMedia.addEventListener(
+        "change",
+        resetCatalogToolbarScrollState
+      );
+    } else {
+      catalogToolbarMedia.addListener(
+        resetCatalogToolbarScrollState
+      );
+    }
 
     window.setTimeout(() => {
       document
