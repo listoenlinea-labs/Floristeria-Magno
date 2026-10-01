@@ -31,6 +31,12 @@ const {
     uploadsRoot
 } = require('./config/uploads');
 
+const {
+    recoverUploadMiddleware
+} = require(
+    './services/image-storage.service'
+);
+
 const app = express();
 
 /*
@@ -140,11 +146,22 @@ app.use(
  * /uploads/productos/imagen.jpg
  * /uploads/galeria/imagen.jpg
  */
+/*
+ * Antes de responder una imagen intentamos restaurarla desde el
+ * respaldo persistente si el archivo principal desapareció.
+ */
+app.use(
+    '/uploads',
+    recoverUploadMiddleware
+);
+
 app.use(
     '/uploads',
     express.static(uploadsRoot, {
         fallthrough: false,
-        maxAge: '7d'
+        maxAge: '30d',
+        immutable: true,
+        dotfiles: 'deny'
     })
 );
 
