@@ -658,3 +658,46 @@ body.page-catalogo .product-card {
         border-color: rgba(86, 62, 69, .11) !important;
     }
 }
+
+
+/* ==========================================================
+   Desktop + tablet · toolbar inteligente según dirección
+   Solo se aplica desde 768px. En móvil permanece siempre visible.
+========================================================== */
+
+@media (min-width: 768px) {
+    body.page-catalogo .catalog-controls {
+        will-change: transform, opacity;
+        transition:
+            transform .28s cubic-bezier(.22, .61, .36, 1),
+            opacity .22s ease,
+            box-shadow .22s ease,
+            background .22s ease,
+            border-color .22s ease !important;
+    }
+
+    body.page-catalogo .catalog-controls.is-scroll-hidden {
+        transform: translateY(calc(-100% - 28px));
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    body.page-catalogo .catalog-controls:not(.is-scroll-hidden) {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/*
+ * Móvil: neutraliza explícitamente el comportamiento anterior
+ * para garantizar que búsqueda + precio sigan siempre visibles.
+ */
+@media (max-width: 767.98px) {
+    body.page-catalogo .catalog-controls,
+    body.page-catalogo .catalog-controls.is-scroll-hidden {
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+}
