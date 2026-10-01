@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
+    <link rel="stylesheet" href="assets/css/admin-hero-backgrounds.css?v=1">
 </head>
 
 <body class="page-admin">
@@ -103,6 +104,9 @@
                 </button>
                 <button class="tab-btn" id="galleryTabButton" onclick="setTab('gallery', this)">
                     <i class="bi bi-images"></i> Galería
+                </button>
+                <button class="tab-btn" id="heroBackgroundsTabButton" onclick="setTab('heroBackgrounds', this)">
+                    <i class="bi bi-image-alt"></i> Fondos Hero
                 </button>
                 <button class="tab-btn" id="specialDatesTabButton" onclick="setTab('specialDates', this)">
                     <i class="bi bi-calendar-event"></i>
@@ -618,6 +622,32 @@
                     </div>
 
                     <div id="galleryTable" class="admin-gallery-sections"></div>
+                </div>
+            </section>
+
+            <section id="tabHeroBackgrounds" class="hidden">
+                <div class="content-card glass hero-backgrounds-panel">
+                    <div class="hero-backgrounds-heading">
+                        <div>
+                            <div class="eyebrow">Portada de index.html</div>
+                            <h2 class="mb-1">Fondos de Hero por temporada</h2>
+                            <p class="small-muted mb-0">
+                                Controla desde aquí la imagen de fondo del Hero de Inicio.
+                                Cada temporada conserva su propio fondo y el sitio utiliza
+                                automáticamente el correspondiente.
+                            </p>
+                        </div>
+
+                        <div class="hero-backgrounds-help">
+                            <i class="bi bi-shield-check"></i>
+                            <span>
+                                Cambiar un fondo no borra las imágenes existentes:
+                                se reutiliza la galería del CMS.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="heroBackgroundsGrid" class="hero-backgrounds-grid"></div>
                 </div>
             </section>
 
@@ -1402,6 +1432,39 @@
         let selectedProductImages = [];
         let sections = [];
         let gallery = [];
+
+        const HERO_BACKGROUND_SEASONS = {
+            spring: {
+                label: 'Primavera',
+                section: 'fondo-primavera',
+                icon: 'bi-flower1',
+                accentClass: 'is-spring'
+            },
+            summer: {
+                label: 'Verano',
+                section: 'fondo-verano',
+                icon: 'bi-sun',
+                accentClass: 'is-summer'
+            },
+            autumn: {
+                label: 'Otoño',
+                section: 'fondo-otono',
+                icon: 'bi-tree',
+                accentClass: 'is-autumn'
+            },
+            winter: {
+                label: 'Invierno',
+                section: 'fondo-invierno',
+                icon: 'bi-snow',
+                accentClass: 'is-winter'
+            }
+        };
+
+        const HERO_BACKGROUND_SECTIONS = new Set(
+            Object.values(HERO_BACKGROUND_SEASONS)
+                .map(item => item.section)
+        );
+
         let specialDates = [];
         let orders = [];
         let salesDashboard = null;
@@ -1875,6 +1938,11 @@
             );
 
             setElementVisible(
+                'heroBackgroundsTabButton',
+                isAdmin
+            );
+
+            setElementVisible(
                 'settingsTabButton',
                 isAdmin
             );
@@ -2334,6 +2402,7 @@
             renderProducts();
             renderSections();
             renderGallery();
+            renderHeroBackgrounds();
             renderSettings();
             fillProductOptions();
         }
@@ -2462,6 +2531,14 @@
                 .toggle('hidden', tab !== 'gallery');
 
             document
+                .getElementById('tabHeroBackgrounds')
+                .classList
+                .toggle(
+                    'hidden',
+                    tab !== 'heroBackgrounds'
+                );
+
+            document
                 .getElementById(
                     'tabSpecialDates'
                 )
@@ -2521,6 +2598,12 @@
                 mainBtn.onclick = openGalleryModal;
                 mainBtn.classList.remove("hidden");
             }
+
+            if (tab === 'heroBackgrounds') {
+                mainBtn.classList.add('hidden');
+                renderHeroBackgrounds();
+            }
+
             if (
                 tab === 'specialDates'
             ) {
@@ -6104,7 +6187,14 @@
             const container =
                 document.getElementById("galleryTable");
 
-            if (!gallery.length) {
+            const regularGallery = gallery.filter(
+                item =>
+                    !HERO_BACKGROUND_SECTIONS.has(
+                        item.section
+                    )
+            );
+
+            if (!regularGallery.length) {
                 container.innerHTML = `
             <div class="admin-gallery-empty">
                 <i class="bi bi-images"></i>
@@ -6127,7 +6217,7 @@
              * Agrupa las imágenes por el valor
              * de la columna seccion.
              */
-            const groupedGallery = gallery.reduce(
+            const groupedGallery = regularGallery.reduce(
                 (groups, item) => {
                     const section =
                         item.section || "otros";
@@ -7037,6 +7127,403 @@
             renderSections();
         }
 
+        function getSeasonHeroBackgroundItems(
+            section
+        ) {
+            return gallery
+                .filter(
+                    item =>
+                        item.section === section
+                )
+                .sort((itemA, itemB) => {
+                    const activeDifference =
+                        (itemB.active === 'SI' ? 1 : 0) -
+                        (itemA.active === 'SI' ? 1 : 0);
+
+                    if (activeDifference !== 0) {
+                        return activeDifference;
+                    }
+
+                    return (
+                        Number(itemA.sortOrder || 999) -
+                        Number(itemB.sortOrder || 999)
+                    );
+                });
+        }
+
+        function renderHeroBackgrounds() {
+            const container =
+                document.getElementById(
+                    'heroBackgroundsGrid'
+                );
+
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML =
+                Object.entries(
+                    HERO_BACKGROUND_SEASONS
+                )
+                    .map(
+                        ([season, config]) => {
+                            const items =
+                                getSeasonHeroBackgroundItems(
+                                    config.section
+                                );
+
+                            const activeItem =
+                                items.find(
+                                    item =>
+                                        item.active === 'SI'
+                                );
+
+                            const savedItem =
+                                activeItem ||
+                                items[0] ||
+                                null;
+
+                            const imageUrl =
+                                savedItem
+                                    ? convertDriveUrl(
+                                        savedItem.imageUrl
+                                    )
+                                    : '';
+
+                            const isCustomActive =
+                                Boolean(activeItem);
+
+                            const statusLabel =
+                                isCustomActive
+                                    ? 'Activo en Inicio'
+                                    : savedItem
+                                        ? 'Guardado · no activo'
+                                        : 'Fondo predeterminado';
+
+                            return `
+                        <article
+                            class="
+                                hero-season-card
+                                ${config.accentClass}
+                            "
+                        >
+                            <div
+                                class="
+                                    hero-season-preview
+                                    ${imageUrl
+                                        ? 'has-image'
+                                        : 'is-default'}
+                                "
+                            >
+                                ${imageUrl
+                                    ? `
+                                        <img
+                                            src="${escapeHtml(imageUrl)}"
+                                            alt="Fondo de Hero · ${escapeHtml(config.label)}"
+                                            loading="lazy"
+                                            onerror="
+                                                this.style.display='none';
+                                                this.parentElement.classList.add('is-default');
+                                            "
+                                        >
+                                    `
+                                    : ''
+                                }
+
+                                <div class="hero-season-preview-fallback">
+                                    <i
+                                        class="bi ${config.icon}"
+                                        aria-hidden="true"
+                                    ></i>
+                                    <span>
+                                        Fondo predeterminado
+                                    </span>
+                                </div>
+
+                                <span
+                                    class="
+                                        hero-season-status
+                                        ${isCustomActive
+                                            ? 'is-active'
+                                            : 'is-default'}
+                                    "
+                                >
+                                    <span></span>
+                                    ${statusLabel}
+                                </span>
+                            </div>
+
+                            <div class="hero-season-content">
+                                <div class="hero-season-title-row">
+                                    <span class="hero-season-icon">
+                                        <i
+                                            class="bi ${config.icon}"
+                                            aria-hidden="true"
+                                        ></i>
+                                    </span>
+
+                                    <div>
+                                        <small>Temporada</small>
+                                        <h3>${config.label}</h3>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    ${isCustomActive
+                                        ? 'Esta imagen se usa actualmente como fondo del Hero cuando está activa esta temporada.'
+                                        : savedItem
+                                            ? 'Hay una imagen guardada para esta temporada, pero el sitio está usando el fondo predeterminado.'
+                                            : 'Aún no hay una imagen personalizada. El sitio conserva su fondo predeterminado.'}
+                                </p>
+
+                                <div class="hero-season-actions">
+                                    <button
+                                        type="button"
+                                        class="btn-gold hero-season-primary"
+                                        onclick="openSeasonHeroBackground('${season}')"
+                                    >
+                                        <i class="bi bi-image"></i>
+                                        ${savedItem
+                                            ? 'Cambiar fondo'
+                                            : 'Agregar fondo'}
+                                    </button>
+
+                                    ${savedItem && !isCustomActive
+                                        ? `
+                                            <button
+                                                type="button"
+                                                class="btn-soft"
+                                                onclick="activateSeasonHeroBackground('${season}')"
+                                            >
+                                                <i class="bi bi-eye"></i>
+                                                Activar guardado
+                                            </button>
+                                        `
+                                        : ''
+                                    }
+
+                                    ${isCustomActive
+                                        ? `
+                                            <button
+                                                type="button"
+                                                class="btn-soft"
+                                                onclick="useDefaultSeasonHeroBackground('${season}')"
+                                            >
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                Usar predeterminado
+                                            </button>
+                                        `
+                                        : ''
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                        }
+                    )
+                    .join('');
+        }
+
+        function openSeasonHeroBackground(
+            season
+        ) {
+            const config =
+                HERO_BACKGROUND_SEASONS[
+                    season
+                ];
+
+            if (!config) {
+                return;
+            }
+
+            const items =
+                getSeasonHeroBackgroundItems(
+                    config.section
+                );
+
+            const currentItem =
+                items[0] || null;
+
+            if (currentItem) {
+                editGalleryItem(
+                    currentItem.id
+                );
+
+                document
+                    .getElementById(
+                        'galleryModalTitle'
+                    )
+                    .textContent =
+                    `Fondo Hero · ${config.label}`;
+
+                return;
+            }
+
+            clearGalleryForm();
+
+            document
+                .getElementById(
+                    'galleryModalTitle'
+                )
+                .textContent =
+                `Fondo Hero · ${config.label}`;
+
+            document
+                .getElementById(
+                    'galleryTitle'
+                )
+                .value =
+                `Fondo Hero · ${config.label}`;
+
+            document
+                .getElementById(
+                    'galleryCategory'
+                )
+                .value =
+                'Temporada';
+
+            document
+                .getElementById(
+                    'gallerySection'
+                )
+                .value =
+                config.section;
+
+            document
+                .getElementById(
+                    'galleryDescription'
+                )
+                .value =
+                `Fondo del Hero de Inicio para la temporada ${config.label}.`;
+
+            document
+                .getElementById(
+                    'galleryAltText'
+                )
+                .value =
+                `Fondo floral de ${config.label} · Floristería Magno`;
+
+            document
+                .getElementById(
+                    'gallerySortOrder'
+                )
+                .value =
+                '1';
+
+            document
+                .getElementById(
+                    'galleryActive'
+                )
+                .value =
+                'SI';
+
+            resetImagePreview(
+                'gallery',
+                `Selecciona el fondo para ${config.label}.`
+            );
+
+            galleryModal.show();
+        }
+
+        async function activateSeasonHeroBackground(
+            season
+        ) {
+            const config =
+                HERO_BACKGROUND_SEASONS[
+                    season
+                ];
+
+            if (!config) {
+                return;
+            }
+
+            const item =
+                getSeasonHeroBackgroundItems(
+                    config.section
+                )[0];
+
+            if (!item) {
+                openSeasonHeroBackground(
+                    season
+                );
+                return;
+            }
+
+            if (item.active === 'SI') {
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    `/galeria/${item.id}/estado`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            activo: true
+                        })
+                    }
+                );
+
+                await loadAllData();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function useDefaultSeasonHeroBackground(
+            season
+        ) {
+            const config =
+                HERO_BACKGROUND_SEASONS[
+                    season
+                ];
+
+            if (!config) {
+                return;
+            }
+
+            const activeItems =
+                getSeasonHeroBackgroundItems(
+                    config.section
+                )
+                    .filter(
+                        item =>
+                            item.active === 'SI'
+                    );
+
+            if (!activeItems.length) {
+                return;
+            }
+
+            try {
+                await Promise.all(
+                    activeItems.map(
+                        item =>
+                            apiFetch(
+                                `/galeria/${item.id}/estado`,
+                                {
+                                    method: 'PATCH',
+                                    body:
+                                        JSON.stringify({
+                                            activo: false
+                                        })
+                                }
+                            )
+                    )
+                );
+
+                await loadAllData();
+
+                alert(
+                    `Se restauró el fondo predeterminado de ${config.label}.`
+                );
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
         function openGalleryModal() {
             clearGalleryForm();
             document.getElementById("galleryModalTitle").textContent = "Nueva imagen";
@@ -7258,10 +7745,17 @@
 
                 await loadAllData();
 
+                const isSeasonHeroBackground =
+                    HERO_BACKGROUND_SECTIONS.has(
+                        section
+                    );
+
                 alert(
-                    id
-                        ? 'Imagen actualizada correctamente.'
-                        : 'Imagen agregada correctamente a la galería.'
+                    isSeasonHeroBackground
+                        ? 'Fondo de temporada guardado correctamente.'
+                        : id
+                            ? 'Imagen actualizada correctamente.'
+                            : 'Imagen agregada correctamente a la galería.'
                 );
             } catch (error) {
                 console.error(
