@@ -775,3 +775,230 @@ body.page-catalogo .product-card {
         padding-top: 88px !important;
     }
 }
+
+
+/* ==========================================================
+   CATÁLOGO · toolbar compacta y espaciado definitivo
+   Reglas finales intencionalmente autoritativas para evitar que
+   estilos históricos vuelvan a introducir espacio o altura extra.
+   No afecta imágenes ni su lógica de carga.
+========================================================== */
+
+/* Base: barra más delgada, limpia y centrada. */
+body.page-catalogo .catalog-controls {
+    width: min(100%, 720px) !important;
+    min-height: 0 !important;
+    padding: 5px !important;
+    gap: 6px !important;
+    border-radius: 17px !important;
+    background: rgba(255, 255, 255, .90) !important;
+    border: 1px solid rgba(39, 21, 27, .075) !important;
+    box-shadow: 0 10px 28px rgba(39, 21, 27, .055) !important;
+}
+
+body.page-catalogo .catalog-controls::before {
+    inset: -4px !important;
+    border-radius: 21px !important;
+    box-shadow: 0 10px 28px rgba(39, 21, 27, .05) !important;
+}
+
+body.page-catalogo .catalog-search {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 11px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+}
+
+body.page-catalogo .catalog-search i {
+    font-size: .82rem !important;
+}
+
+body.page-catalogo .catalog-search input {
+    font-size: .78rem !important;
+}
+
+body.page-catalogo .catalog-sort {
+    height: 36px !important;
+    min-height: 36px !important;
+    min-width: 168px !important;
+    border-radius: 12px !important;
+}
+
+body.page-catalogo .catalog-sort-label {
+    padding-left: 10px !important;
+    font-size: .62rem !important;
+}
+
+body.page-catalogo .catalog-sort-trigger {
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 10px 0 7px !important;
+    font-size: .70rem !important;
+    border-radius: 10px !important;
+}
+
+body.page-catalogo .catalog-sort-trigger i {
+    font-size: .65rem !important;
+}
+
+/* ==========================================================
+   CELULAR
+   Header móvil real ≈ 70px. Dejamos solo 4px visuales de aire.
+========================================================== */
+@media (max-width: 767.98px) {
+    body.page-catalogo .season-preview-panel {
+        display: none !important;
+        position: fixed !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.page-catalogo #productos {
+        padding-top: 74px !important;
+        padding-bottom: 58px !important;
+        scroll-margin-top: 70px !important;
+    }
+
+    body.page-catalogo #productos > .container {
+        padding-top: 0 !important;
+    }
+
+    body.page-catalogo .catalog-controls,
+    body.page-catalogo .catalog-controls.is-scroll-hidden {
+        top: 70px !important;
+        width: calc(100% - 16px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 10px !important;
+        padding: 4px !important;
+        gap: 5px !important;
+        border-radius: 15px !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    body.page-catalogo .catalog-controls::before {
+        inset: -3px !important;
+        border-radius: 18px !important;
+    }
+
+    body.page-catalogo .catalog-search {
+        height: 32px !important;
+        min-height: 32px !important;
+        padding: 0 9px !important;
+        gap: 6px !important;
+        border-radius: 10px !important;
+    }
+
+    body.page-catalogo .catalog-search i {
+        font-size: .74rem !important;
+    }
+
+    body.page-catalogo .catalog-search input {
+        font-size: .66rem !important;
+    }
+
+    body.page-catalogo .catalog-sort {
+        width: 104px !important;
+        min-width: 104px !important;
+        max-width: 104px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        border-radius: 10px !important;
+    }
+
+    body.page-catalogo .catalog-sort-label {
+        display: none !important;
+    }
+
+    body.page-catalogo .catalog-sort-trigger {
+        width: 100% !important;
+        max-width: none !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        padding: 0 8px !important;
+        font-size: .64rem !important;
+        border-radius: 9px !important;
+    }
+
+    body.page-catalogo .catalog-sort-menu {
+        top: calc(100% + 6px) !important;
+    }
+
+    body.page-catalogo #productGrid {
+        margin-top: 0 !important;
+    }
+}
+
+/* Pantallas móviles muy estrechas. */
+@media (max-width: 360px) {
+    body.page-catalogo #productos {
+        padding-top: 72px !important;
+    }
+
+    body.page-catalogo .catalog-controls,
+    body.page-catalogo .catalog-controls.is-scroll-hidden {
+        top: 68px !important;
+        width: calc(100% - 12px) !important;
+    }
+
+    body.page-catalogo .catalog-sort {
+        width: 96px !important;
+        min-width: 96px !important;
+        max-width: 96px !important;
+    }
+}
+
+/* ==========================================================
+   TABLETA
+   Más compacta, pero conserva el comportamiento de ocultarse
+   al bajar y reaparecer al subir.
+========================================================== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    body.page-catalogo #productos {
+        padding-top: 84px !important;
+    }
+
+    body.page-catalogo .catalog-controls {
+        top: 78px !important;
+        width: min(calc(100% - 36px), 680px) !important;
+        margin-bottom: 18px !important;
+    }
+}
+
+/* ==========================================================
+   COMPUTADORA
+   Barra con espacio propio sobre la primera fila, más fina y sin
+   sensación de estar "montada" encima de las fotografías.
+========================================================== */
+@media (min-width: 992px) {
+    body.page-catalogo #productos {
+        padding-top: 104px !important;
+    }
+
+    body.page-catalogo .catalog-controls {
+        top: 94px !important;
+        width: min(700px, calc(100% - 48px)) !important;
+        margin-bottom: 22px !important;
+    }
+
+    body.page-catalogo .catalog-search {
+        height: 38px !important;
+        min-height: 38px !important;
+    }
+
+    body.page-catalogo .catalog-sort {
+        height: 38px !important;
+        min-height: 38px !important;
+        min-width: 176px !important;
+    }
+
+    body.page-catalogo .catalog-sort-trigger {
+        height: 36px !important;
+        min-height: 36px !important;
+    }
+}
