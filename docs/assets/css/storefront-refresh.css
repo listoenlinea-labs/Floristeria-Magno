@@ -741,3 +741,37 @@ body.page-catalogo .product-card {
         top: 70px !important;
     }
 }
+
+
+/* ==========================================================
+   Catálogo móvil · elimina espacio fantasma del selector estacional
+   El panel estaba con visibility:hidden, pero en móvil otra regla lo
+   convertía en position:relative; por eso seguía reservando altura.
+========================================================== */
+@media (max-width: 767.98px) {
+    body.page-catalogo .season-preview-panel {
+        display: none !important;
+        visibility: hidden !important;
+        position: fixed !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /*
+     * Con el espacio fantasma eliminado, dejamos únicamente una
+     * separación corta y limpia entre header y buscador.
+     */
+    body.page-catalogo #productos {
+        padding-top: 92px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body.page-catalogo #productos {
+        padding-top: 88px !important;
+    }
+}
