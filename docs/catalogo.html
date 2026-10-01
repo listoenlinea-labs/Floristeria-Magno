@@ -32,7 +32,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
-  <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=1">
+  <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=2">
 </head>
 
 <body class="theme-spring page-catalogo">
@@ -79,14 +79,82 @@
             >
           </label>
 
-          <label class="catalog-sort" for="catalogSortSelect">
-            <span>Ordenar</span>
-            <select id="catalogSortSelect" aria-label="Ordenar catálogo por precio">
+          <div class="catalog-sort" id="catalogSort">
+            <span class="catalog-sort-label">Ordenar</span>
+
+            <button
+              class="catalog-sort-trigger"
+              id="catalogSortButton"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="catalogSortMenu"
+            >
+              <span id="catalogSortButtonText">Precio</span>
+              <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+
+            <div
+              class="catalog-sort-menu"
+              id="catalogSortMenu"
+              role="listbox"
+              aria-label="Ordenar catálogo por precio"
+              hidden
+            >
+              <button
+                type="button"
+                class="catalog-sort-option active"
+                data-sort-value="default"
+                role="option"
+                aria-selected="true"
+              >
+                <span>
+                  <strong>Precio</strong>
+                  <small>Orden original</small>
+                </span>
+                <i class="bi bi-check2" aria-hidden="true"></i>
+              </button>
+
+              <button
+                type="button"
+                class="catalog-sort-option"
+                data-sort-value="price-desc"
+                role="option"
+                aria-selected="false"
+              >
+                <span>
+                  <strong>Mayor a menor</strong>
+                  <small>Primero los arreglos de mayor precio</small>
+                </span>
+                <i class="bi bi-arrow-down" aria-hidden="true"></i>
+              </button>
+
+              <button
+                type="button"
+                class="catalog-sort-option"
+                data-sort-value="price-asc"
+                role="option"
+                aria-selected="false"
+              >
+                <span>
+                  <strong>Menor a mayor</strong>
+                  <small>Primero los arreglos de menor precio</small>
+                </span>
+                <i class="bi bi-arrow-up" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <select
+              id="catalogSortSelect"
+              class="visually-hidden"
+              tabindex="-1"
+              aria-hidden="true"
+            >
               <option value="default">Precio</option>
               <option value="price-desc">Mayor a menor</option>
               <option value="price-asc">Menor a mayor</option>
             </select>
-          </label>
+          </div>
         </div>
 
         <div class="row g-4" id="productGrid">
@@ -1331,9 +1399,94 @@
       .getElementById("catalogSearchInput")
       ?.addEventListener("input", applyCatalogControls);
 
+    const catalogSort = document.getElementById("catalogSort");
+    const catalogSortButton = document.getElementById("catalogSortButton");
+    const catalogSortButtonText = document.getElementById("catalogSortButtonText");
+    const catalogSortMenu = document.getElementById("catalogSortMenu");
+    const catalogSortSelect = document.getElementById("catalogSortSelect");
+
+    function closeCatalogSortMenu() {
+      if (!catalogSortButton || !catalogSortMenu) {
+        return;
+      }
+
+      catalogSortMenu.hidden = true;
+      catalogSortButton.setAttribute("aria-expanded", "false");
+      catalogSort?.classList.remove("open");
+    }
+
+    function openCatalogSortMenu() {
+      if (!catalogSortButton || !catalogSortMenu) {
+        return;
+      }
+
+      catalogSortMenu.hidden = false;
+      catalogSortButton.setAttribute("aria-expanded", "true");
+      catalogSort?.classList.add("open");
+    }
+
+    catalogSortButton?.addEventListener("click", event => {
+      event.stopPropagation();
+
+      const isOpen =
+        catalogSortButton.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeCatalogSortMenu();
+      } else {
+        openCatalogSortMenu();
+      }
+    });
+
     document
-      .getElementById("catalogSortSelect")
-      ?.addEventListener("change", applyCatalogControls);
+      .querySelectorAll(".catalog-sort-option")
+      .forEach(option => {
+        option.addEventListener("click", () => {
+          const value = option.dataset.sortValue || "default";
+
+          if (catalogSortSelect) {
+            catalogSortSelect.value = value;
+          }
+
+          document
+            .querySelectorAll(".catalog-sort-option")
+            .forEach(item => {
+              const isActive = item === option;
+              item.classList.toggle("active", isActive);
+              item.setAttribute(
+                "aria-selected",
+                String(isActive)
+              );
+            });
+
+          if (catalogSortButtonText) {
+            catalogSortButtonText.textContent =
+              value === "price-desc"
+                ? "Mayor a menor"
+                : value === "price-asc"
+                  ? "Menor a mayor"
+                  : "Precio";
+          }
+
+          applyCatalogControls();
+          closeCatalogSortMenu();
+        });
+      });
+
+    document.addEventListener("click", event => {
+      if (
+        catalogSort &&
+        !catalogSort.contains(event.target)
+      ) {
+        closeCatalogSortMenu();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeCatalogSortMenu();
+      }
+    });
 
     window.setTimeout(() => {
       document
