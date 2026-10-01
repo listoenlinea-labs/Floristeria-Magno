@@ -1002,3 +1002,28 @@ body.page-catalogo .catalog-sort-trigger i {
         min-height: 36px !important;
     }
 }
+
+
+/* ==========================================================
+   Desktop · separación real entre toolbar y primera fila
+   Evita cualquier choque visual al entrar al catálogo desde arriba.
+========================================================== */
+@media (min-width: 992px) {
+    /*
+     * La toolbar conserva su sticky, pero su caja queda claramente
+     * separada del grid desde el estado inicial de la página.
+     */
+    body.page-catalogo .catalog-controls {
+        margin-bottom: 30px !important;
+    }
+
+    /*
+     * Reserva física adicional antes de las tarjetas. Esto evita que
+     * la sombra / fondo translúcido del buscador alcance las imágenes,
+     * incluso en navegadores que calculan sticky de forma ligeramente
+     * distinta.
+     */
+    body.page-catalogo #productGrid {
+        padding-top: 18px !important;
+    }
+}
