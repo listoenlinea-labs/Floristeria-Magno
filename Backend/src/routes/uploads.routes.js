@@ -11,10 +11,17 @@ const {
 
 const {
     subirImagenProducto,
-    subirImagenGaleria
+    subirImagenGaleria,
+    auditarAlmacenamientoImagenes
 } = require('../controllers/uploads.controller');
 
 const router = express.Router();
+
+router.get(
+    '/health',
+    basicAuth,
+    auditarAlmacenamientoImagenes
+);
 
 router.post(
     '/producto',
