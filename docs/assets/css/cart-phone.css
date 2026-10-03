@@ -1,0 +1,11 @@
+body.page-carrito .checkout-phone-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) minmax(0, 1.6fr);
+    gap: 10px;
+}
+
+@media (max-width: 420px) {
+    body.page-carrito .checkout-phone-grid {
+        grid-template-columns: 1fr;
+    }
+}
