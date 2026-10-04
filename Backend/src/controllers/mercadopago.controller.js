@@ -618,6 +618,94 @@ function chooseRedirectUrl(preferenceResponse) {
     return redirectUrl;
 }
 
+async function enviarCorreoPedidoPagado(pedido) {
+    const correoYaEnviado =
+        await HistorialPedido.findOne({
+            where: {
+                pedidoId:
+                    pedido.id,
+
+                estado:
+                    'CONFIRMACION_EMAIL'
+            }
+        });
+
+    if (correoYaEnviado) {
+        console.log(
+            'Correo de confirmación previamente enviado:',
+            pedido.codigoRastreo
+        );
+
+        return;
+    }
+
+    const cliente =
+        await Cliente.findByPk(
+            pedido.clienteId
+        );
+
+    if (!cliente?.email) {
+        console.warn(
+            'Pedido pagado sin correo de cliente:',
+            pedido.codigoRastreo
+        );
+
+        return;
+    }
+
+    try {
+        console.log('------------------------------------');
+        console.log('Pago aprobado. Intentando enviar correo...');
+        console.log('Cliente:', cliente.nombre);
+        console.log('Correo:', cliente.email);
+        console.log('Código:', pedido.codigoRastreo);
+        console.log('------------------------------------');
+
+        await enviarCorreoCodigoRastreo({
+            email:
+                cliente.email,
+
+            nombreCliente:
+                pedido.nombreDestinatario ||
+                cliente.nombre,
+
+            codigoRastreo:
+                pedido.codigoRastreo,
+
+            total:
+                pedido.total,
+
+            fechaEntrega:
+                pedido.fechaEntrega,
+
+            ventanaEntrega:
+                pedido.ventanaEntrega
+        });
+
+        await HistorialPedido.create({
+            pedidoId:
+                pedido.id,
+
+            estado:
+                'CONFIRMACION_EMAIL',
+
+            descripcion:
+                'Confirmación enviada por correo después de aprobarse el pago'
+        });
+
+        console.log('Correo de pago aprobado enviado correctamente.');
+    } catch (emailError) {
+        console.error('====================================');
+        console.error('ERROR ENVIANDO CORREO DE PAGO APROBADO');
+        console.error('Mensaje:', emailError.message);
+        console.error('Código:', emailError.code);
+        console.error('Comando:', emailError.command);
+        console.error('Respuesta:', emailError.response);
+        console.error('Stack:', emailError.stack);
+        console.error('====================================');
+    }
+}
+
 async function crearPreferencia(
     req,
     res,
@@ -676,7 +764,6 @@ async function crearPreferencia(
             await sequelize.transaction();
 
         const {
-            cliente,
             pedido,
             codigoRastreo
         } =
@@ -797,53 +884,6 @@ async function crearPreferencia(
         await transaction.commit();
         transaction = null;
 
-        /*
-         * Implementación temporal:
-         * envía el correo antes de confirmar el pago.
-         *
-         * Después moveremos esta llamada al webhook
-         * cuando payment.status sea approved.
-         */
-        let emailSent = true;
-        let emailWarning = null;
-
-        try {
-
-            console.log('------------------------------------');
-            console.log('Intentando enviar correo...');
-            console.log('Cliente:', cliente.nombre);
-            console.log('Correo:', delivery.customerEmail);
-            console.log('Código:', codigoRastreo);
-            console.log('------------------------------------');
-
-            await enviarCorreoCodigoRastreo({
-                email: delivery.customerEmail,
-                nombreCliente: cliente.nombre,
-                codigoRastreo,
-                total,
-                fechaEntrega: delivery.date,
-                ventanaEntrega: delivery.slot
-            });
-
-            console.log('Correo enviado correctamente.');
-
-        } catch (emailError) {
-
-            console.error('====================================');
-            console.error('ERROR ENVIANDO CORREO');
-            console.error('Mensaje:', emailError.message);
-            console.error('Código:', emailError.code);
-            console.error('Comando:', emailError.command);
-            console.error('Respuesta:', emailError.response);
-            console.error('Stack:', emailError.stack);
-            console.error('====================================');
-
-            emailSent = false;
-
-            emailWarning =
-                'El pedido fue creado, pero no se pudo enviar el correo.';
-        }
-
         return res.status(201).json({
             ok: true,
             preferenceId:
@@ -851,8 +891,6 @@ async function crearPreferencia(
             externalReference,
             codigoRastreo,
             pedidoId: pedido.id,
-            emailSent,
-            emailWarning,
             redirectUrl
         });
     } catch (error) {
@@ -1101,6 +1139,10 @@ async function recibirWebhook(req, res, next) {
                     paymentId:
                         payment.id
                 }
+            );
+
+            await enviarCorreoPedidoPagado(
+                pedido
             );
 
             return res.sendStatus(200);
