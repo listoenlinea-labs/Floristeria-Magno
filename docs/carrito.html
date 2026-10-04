@@ -16,8 +16,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=10">
-  <link rel="stylesheet" href="assets/css/cart-phone.css?v=1">
+  <link rel="stylesheet" href="assets/css/style.css?v=9">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
 </head>
 
@@ -145,45 +144,6 @@
 
               <small class="form-text text-muted">
                 Enviaremos a este correo el código de rastreo del pedido.
-              </small>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label" for="customerPhone">
-                Teléfono (opcional)
-              </label>
-
-              <div class="checkout-phone-grid">
-                <select class="form-select" id="phoneCountryCode" aria-label="Prefijo internacional">
-                  <option value="52" selected>México (+52)</option>
-                  <option value="1">EE. UU. / Canadá (+1)</option>
-                  <option value="502">Guatemala (+502)</option>
-                  <option value="503">El Salvador (+503)</option>
-                  <option value="504">Honduras (+504)</option>
-                  <option value="505">Nicaragua (+505)</option>
-                  <option value="506">Costa Rica (+506)</option>
-                  <option value="507">Panamá (+507)</option>
-                  <option value="53">Cuba (+53)</option>
-                  <option value="57">Colombia (+57)</option>
-                  <option value="58">Venezuela (+58)</option>
-                  <option value="593">Ecuador (+593)</option>
-                  <option value="51">Perú (+51)</option>
-                  <option value="591">Bolivia (+591)</option>
-                  <option value="56">Chile (+56)</option>
-                  <option value="54">Argentina (+54)</option>
-                  <option value="598">Uruguay (+598)</option>
-                  <option value="595">Paraguay (+595)</option>
-                  <option value="55">Brasil (+55)</option>
-                  <option value="34">España (+34)</option>
-                </select>
-
-                <input class="form-control" id="customerPhone" type="tel" inputmode="tel"
-                  autocomplete="tel-national" placeholder="33 1234 5678" maxlength="18"
-                  aria-describedby="customerPhoneHelp">
-              </div>
-
-              <small class="form-text text-muted" id="customerPhoneHelp">
-                Si lo proporcionas, enviaremos la confirmación por WhatsApp cuando se apruebe el pago.
               </small>
             </div>
 
@@ -392,8 +352,6 @@
     const mercadoPagoBtn = document.getElementById('mercadoPagoBtn');
     const receiverName = document.getElementById('receiverName');
     const customerEmail = document.getElementById('customerEmail');
-    const phoneCountryCode = document.getElementById('phoneCountryCode');
-    const customerPhone = document.getElementById('customerPhone');
     const deliveryAddress = document.getElementById('deliveryAddress');
     const deliveryMunicipality = document.getElementById('deliveryMunicipality');
     const deliveryAreaNotice = document.getElementById('deliveryAreaNotice');
@@ -571,8 +529,6 @@
     [
       receiverName,
       customerEmail,
-      phoneCountryCode,
-      customerPhone,
       deliveryAddress,
       deliveryMunicipality,
       deliveryDate
@@ -936,13 +892,6 @@
         return 'Escribe un correo electrónico válido.';
       }
 
-      const phone = getCustomerPhone();
-
-      if (customerPhone.value.trim() && !/^\+[1-9]\d{7,14}$/.test(phone)) {
-        customerPhone.focus();
-        return 'Escribe un teléfono válido.';
-      }
-
       const deliveryValidationMessage =
         validateDeliveryLocation();
 
@@ -1034,9 +983,6 @@
                   .trim()
                   .toLowerCase(),
 
-              customerPhone:
-                getCustomerPhone(),
-
               address:
                 deliveryAddress.value.trim(),
 
@@ -1082,23 +1028,6 @@
         mercadoPagoBtn.innerHTML = originalContent;
       }
     });
-
-    function getCustomerPhone() {
-      const rawPhone = customerPhone.value.trim();
-      const nationalNumber = rawPhone.replace(/\D/g, '');
-
-      if (!nationalNumber) {
-        return '';
-      }
-
-      if (rawPhone.startsWith('+')) {
-        return `+${nationalNumber}`;
-      }
-
-      const countryCode = phoneCountryCode.value.replace(/\D/g, '');
-
-      return `+${countryCode}${nationalNumber}`;
-    }
 
     const todayIso = new Date().toLocaleDateString('en-CA', {
       timeZone: 'America/Mexico_City'

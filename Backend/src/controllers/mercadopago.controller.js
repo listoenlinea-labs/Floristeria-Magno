@@ -24,12 +24,8 @@ const {
 } = require('../models');
 
 const {
-    enviarCorreoConfirmacionPedido
+    enviarCorreoCodigoRastreo
 } = require('../services/email.service');
-
-const {
-    enviarWhatsappConfirmacionPedido
-} = require('../services/whatsapp.service');
 
 const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
 
@@ -185,11 +181,6 @@ function validateDelivery(delivery) {
         150
     ).toLowerCase();
 
-    const customerPhone = normalizeText(
-        delivery?.customerPhone,
-        30
-    );
-
     const address = normalizeText(
         delivery?.address,
         220
@@ -222,15 +213,6 @@ function validateDelivery(delivery) {
     if (!emailPattern.test(customerEmail)) {
         throw createHttpError(
             'Escribe un correo electrónico válido'
-        );
-    }
-
-    if (
-        customerPhone &&
-        !/^\+[1-9]\d{7,14}$/.test(customerPhone)
-    ) {
-        throw createHttpError(
-            'Escribe un teléfono válido con prefijo internacional'
         );
     }
 
@@ -278,7 +260,6 @@ function validateDelivery(delivery) {
     return {
         receiverName,
         customerEmail,
-        customerPhone,
         address: fullAddress,
         municipality,
         date,
@@ -323,17 +304,11 @@ async function crearClientePedidoYDetalles({
     });
 
     if (cliente) {
-        const customerUpdate = {
-            nombre: delivery.receiverName,
-            direccion: delivery.address
-        };
-
-        if (delivery.customerPhone) {
-            customerUpdate.telefono = delivery.customerPhone;
-        }
-
         await cliente.update(
-            customerUpdate,
+            {
+                nombre: delivery.receiverName,
+                direccion: delivery.address
+            },
             {
                 transaction
             }
@@ -343,7 +318,6 @@ async function crearClientePedidoYDetalles({
             {
                 nombre: delivery.receiverName,
                 email: delivery.customerEmail,
-                telefono: delivery.customerPhone || null,
                 direccion: delivery.address
             },
             {
@@ -359,9 +333,6 @@ async function crearClientePedidoYDetalles({
 
             nombreDestinatario:
                 delivery.receiverName,
-
-            telefonoDestinatario:
-                delivery.customerPhone || null,
 
             direccionEntrega:
                 delivery.address,
@@ -647,125 +618,6 @@ function chooseRedirectUrl(preferenceResponse) {
     return redirectUrl;
 }
 
-function getNotificationProducts(pedido) {
-    return (pedido.detalles || []).map((detalle) => ({
-        nombre: detalle.producto?.nombre || `Producto ${detalle.productoId}`,
-        cantidad: Number(detalle.cantidad),
-        subtotal: Number(detalle.subtotal)
-    }));
-}
-
-async function enviarNotificacionUnaVez({
-    pedidoId,
-    estado,
-    descripcion,
-    send
-}) {
-    const previousNotification = await HistorialPedido.findOne({
-        where: {
-            pedidoId,
-            estado
-        }
-    });
-
-    if (previousNotification) {
-        return;
-    }
-
-    await send();
-
-    await HistorialPedido.create({
-        pedidoId,
-        estado,
-        descripcion
-    });
-}
-
-async function enviarConfirmacionesDePago(pedidoId) {
-    const pedido = await Pedido.findByPk(pedidoId, {
-        include: [
-            {
-                model: Cliente,
-                as: 'cliente'
-            },
-            {
-                model: DetallePedido,
-                as: 'detalles',
-                include: [
-                    {
-                        model: Producto,
-                        as: 'producto'
-                    }
-                ]
-            }
-        ]
-    });
-
-    if (!pedido) {
-        throw new Error(`No se encontró el pedido ${pedidoId}`);
-    }
-
-    const notificationData = {
-        nombreCliente: pedido.nombreDestinatario || pedido.cliente?.nombre,
-        codigoRastreo: pedido.codigoRastreo,
-        total: pedido.total,
-        fechaEntrega: pedido.fechaEntrega,
-        ventanaEntrega: pedido.ventanaEntrega,
-        direccionEntrega: pedido.direccionEntrega,
-        productos: getNotificationProducts(pedido)
-    };
-
-    const notifications = [];
-
-    if (pedido.cliente?.email) {
-        notifications.push(
-            enviarNotificacionUnaVez({
-                pedidoId: pedido.id,
-                estado: 'CONFIRMACION_EMAIL',
-                descripcion: 'Confirmación de pago enviada por correo',
-                send: () => enviarCorreoConfirmacionPedido({
-                    ...notificationData,
-                    email: pedido.cliente.email
-                })
-            })
-        );
-    } else {
-        console.warn(
-            'Pedido pagado sin correo para confirmación:',
-            pedido.codigoRastreo
-        );
-    }
-
-    if (pedido.telefonoDestinatario) {
-        notifications.push(
-            enviarNotificacionUnaVez({
-                pedidoId: pedido.id,
-                estado: 'CONFIRMACION_WHATSAPP',
-                descripcion: 'Confirmación de pago enviada por WhatsApp',
-                send: () => enviarWhatsappConfirmacionPedido({
-                    ...notificationData,
-                    telefono: pedido.telefonoDestinatario
-                })
-            })
-        );
-    }
-
-    const results = await Promise.allSettled(notifications);
-
-    results.forEach((result) => {
-        if (result.status === 'rejected') {
-            console.error(
-                'No fue posible enviar una confirmación del pedido:',
-                {
-                    pedidoId: pedido.id,
-                    codigoRastreo: pedido.codigoRastreo,
-                    message: result.reason?.message
-                }
-            );
-        }
-    });
-}
-
 async function crearPreferencia(
     req,
     res,
@@ -824,6 +676,7 @@ async function crearPreferencia(
             await sequelize.transaction();
 
         const {
+            cliente,
             pedido,
             codigoRastreo
         } =
@@ -910,8 +763,6 @@ async function crearPreferencia(
                             codigoRastreo,
                         customer_email:
                             delivery.customerEmail,
-                        customer_phone:
-                            delivery.customerPhone || '',
                         receiver_name:
                             delivery.receiverName,
                         delivery_address:
@@ -946,6 +797,53 @@ async function crearPreferencia(
         await transaction.commit();
         transaction = null;
 
+        /*
+         * Implementación temporal:
+         * envía el correo antes de confirmar el pago.
+         *
+         * Después moveremos esta llamada al webhook
+         * cuando payment.status sea approved.
+         */
+        let emailSent = true;
+        let emailWarning = null;
+
+        try {
+
+            console.log('------------------------------------');
+            console.log('Intentando enviar correo...');
+            console.log('Cliente:', cliente.nombre);
+            console.log('Correo:', delivery.customerEmail);
+            console.log('Código:', codigoRastreo);
+            console.log('------------------------------------');
+
+            await enviarCorreoCodigoRastreo({
+                email: delivery.customerEmail,
+                nombreCliente: cliente.nombre,
+                codigoRastreo,
+                total,
+                fechaEntrega: delivery.date,
+                ventanaEntrega: delivery.slot
+            });
+
+            console.log('Correo enviado correctamente.');
+
+        } catch (emailError) {
+
+            console.error('====================================');
+            console.error('ERROR ENVIANDO CORREO');
+            console.error('Mensaje:', emailError.message);
+            console.error('Código:', emailError.code);
+            console.error('Comando:', emailError.command);
+            console.error('Respuesta:', emailError.response);
+            console.error('Stack:', emailError.stack);
+            console.error('====================================');
+
+            emailSent = false;
+
+            emailWarning =
+                'El pedido fue creado, pero no se pudo enviar el correo.';
+        }
+
         return res.status(201).json({
             ok: true,
             preferenceId:
@@ -953,6 +851,8 @@ async function crearPreferencia(
             externalReference,
             codigoRastreo,
             pedidoId: pedido.id,
+            emailSent,
+            emailWarning,
             redirectUrl
         });
     } catch (error) {
@@ -1201,10 +1101,6 @@ async function recibirWebhook(req, res, next) {
                     paymentId:
                         payment.id
                 }
-            );
-
-            await enviarConfirmacionesDePago(
-                pedido.id
             );
 
             return res.sendStatus(200);
