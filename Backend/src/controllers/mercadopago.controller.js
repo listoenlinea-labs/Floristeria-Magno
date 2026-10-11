@@ -129,6 +129,20 @@ function getClient() {
     });
 }
 
+function getPublicKey() {
+    const publicKey = String(
+        process.env.MP_PUBLIC_KEY || ''
+    ).trim();
+
+    if (!publicKey) {
+        throw configurationError(
+            'Falta configurar MP_PUBLIC_KEY en las variables de entorno'
+        );
+    }
+
+    return publicKey;
+}
+
 function getAbsoluteUrl(variableName) {
     const rawValue = String(process.env[variableName] || '')
         .trim()
@@ -294,7 +308,8 @@ async function crearClientePedidoYDetalles({
     items,
     delivery,
     total,
-    transaction
+    transaction,
+    paymentMethod = 'MERCADO_PAGO'
 }) {
     let cliente = await Cliente.findOne({
         where: {
@@ -361,7 +376,7 @@ async function crearClientePedidoYDetalles({
                 delivery.slot,
 
             metodoPago:
-                'MERCADO_PAGO',
+                paymentMethod,
 
             estadoPago:
                 'PENDIENTE'
@@ -618,6 +633,206 @@ function chooseRedirectUrl(preferenceResponse) {
     return redirectUrl;
 }
 
+function getPaymentMethodForOrder(payment) {
+    const paymentMethodId = normalizeText(
+        payment?.payment_method_id,
+        50
+    ).toLowerCase();
+
+    const paymentTypeId = normalizeText(
+        payment?.payment_type_id,
+        50
+    ).toLowerCase();
+
+    if (
+        paymentMethodId === 'oxxo' ||
+        paymentTypeId === 'ticket'
+    ) {
+        return 'OXXO_MERCADO_PAGO';
+    }
+
+    if (
+        paymentTypeId === 'credit_card' ||
+        paymentTypeId === 'debit_card' ||
+        paymentTypeId === 'prepaid_card'
+    ) {
+        return 'TARJETA_MERCADO_PAGO';
+    }
+
+    return 'MERCADO_PAGO';
+}
+
+function getPaymentExternalUrl(payment) {
+    return (
+        payment?.three_ds_info?.external_resource_url ||
+        payment?.point_of_interaction?.transaction_data?.ticket_url ||
+        payment?.transaction_details?.external_resource_url ||
+        null
+    );
+}
+
+function getCheckoutAttemptId(value) {
+    const attemptId = normalizeText(value, 80);
+
+    if (
+        attemptId &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            attemptId
+        )
+    ) {
+        return attemptId;
+    }
+
+    return crypto.randomUUID();
+}
+
+function validateCardPaymentData(paymentData) {
+    const token = normalizeText(
+        paymentData?.token,
+        500
+    );
+
+    const paymentMethodId = normalizeText(
+        paymentData?.payment_method_id ||
+            paymentData?.paymentMethodId,
+        50
+    ).toLowerCase();
+
+    const installments = Number(
+        paymentData?.installments
+    );
+
+    const issuerIdRaw = normalizeText(
+        paymentData?.issuer_id ||
+            paymentData?.issuerId,
+        50
+    );
+
+    const issuerId = issuerIdRaw
+        ? Number(issuerIdRaw)
+        : null;
+
+    const identificationType = normalizeText(
+        paymentData?.payer?.identification?.type,
+        20
+    );
+
+    const identificationNumber = normalizeText(
+        paymentData?.payer?.identification?.number,
+        40
+    );
+
+    if (token.length < 10) {
+        throw createHttpError(
+            'Mercado Pago no pudo tokenizar la tarjeta. Revisa los datos e inténtalo nuevamente.'
+        );
+    }
+
+    if (!/^[a-z0-9_-]+$/.test(paymentMethodId)) {
+        throw createHttpError(
+            'El método de la tarjeta no es válido'
+        );
+    }
+
+    if (
+        !Number.isInteger(installments) ||
+        installments < 1 ||
+        installments > 24
+    ) {
+        throw createHttpError(
+            'Selecciona un número de mensualidades válido'
+        );
+    }
+
+    if (
+        issuerIdRaw &&
+        (
+            !Number.isInteger(issuerId) ||
+            issuerId <= 0
+        )
+    ) {
+        throw createHttpError(
+            'El emisor de la tarjeta no es válido'
+        );
+    }
+
+    return {
+        token,
+        paymentMethodId,
+        installments,
+        issuerId,
+        identification:
+            identificationType && identificationNumber
+                ? {
+                    type: identificationType,
+                    number: identificationNumber
+                }
+                : null
+    };
+}
+
+async function createPendingOrderFromCart({
+    body,
+    paymentMethod
+}) {
+    await verificarCierreDePedidos();
+
+    const productItems = await buildPreferenceItems(
+        body?.items
+    );
+
+    const delivery = validateDelivery(
+        body?.delivery
+    );
+
+    if (
+        !Number.isFinite(DELIVERY_COST) ||
+        DELIVERY_COST < 0
+    ) {
+        throw configurationError(
+            'DELIVERY_COST no es un número válido'
+        );
+    }
+
+    const subtotal = calcularSubtotalProductos(
+        productItems
+    );
+
+    const total = subtotal + DELIVERY_COST;
+    const transaction = await sequelize.transaction();
+
+    try {
+        const orderData =
+            await crearClientePedidoYDetalles({
+                items: productItems,
+                delivery,
+                total,
+                transaction,
+                paymentMethod
+            });
+
+        await transaction.commit();
+
+        return {
+            ...orderData,
+            productItems,
+            delivery,
+            total
+        };
+    } catch (error) {
+        try {
+            await transaction.rollback();
+        } catch (rollbackError) {
+            console.error(
+                'Error revirtiendo pedido pendiente:',
+                rollbackError
+            );
+        }
+
+        throw error;
+    }
+}
+
 async function enviarCorreoPedidoPagado(pedido) {
     const correoYaEnviado =
         await HistorialPedido.findOne({
@@ -703,6 +918,464 @@ async function enviarCorreoPedidoPagado(pedido) {
         console.error('Respuesta:', emailError.response);
         console.error('Stack:', emailError.stack);
         console.error('====================================');
+    }
+}
+
+async function applyMercadoPagoPaymentToOrder(payment) {
+    const codigoRastreo = normalizeText(
+        payment?.external_reference,
+        30
+    );
+
+    if (!codigoRastreo) {
+        console.warn(
+            'Pago Mercado Pago sin external_reference:',
+            payment?.id
+        );
+
+        return null;
+    }
+
+    const pedido = await Pedido.findOne({
+        where: {
+            codigoRastreo
+        }
+    });
+
+    if (!pedido) {
+        console.warn(
+            'No existe pedido para el pago:',
+            {
+                paymentId: payment?.id,
+                codigoRastreo
+            }
+        );
+
+        return null;
+    }
+
+    const paymentStatus = normalizeText(
+        payment?.status,
+        50
+    ).toLowerCase();
+
+    const paymentMethod = getPaymentMethodForOrder(
+        payment
+    );
+
+    const paymentAmount = Number(
+        payment?.transaction_amount
+    );
+
+    const orderAmount = Number(
+        pedido.total
+    );
+
+    const currencyId = normalizeText(
+        payment?.currency_id,
+        10
+    ).toUpperCase();
+
+    if (
+        paymentStatus === 'approved' &&
+        (
+            !Number.isFinite(paymentAmount) ||
+            Math.abs(paymentAmount - orderAmount) > 0.01 ||
+            currencyId !== 'MXN'
+        )
+    ) {
+        console.error(
+            'Pago aprobado con importe o moneda inesperados:',
+            {
+                pedidoId: pedido.id,
+                paymentId: payment?.id,
+                paymentAmount,
+                orderAmount,
+                currencyId
+            }
+        );
+
+        await pedido.update({
+            estadoPago: 'REVISION',
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    if (paymentStatus === 'approved') {
+        const paymentDate =
+            pedido.pagadoEn ||
+            (
+                payment?.date_approved
+                    ? new Date(payment.date_approved)
+                    : new Date()
+            );
+
+        await pedido.update({
+            estadoPago: 'PAGADO',
+            pagadoEn: paymentDate,
+            referenciaPago: String(payment?.id || ''),
+            origen: 'WEB',
+            canalCierre: 'MERCADO_PAGO',
+            metodoPago: paymentMethod,
+            estado:
+                pedido.estado === 'PENDIENTE'
+                    ? 'RECIBIDO'
+                    : pedido.estado,
+            actualizadoEn: new Date()
+        });
+
+        console.log(
+            '✅ Venta Mercado Pago confirmada:',
+            {
+                pedidoId: pedido.id,
+                codigoRastreo: pedido.codigoRastreo,
+                total: pedido.total,
+                paymentId: payment?.id,
+                paymentMethod
+            }
+        );
+
+        await enviarCorreoPedidoPagado(
+            pedido
+        );
+
+        return pedido;
+    }
+
+    if (
+        paymentStatus === 'pending' ||
+        paymentStatus === 'in_process'
+    ) {
+        await pedido.update({
+            estadoPago: 'PENDIENTE',
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    if (
+        [
+            'rejected',
+            'cancelled',
+            'refunded',
+            'charged_back'
+        ].includes(paymentStatus)
+    ) {
+        await pedido.update({
+            estadoPago: paymentStatus.toUpperCase(),
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    return pedido;
+}
+
+function obtenerConfiguracionPublica(req, res, next) {
+    try {
+        return res.status(200).json({
+            ok: true,
+            publicKey: getPublicKey()
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+async function cotizarCarrito(req, res, next) {
+    try {
+        await verificarCierreDePedidos();
+
+        const productItems = await buildPreferenceItems(
+            req.body?.items
+        );
+
+        validateDelivery(
+            req.body?.delivery
+        );
+
+        if (
+            !Number.isFinite(DELIVERY_COST) ||
+            DELIVERY_COST < 0
+        ) {
+            throw configurationError(
+                'DELIVERY_COST no es un número válido'
+            );
+        }
+
+        const subtotal = calcularSubtotalProductos(
+            productItems
+        );
+
+        return res.status(200).json({
+            ok: true,
+            currencyId: 'MXN',
+            subtotal,
+            deliveryCost: DELIVERY_COST,
+            total: subtotal + DELIVERY_COST
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+async function crearPagoTarjeta(req, res, next) {
+    let pedido;
+    let paymentCreated = false;
+
+    try {
+        const cardPayment = validateCardPaymentData(
+            req.body?.payment
+        );
+
+        const orderData = await createPendingOrderFromCart({
+            body: req.body,
+            paymentMethod: 'TARJETA_MERCADO_PAGO'
+        });
+
+        pedido = orderData.pedido;
+
+        const publicApiUrl = getAbsoluteUrl(
+            'PUBLIC_API_URL'
+        );
+
+        const frontendUrl = getAbsoluteUrl(
+            'FRONTEND_PUBLIC_URL'
+        );
+
+        const payer = {
+            email: orderData.delivery.customerEmail
+        };
+
+        if (cardPayment.identification) {
+            payer.identification = cardPayment.identification;
+        }
+
+        const paymentBody = {
+            transaction_amount: orderData.total,
+            description:
+                `Pedido floral ${orderData.codigoRastreo}`,
+            token: cardPayment.token,
+            installments: cardPayment.installments,
+            payment_method_id:
+                cardPayment.paymentMethodId,
+            payer,
+            external_reference:
+                orderData.codigoRastreo,
+            notification_url:
+                `${publicApiUrl}/api/mercadopago/webhook`,
+            capture: true,
+            binary_mode: false,
+            three_d_secure_mode: 'optional',
+            statement_descriptor:
+                'JUAN H MAGNO',
+            metadata: {
+                pedido_id: pedido.id,
+                codigo_rastreo:
+                    orderData.codigoRastreo,
+                payment_flow:
+                    'embedded_card'
+            }
+        };
+
+        if (cardPayment.issuerId !== null) {
+            paymentBody.issuer_id =
+                cardPayment.issuerId;
+        }
+
+        const paymentClient = new Payment(
+            getClient()
+        );
+
+        const payment = await paymentClient.create({
+            body: paymentBody,
+            requestOptions: {
+                idempotencyKey:
+                    getCheckoutAttemptId(
+                        req.body?.checkoutAttemptId
+                    )
+            }
+        });
+
+        paymentCreated = true;
+
+        await applyMercadoPagoPaymentToOrder(
+            payment
+        );
+
+        const resultUrl =
+            `${frontendUrl}/pago.html?payment_id=${encodeURIComponent(
+                payment.id
+            )}&resultado=${encodeURIComponent(
+                payment.status || 'pending'
+            )}`;
+
+        const requiresChallenge =
+            payment.status === 'pending' &&
+            payment.status_detail === 'pending_challenge' &&
+            Boolean(
+                payment?.three_ds_info?.external_resource_url &&
+                payment?.three_ds_info?.creq
+            );
+
+        return res.status(201).json({
+            ok: true,
+            paymentId: payment.id,
+            status: payment.status,
+            statusDetail: payment.status_detail,
+            codigoRastreo: orderData.codigoRastreo,
+            resultUrl,
+            redirectUrl:
+                requiresChallenge
+                    ? null
+                    : resultUrl,
+            challenge:
+                requiresChallenge
+                    ? {
+                        url:
+                            payment.three_ds_info
+                                .external_resource_url,
+                        creq:
+                            payment.three_ds_info.creq
+                    }
+                    : null
+        });
+    } catch (error) {
+        if (pedido && !paymentCreated) {
+            try {
+                await pedido.update({
+                    estadoPago: 'ERROR',
+                    actualizadoEn: new Date()
+                });
+            } catch (updateError) {
+                console.error(
+                    'No fue posible marcar el pedido con error de pago:',
+                    updateError
+                );
+            }
+        }
+
+        console.error(
+            'Error procesando tarjeta con Mercado Pago:',
+            {
+                message: error.message,
+                status: error.status,
+                cause: error.cause
+            }
+        );
+
+        return next(error);
+    }
+}
+
+async function crearPagoOxxo(req, res, next) {
+    let pedido;
+    let paymentCreated = false;
+
+    try {
+        const orderData = await createPendingOrderFromCart({
+            body: req.body,
+            paymentMethod: 'OXXO_MERCADO_PAGO'
+        });
+
+        pedido = orderData.pedido;
+
+        const publicApiUrl = getAbsoluteUrl(
+            'PUBLIC_API_URL'
+        );
+
+        const paymentClient = new Payment(
+            getClient()
+        );
+
+        const payment = await paymentClient.create({
+            body: {
+                transaction_amount: orderData.total,
+                description:
+                    `Pedido floral ${orderData.codigoRastreo}`,
+                payment_method_id: 'oxxo',
+                payer: {
+                    email:
+                        orderData.delivery.customerEmail
+                },
+                external_reference:
+                    orderData.codigoRastreo,
+                notification_url:
+                    `${publicApiUrl}/api/mercadopago/webhook`,
+                metadata: {
+                    pedido_id: pedido.id,
+                    codigo_rastreo:
+                        orderData.codigoRastreo,
+                    payment_flow:
+                        'oxxo'
+                }
+            },
+            requestOptions: {
+                idempotencyKey:
+                    getCheckoutAttemptId(
+                        req.body?.checkoutAttemptId
+                    )
+            }
+        });
+
+        paymentCreated = true;
+
+        await applyMercadoPagoPaymentToOrder(
+            payment
+        );
+
+        const ticketUrl = getPaymentExternalUrl(
+            payment
+        );
+
+        if (!ticketUrl) {
+            throw configurationError(
+                'Mercado Pago creó el pago, pero no devolvió la ficha de OXXO'
+            );
+        }
+
+        return res.status(201).json({
+            ok: true,
+            paymentId: payment.id,
+            status: payment.status,
+            codigoRastreo: orderData.codigoRastreo,
+            ticketUrl
+        });
+    } catch (error) {
+        if (pedido && !paymentCreated) {
+            try {
+                await pedido.update({
+                    estadoPago: 'ERROR',
+                    actualizadoEn: new Date()
+                });
+            } catch (updateError) {
+                console.error(
+                    'No fue posible marcar el pedido OXXO con error:',
+                    updateError
+                );
+            }
+        }
+
+        console.error(
+            'Error creando pago OXXO con Mercado Pago:',
+            {
+                message: error.message,
+                status: error.status,
+                cause: error.cause
+            }
+        );
+
+        return next(error);
     }
 }
 
@@ -1014,189 +1687,9 @@ async function recibirWebhook(req, res, next) {
         );
 
 
-        /*
-         * ==========================================================
-         * ACTUALIZAR PEDIDO REAL
-         * ==========================================================
-         */
-
-        const codigoRastreo =
-            normalizeText(
-                payment.external_reference,
-                30
-            );
-
-        if (!codigoRastreo) {
-            console.warn(
-                'Pago Mercado Pago sin external_reference:',
-                payment.id
-            );
-
-            return res.sendStatus(200);
-        }
-
-
-        const pedido =
-            await Pedido.findOne({
-                where: {
-                    codigoRastreo
-                }
-            });
-
-
-        if (!pedido) {
-            console.warn(
-                'No existe pedido para el pago:',
-                {
-                    paymentId:
-                        payment.id,
-
-                    codigoRastreo
-                }
-            );
-
-            return res.sendStatus(200);
-        }
-
-
-        const paymentStatus =
-            String(
-                payment.status || ''
-            )
-                .trim()
-                .toLowerCase();
-
-
-        /*
-         * ==========================================================
-         * PAGO APROBADO = VENTA REAL
-         * ==========================================================
-         */
-        if (
-            paymentStatus === 'approved'
-        ) {
-            /*
-             * Evitamos modificar pagadoEn
-             * si el webhook llega repetido.
-             */
-            const paymentDate =
-                pedido.pagadoEn ||
-                (
-                    payment.date_approved
-                        ? new Date(
-                            payment.date_approved
-                        )
-                        : new Date()
-                );
-
-            await pedido.update({
-                estadoPago:
-                    'PAGADO',
-
-                pagadoEn:
-                    paymentDate,
-
-                referenciaPago:
-                    String(
-                        payment.id
-                    ),
-
-                origen:
-                    'WEB',
-
-                canalCierre:
-                    'MERCADO_PAGO',
-
-                metodoPago:
-                    'MERCADO_PAGO',
-
-                /*
-                 * Una venta aprobada ya puede pasar
-                 * al flujo de preparación.
-                 */
-                estado:
-                    pedido.estado === 'PENDIENTE'
-                        ? 'RECIBIDO'
-                        : pedido.estado,
-
-                actualizadoEn:
-                    new Date()
-            });
-
-
-            console.log(
-                '✅ Venta Mercado Pago confirmada:',
-                {
-                    pedidoId:
-                        pedido.id,
-
-                    codigoRastreo:
-                        pedido.codigoRastreo,
-
-                    total:
-                        pedido.total,
-
-                    paymentId:
-                        payment.id
-                }
-            );
-
-            await enviarCorreoPedidoPagado(
-                pedido
-            );
-
-            return res.sendStatus(200);
-        }
-
-
-        /*
-         * ==========================================================
-         * PAGO PENDIENTE
-         * ==========================================================
-         */
-        if (
-            paymentStatus === 'pending' ||
-            paymentStatus === 'in_process'
-        ) {
-            await pedido.update({
-                estadoPago:
-                    'PENDIENTE',
-
-                actualizadoEn:
-                    new Date()
-            });
-
-            return res.sendStatus(200);
-        }
-
-
-        /*
-         * ==========================================================
-         * PAGO RECHAZADO / CANCELADO
-         * ==========================================================
-         */
-        if (
-            [
-                'rejected',
-                'cancelled',
-                'refunded',
-                'charged_back'
-            ].includes(
-                paymentStatus
-            )
-        ) {
-            await pedido.update({
-                estadoPago:
-                    paymentStatus
-                        .toUpperCase(),
-
-                actualizadoEn:
-                    new Date()
-            });
-
-            return res.sendStatus(200);
-        }
-
+        await applyMercadoPagoPaymentToOrder(
+            payment
+        );
 
         return res.sendStatus(200);
     } catch (error) {
@@ -1209,7 +1702,11 @@ async function recibirWebhook(req, res, next) {
 }
 
 module.exports = {
+    obtenerConfiguracionPublica,
+    cotizarCarrito,
     crearPreferencia,
+    crearPagoTarjeta,
+    crearPagoOxxo,
     obtenerPago,
     recibirWebhook
 };
