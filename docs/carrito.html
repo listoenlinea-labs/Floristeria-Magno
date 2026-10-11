@@ -42,6 +42,18 @@
           <p id="specialDateBannerText" class="mb-0"></p>
         </div>
       </div>
+
+      <div class="order-closed-banner mb-4" id="orderClosedBanner" style="display:none;">
+        <div class="order-closed-icon">
+          <i class="bi bi-calendar-x"></i>
+        </div>
+
+        <div>
+          <h2 id="orderClosedTitle">Pedidos temporalmente cerrados</h2>
+          <p id="orderClosedText" class="mb-0"></p>
+        </div>
+      </div>
+
       <div class="cart-page-header row g-4 align-items-center mb-5">
 
         <!-- TÍTULO DEL CARRITO -->
@@ -307,21 +319,14 @@
             <div class="mt-4">
               <label class="form-label">Método de pago</label>
               <p class="small text-white-50 mb-0">
-                Al continuar, Mercado Pago mostrará los métodos disponibles para el comprador,
-                como tarjeta, saldo, transferencia o efectivo.
+                Elige cómo quieres pagar. Los datos de tarjeta se capturan en campos seguros de Mercado Pago y no se
+                almacenan en Floristería Magno.
               </p>
             </div>
 
-            <div class="mp-payment-methods" aria-label="Métodos compatibles con Mercado Pago">
-              <img src="https://img.icons8.com/color/48/visa.png" alt="Visa">
-              <img src="https://img.icons8.com/color/48/mastercard-logo.png" alt="Mastercard">
-              <img src="https://img.icons8.com/color/48/amex.png" alt="American Express">
-              <img src="https://img.icons8.com/color/48/mercado-pago.png" alt="Mercado Pago">
-            </div>
-
-            <button id="mercadoPagoBtn" class="btn-pay" type="button">
-              <i class="bi bi-shield-lock-fill me-2"></i>
-              Pagar con Mercado Pago
+            <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
+              <i class="bi bi-credit-card-2-front-fill me-2"></i>
+              Elige opción de pago
             </button>
 
             <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
@@ -336,7 +341,107 @@
     </div>
   </main>
 
+  <div class="modal fade payment-modal" id="paymentOptionsModal" tabindex="-1"
+    aria-labelledby="paymentOptionsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <div>
+            <div class="eyebrow">Pago seguro</div>
+            <h2 class="modal-title serif" id="paymentOptionsTitle">Elige una opción de pago</h2>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body pt-2">
+          <button class="payment-option" id="cardPaymentOption" type="button">
+            <span class="payment-option-icon"><i class="bi bi-credit-card-2-front"></i></span>
+            <span class="payment-option-copy">
+              <strong>Tarjeta de crédito o débito</strong>
+              <small>Introduce tus datos sin crear una cuenta de Mercado Pago.</small>
+            </span>
+            <span class="payment-option-brands" aria-label="Visa y Mastercard">
+              <img src="https://img.icons8.com/color/48/visa.png" alt="Visa">
+              <img src="https://img.icons8.com/color/48/mastercard-logo.png" alt="Mastercard">
+            </span>
+            <i class="bi bi-chevron-right payment-option-arrow" aria-hidden="true"></i>
+          </button>
+
+          <button class="payment-option" id="checkoutProOption" type="button">
+            <span class="payment-option-icon payment-option-icon-mp">
+              <img src="https://img.icons8.com/color/48/mercado-pago.png" alt="">
+            </span>
+            <span class="payment-option-copy">
+              <strong>Pagar con Mercado Pago</strong>
+              <small>Continúa al flujo de Mercado Pago que ya conoces.</small>
+            </span>
+            <i class="bi bi-chevron-right payment-option-arrow" aria-hidden="true"></i>
+          </button>
+
+          <button class="payment-option" id="oxxoPaymentOption" type="button">
+            <span class="payment-option-icon payment-option-icon-oxxo" aria-hidden="true">OXXO</span>
+            <span class="payment-option-copy">
+              <strong>Pagar en OXXO</strong>
+              <small>Genera una ficha y paga en efectivo antes de su vencimiento.</small>
+            </span>
+            <i class="bi bi-chevron-right payment-option-arrow" aria-hidden="true"></i>
+          </button>
+
+          <div class="payment-security-note">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Los tres métodos son procesados de forma segura por Mercado Pago.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade payment-modal card-payment-modal" id="cardPaymentModal" tabindex="-1"
+    aria-labelledby="cardPaymentTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <div>
+            <div class="eyebrow">Campos seguros de Mercado Pago</div>
+            <h2 class="modal-title serif" id="cardPaymentTitle">Paga con tarjeta</h2>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body pt-2">
+          <div class="card-payment-trust">
+            <i class="bi bi-lock-fill"></i>
+            <span>Floristería Magno no recibe ni almacena el número de tarjeta ni el código de seguridad.</span>
+          </div>
+
+          <div id="cardPaymentLoading" class="card-payment-loading">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            Preparando el formulario seguro…
+          </div>
+
+          <div id="cardPaymentBrick_container"></div>
+
+          <div id="threeDsChallenge" class="three-ds-challenge" hidden>
+            <div class="three-ds-heading">
+              <i class="bi bi-bank"></i>
+              <div>
+                <strong>Tu banco necesita confirmar que eres tú</strong>
+                <small>Completa la verificación para terminar el pago.</small>
+              </div>
+            </div>
+            <iframe id="threeDsFrame" name="threeDsFrame" title="Verificación bancaria segura"></iframe>
+          </div>
+
+          <p id="cardPaymentMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
 
   <script>
     const CART_KEY = 'jhmagno_cart';
@@ -349,7 +454,15 @@
     const summaryDelivery = document.getElementById('summaryDelivery');
     const summaryTotal = document.getElementById('summaryTotal');
     const whatsappConfirm = document.getElementById('whatsappConfirm');
-    const mercadoPagoBtn = document.getElementById('mercadoPagoBtn');
+    const choosePaymentBtn = document.getElementById('choosePaymentBtn');
+    const cardPaymentOption = document.getElementById('cardPaymentOption');
+    const checkoutProOption = document.getElementById('checkoutProOption');
+    const oxxoPaymentOption = document.getElementById('oxxoPaymentOption');
+    const cardPaymentLoading = document.getElementById('cardPaymentLoading');
+    const cardPaymentMessage = document.getElementById('cardPaymentMessage');
+    const cardPaymentBrickContainer = document.getElementById('cardPaymentBrick_container');
+    const threeDsChallenge = document.getElementById('threeDsChallenge');
+    const threeDsFrame = document.getElementById('threeDsFrame');
     const receiverName = document.getElementById('receiverName');
     const customerEmail = document.getElementById('customerEmail');
     const deliveryAddress = document.getElementById('deliveryAddress');
@@ -366,6 +479,29 @@
 
     const BACKEND_CREATE_PREFERENCE_URL =
       `${BACKEND_BASE_URL}/api/mercadopago/create-preference`;
+
+    const BACKEND_MP_PUBLIC_CONFIG_URL =
+      `${BACKEND_BASE_URL}/api/mercadopago/public-config`;
+
+    const BACKEND_CHECKOUT_QUOTE_URL =
+      `${BACKEND_BASE_URL}/api/mercadopago/quote`;
+
+    const BACKEND_CARD_PAYMENT_URL =
+      `${BACKEND_BASE_URL}/api/mercadopago/process-card-payment`;
+
+    const BACKEND_OXXO_PAYMENT_URL =
+      `${BACKEND_BASE_URL}/api/mercadopago/create-oxxo-payment`;
+
+    const paymentOptionsModal = new bootstrap.Modal(
+      document.getElementById('paymentOptionsModal')
+    );
+
+    const cardPaymentModalElement = document.getElementById('cardPaymentModal');
+    const cardPaymentModal = new bootstrap.Modal(cardPaymentModalElement);
+
+    let cardPaymentBrickController = null;
+    let mercadoPagoInstance = null;
+    let activeChallengeResultUrl = '';
 
     const OUTSIDE_DELIVERY_AREA_VALUE = 'FUERA_AMG';
     const DELIVERY_AREA_UNAVAILABLE_MESSAGE =
@@ -411,6 +547,20 @@
       return Object.values(readCart()).filter(item => Number(item.qty || 0) > 0);
     }
 
+    function calculateCartTotals(items = getCartItems()) {
+      const subtotal = items.reduce((sum, item) => {
+        return sum + Number(item.price || 0) * Number(item.qty || 0);
+      }, 0);
+
+      const delivery = items.length ? DELIVERY_COST : 0;
+
+      return {
+        subtotal,
+        delivery,
+        total: subtotal + delivery
+      };
+    }
+
     function updateWhatsapp() {
       /*
        * El enlace ya no apunta directamente
@@ -432,13 +582,7 @@
 
     function renderCart() {
       const items = getCartItems();
-
-      const subtotal = items.reduce((sum, item) => {
-        return sum + Number(item.price || 0) * Number(item.qty || 0);
-      }, 0);
-
-      const delivery = items.length ? DELIVERY_COST : 0;
-      const total = subtotal + delivery;
+      const { subtotal, delivery, total } = calculateCartTotals(items);
       const count = items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
 
       cartProductsTitle.textContent = count === 1 ? '1 producto' : `${count} productos`;
@@ -750,7 +894,7 @@
        * Recuperamos estado normal
        * antes de aplicar restricciones.
        */
-      mercadoPagoBtn.disabled =
+      choosePaymentBtn.disabled =
         false;
 
       whatsappConfirm.style.display =
@@ -789,10 +933,10 @@
         closedBanner.style.display =
           'flex';
 
-        mercadoPagoBtn.disabled =
+        choosePaymentBtn.disabled =
           true;
 
-        mercadoPagoBtn.innerHTML = `
+        choosePaymentBtn.innerHTML = `
             <i class="bi bi-calendar-x me-2"></i>
             Pedidos temporalmente cerrados
         `;
@@ -920,7 +1064,83 @@
       return '';
     }
 
-    mercadoPagoBtn.addEventListener('click', async () => {
+    function buildCheckoutRequest(items = getCartItems()) {
+      return {
+        items: items.map(item => ({
+          id: String(item.id),
+          quantity: Number(item.qty || 0)
+        })),
+        delivery: {
+          receiverName: receiverName.value.trim(),
+          customerEmail: customerEmail.value.trim().toLowerCase(),
+          address: deliveryAddress.value.trim(),
+          municipality: deliveryMunicipality.value,
+          date: deliveryDate.value,
+          slot: deliverySlot.value
+        }
+      };
+    }
+
+    function createCheckoutAttemptId() {
+      if (window.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
+      }
+
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, character => {
+        const randomValue = window.crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+        const value = character === 'x' ? randomValue : (randomValue & 0x3) | 0x8;
+        return value.toString(16);
+      });
+    }
+
+    function openPaymentWindow(title, message) {
+      const paymentWindow = window.open('about:blank', '_blank');
+
+      if (!paymentWindow) {
+        setCheckoutMessage(
+          'El navegador bloqueó la nueva pestaña. Permite ventanas emergentes para este sitio e inténtalo nuevamente.'
+        );
+        return null;
+      }
+
+      try {
+        paymentWindow.opener = null;
+        paymentWindow.document.title = title;
+        paymentWindow.document.body.innerHTML = `
+          <main style="font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;background:#f7f7f7;color:#222;">
+            <div>
+              <h1 style="font-size:1.35rem;margin-bottom:10px;">${title}</h1>
+              <p style="margin:0;color:#666;">${message}</p>
+            </div>
+          </main>
+        `;
+      } catch (error) {
+        console.warn('No fue posible personalizar la pestaña de espera:', error);
+      }
+
+      return paymentWindow;
+    }
+
+    function setOptionBusy(button, busy, busyLabel) {
+      if (busy) {
+        button.dataset.originalContent = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          <span class="payment-option-copy"><strong>${busyLabel}</strong></span>
+        `;
+        return;
+      }
+
+      button.disabled = false;
+
+      if (button.dataset.originalContent) {
+        button.innerHTML = button.dataset.originalContent;
+        delete button.dataset.originalContent;
+      }
+    }
+
+    choosePaymentBtn.addEventListener('click', () => {
       const items = getCartItems();
       const validationMessage = validateCheckout(items);
 
@@ -929,38 +1149,34 @@
         return;
       }
 
+      setCheckoutMessage('', 'info');
+      paymentOptionsModal.show();
+    });
+
+    checkoutProOption.addEventListener('click', async () => {
+      const items = getCartItems();
+      const validationMessage = validateCheckout(items);
+
+      if (validationMessage) {
+        paymentOptionsModal.hide();
+        setCheckoutMessage(validationMessage);
+        return;
+      }
+
       /*
        * La pestaña se abre antes del fetch para que el navegador no la bloquee
        * como una ventana emergente creada después de una operación asíncrona.
        */
-      const mercadoPagoWindow = window.open('about:blank', '_blank');
+      const mercadoPagoWindow = openPaymentWindow(
+        'Preparando Mercado Pago',
+        'En un momento abrirá Mercado Pago.'
+      );
 
       if (!mercadoPagoWindow) {
-        setCheckoutMessage(
-          'El navegador bloqueó la nueva pestaña. Permite ventanas emergentes para este sitio e inténtalo nuevamente.'
-        );
         return;
       }
 
-      try {
-        mercadoPagoWindow.opener = null;
-        mercadoPagoWindow.document.title = 'Preparando Mercado Pago';
-        mercadoPagoWindow.document.body.innerHTML = `
-          <main style="font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;background:#f7f7f7;color:#222;">
-            <div>
-              <h1 style="font-size:1.35rem;margin-bottom:10px;">Preparando tu pago…</h1>
-              <p style="margin:0;color:#666;">En un momento abrirá Mercado Pago.</p>
-            </div>
-          </main>
-        `;
-      } catch (error) {
-        console.warn('No fue posible personalizar la pestaña de espera:', error);
-      }
-
-      const originalContent = mercadoPagoBtn.innerHTML;
-      mercadoPagoBtn.disabled = true;
-      mercadoPagoBtn.innerHTML =
-        '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Preparando pago...';
+      setOptionBusy(checkoutProOption, true, 'Preparando Mercado Pago…');
       setCheckoutMessage('Conectando de forma segura con Mercado Pago...', 'info');
 
       try {
@@ -969,33 +1185,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            items: items.map(item => ({
-              id: String(item.id),
-              quantity: Number(item.qty || 0)
-            })),
-            delivery: {
-              receiverName:
-                receiverName.value.trim(),
-
-              customerEmail:
-                customerEmail.value
-                  .trim()
-                  .toLowerCase(),
-
-              address:
-                deliveryAddress.value.trim(),
-
-              municipality:
-                deliveryMunicipality.value,
-
-              date:
-                deliveryDate.value,
-
-              slot:
-                deliverySlot.value
-            }
-          })
+          body: JSON.stringify(buildCheckoutRequest(items))
         });
 
         const result = await response.json().catch(() => ({}));
@@ -1011,9 +1201,8 @@
           'success'
         );
 
+        paymentOptionsModal.hide();
         mercadoPagoWindow.location.replace(result.redirectUrl);
-        mercadoPagoBtn.disabled = false;
-        mercadoPagoBtn.innerHTML = originalContent;
       } catch (error) {
         console.error('Error iniciando Checkout Pro:', error);
 
@@ -1024,8 +1213,308 @@
         setCheckoutMessage(
           error.message || 'Ocurrió un error al preparar el pago.'
         );
-        mercadoPagoBtn.disabled = false;
-        mercadoPagoBtn.innerHTML = originalContent;
+      } finally {
+        setOptionBusy(checkoutProOption, false);
+      }
+    });
+
+    oxxoPaymentOption.addEventListener('click', async () => {
+      const items = getCartItems();
+      const validationMessage = validateCheckout(items);
+
+      if (validationMessage) {
+        paymentOptionsModal.hide();
+        setCheckoutMessage(validationMessage);
+        return;
+      }
+
+      const oxxoWindow = openPaymentWindow(
+        'Preparando ficha de OXXO',
+        'En un momento verás las instrucciones para pagar en efectivo.'
+      );
+
+      if (!oxxoWindow) {
+        return;
+      }
+
+      setOptionBusy(oxxoPaymentOption, true, 'Generando ficha de OXXO…');
+      setCheckoutMessage('Generando tu ficha de pago en OXXO...', 'info');
+
+      try {
+        const response = await fetch(BACKEND_OXXO_PAYMENT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...buildCheckoutRequest(items),
+            checkoutAttemptId: createCheckoutAttemptId()
+          })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.ticketUrl) {
+          throw new Error(
+            result.message || 'No fue posible generar la ficha de pago en OXXO.'
+          );
+        }
+
+        paymentOptionsModal.hide();
+        setCheckoutMessage(
+          'La ficha de OXXO se abrió en una pestaña nueva. El pedido se confirmará cuando Mercado Pago acredite el efectivo.',
+          'success'
+        );
+        oxxoWindow.location.replace(result.ticketUrl);
+      } catch (error) {
+        console.error('Error creando pago OXXO:', error);
+
+        if (!oxxoWindow.closed) {
+          oxxoWindow.close();
+        }
+
+        setCheckoutMessage(
+          error.message || 'Ocurrió un error al preparar la ficha de OXXO.'
+        );
+      } finally {
+        setOptionBusy(oxxoPaymentOption, false);
+      }
+    });
+
+    function setCardPaymentMessage(message, type = 'error') {
+      cardPaymentMessage.textContent = message;
+      cardPaymentMessage.dataset.type = type;
+    }
+
+    async function unmountCardPaymentBrick() {
+      if (!cardPaymentBrickController) {
+        return;
+      }
+
+      try {
+        await cardPaymentBrickController.unmount();
+      } catch (error) {
+        console.warn('No fue posible desmontar el formulario de tarjeta:', error);
+      } finally {
+        cardPaymentBrickController = null;
+        cardPaymentBrickContainer.innerHTML = '';
+      }
+    }
+
+    function startThreeDsChallenge(result) {
+      const challengeUrl = result?.challenge?.url;
+      const creq = result?.challenge?.creq;
+
+      if (!challengeUrl || !creq || !result?.resultUrl) {
+        throw new Error(
+          'Mercado Pago solicitó una verificación bancaria, pero no devolvió los datos necesarios.'
+        );
+      }
+
+      activeChallengeResultUrl = result.resultUrl;
+      cardPaymentBrickContainer.hidden = true;
+      threeDsChallenge.hidden = false;
+
+      const frameDocument = threeDsFrame.contentWindow.document;
+      frameDocument.body.innerHTML = '';
+      frameDocument.body.style.margin = '0';
+
+      const challengeForm = frameDocument.createElement('form');
+      challengeForm.method = 'post';
+      challengeForm.action = challengeUrl;
+
+      const creqInput = frameDocument.createElement('input');
+      creqInput.type = 'hidden';
+      creqInput.name = 'creq';
+      creqInput.value = creq;
+
+      challengeForm.appendChild(creqInput);
+      frameDocument.body.appendChild(challengeForm);
+      challengeForm.submit();
+
+      setCardPaymentMessage(
+        'Completa la validación de tu banco. No cierres esta ventana.',
+        'info'
+      );
+    }
+
+    async function renderCardPaymentBrick() {
+      const items = getCartItems();
+      const validationMessage = validateCheckout(items);
+
+      if (validationMessage) {
+        cardPaymentModal.hide();
+        setCheckoutMessage(validationMessage);
+        return;
+      }
+
+      cardPaymentLoading.hidden = false;
+      setCardPaymentMessage('', 'info');
+      activeChallengeResultUrl = '';
+      threeDsChallenge.hidden = true;
+      cardPaymentBrickContainer.hidden = false;
+      await unmountCardPaymentBrick();
+
+      try {
+        if (!window.MercadoPago) {
+          throw new Error('No fue posible cargar el formulario seguro de Mercado Pago.');
+        }
+
+        if (!mercadoPagoInstance) {
+          const configResponse = await fetch(BACKEND_MP_PUBLIC_CONFIG_URL, {
+            headers: {
+              Accept: 'application/json'
+            }
+          });
+
+          const config = await configResponse.json().catch(() => ({}));
+
+          if (!configResponse.ok || !config.publicKey) {
+            throw new Error(
+              config.message || 'No se encontró la llave pública de Mercado Pago.'
+            );
+          }
+
+          mercadoPagoInstance = new MercadoPago(config.publicKey, {
+            locale: 'es-MX'
+          });
+        }
+
+        const quoteResponse = await fetch(BACKEND_CHECKOUT_QUOTE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(buildCheckoutRequest(items))
+        });
+
+        const quote = await quoteResponse.json().catch(() => ({}));
+
+        if (
+          !quoteResponse.ok ||
+          !Number.isFinite(Number(quote.total)) ||
+          Number(quote.total) <= 0
+        ) {
+          throw new Error(
+            quote.message || 'No fue posible verificar el total del pedido.'
+          );
+        }
+
+        const bricksBuilder = mercadoPagoInstance.bricks();
+
+        cardPaymentBrickController = await bricksBuilder.create(
+          'cardPayment',
+          'cardPaymentBrick_container',
+          {
+            initialization: {
+              amount: Number(quote.total)
+            },
+            callbacks: {
+              onReady: () => {
+                cardPaymentLoading.hidden = true;
+              },
+              onSubmit: async formData => {
+                setCardPaymentMessage(
+                  'Procesando el pago de forma segura…',
+                  'info'
+                );
+
+                try {
+                  const response = await fetch(BACKEND_CARD_PAYMENT_URL, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      ...buildCheckoutRequest(items),
+                      payment: formData,
+                      checkoutAttemptId: createCheckoutAttemptId()
+                    })
+                  });
+
+                  const result = await response.json().catch(() => ({}));
+
+                  if (
+                    !response.ok ||
+                    (!result.redirectUrl && !result.challenge)
+                  ) {
+                    throw new Error(
+                      result.message || 'No fue posible procesar el pago con tarjeta.'
+                    );
+                  }
+
+                  if (result.challenge) {
+                    startThreeDsChallenge(result);
+                    return;
+                  }
+
+                  setCardPaymentMessage(
+                    'Mercado Pago recibió la operación. Verificando el resultado…',
+                    'success'
+                  );
+
+                  window.location.assign(result.redirectUrl);
+                } catch (error) {
+                  console.error('Error procesando tarjeta:', error);
+                  setCardPaymentMessage(
+                    error.message || 'No fue posible procesar el pago con tarjeta.'
+                  );
+                  throw error;
+                }
+              },
+              onError: error => {
+                console.error('Error del formulario seguro de Mercado Pago:', error);
+                cardPaymentLoading.hidden = true;
+                setCardPaymentMessage(
+                  'No fue posible cargar o validar el formulario. Revisa los datos e inténtalo nuevamente.'
+                );
+              }
+            }
+          }
+        );
+      } catch (error) {
+        console.error('Error inicializando Card Payment Brick:', error);
+        cardPaymentLoading.hidden = true;
+        setCardPaymentMessage(
+          error.message || 'No fue posible abrir el formulario seguro de tarjeta.'
+        );
+      }
+    }
+
+    cardPaymentOption.addEventListener('click', () => {
+      const items = getCartItems();
+      const validationMessage = validateCheckout(items);
+
+      if (validationMessage) {
+        paymentOptionsModal.hide();
+        setCheckoutMessage(validationMessage);
+        return;
+      }
+
+      const optionsModalElement = document.getElementById('paymentOptionsModal');
+
+      optionsModalElement.addEventListener('hidden.bs.modal', () => {
+        cardPaymentModal.show();
+        renderCardPaymentBrick();
+      }, { once: true });
+
+      paymentOptionsModal.hide();
+    });
+
+    cardPaymentModalElement.addEventListener('hidden.bs.modal', () => {
+      activeChallengeResultUrl = '';
+      threeDsChallenge.hidden = true;
+      cardPaymentBrickContainer.hidden = false;
+      threeDsFrame.src = 'about:blank';
+      unmountCardPaymentBrick();
+    });
+
+    window.addEventListener('message', event => {
+      if (
+        activeChallengeResultUrl &&
+        event.data?.status === 'COMPLETE'
+      ) {
+        window.location.assign(activeChallengeResultUrl);
       }
     });
 
