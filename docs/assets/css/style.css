@@ -16350,6 +16350,89 @@ body.page-carrito .order-closed-banner p {
 }
 
 /* =========================================================
+   CARRITO — MODAL DE OPCIONES DE PAGO LEGIBLE
+   Mantener al final para prevalecer sobre los temas globales.
+========================================================= */
+
+body.page-carrito .payment-modal .modal-content {
+    color: #27151b !important;
+    background:
+        radial-gradient(circle at top right, rgba(255, 232, 232, .9), transparent 38%),
+        linear-gradient(150deg, #ffffff, #fff7f7) !important;
+    border-color: rgba(124, 64, 87, .2) !important;
+    box-shadow: 0 30px 90px rgba(39, 21, 27, .24) !important;
+}
+
+body.page-carrito .payment-modal .modal-title,
+body.page-carrito .payment-modal .payment-option-copy strong {
+    color: #27151b !important;
+}
+
+body.page-carrito .payment-modal .eyebrow {
+    color: #7c4057 !important;
+}
+
+body.page-carrito .payment-modal .btn-close {
+    filter: none !important;
+    opacity: .68;
+}
+
+body.page-carrito .payment-modal .btn-close:hover,
+body.page-carrito .payment-modal .btn-close:focus-visible {
+    opacity: 1;
+}
+
+body.page-carrito .payment-modal .payment-option {
+    color: #27151b !important;
+    background: rgba(255, 255, 255, .92) !important;
+    border-color: rgba(124, 64, 87, .2) !important;
+    box-shadow: 0 10px 28px rgba(39, 21, 27, .07);
+}
+
+body.page-carrito .payment-modal .payment-option:hover,
+body.page-carrito .payment-modal .payment-option:focus-visible {
+    color: #27151b !important;
+    background: #ffe8e8 !important;
+    border-color: rgba(124, 64, 87, .48) !important;
+    box-shadow: 0 14px 34px rgba(39, 21, 27, .12);
+}
+
+body.page-carrito .payment-modal .payment-option-icon {
+    color: #5d3650 !important;
+    background: #f8e8ed !important;
+}
+
+body.page-carrito .payment-modal .payment-option-icon-oxxo {
+    color: #ffffff !important;
+    background: #e32119 !important;
+}
+
+body.page-carrito .payment-modal .payment-option-copy small {
+    color: #705a62 !important;
+}
+
+body.page-carrito .payment-modal .payment-option-arrow {
+    color: #765f68 !important;
+}
+
+body.page-carrito .payment-modal .payment-security-note,
+body.page-carrito .payment-modal .card-payment-trust {
+    color: #294c60 !important;
+    background: #eef8ff !important;
+    border-color: #b9def1 !important;
+}
+
+body.page-carrito .payment-modal .payment-security-note i,
+body.page-carrito .payment-modal .card-payment-trust i {
+    color: #1678aa !important;
+}
+
+body.page-carrito .payment-modal .card-payment-loading,
+body.page-carrito .payment-modal .three-ds-heading small {
+    color: #705a62 !important;
+}
+
+/* =========================================================
    ADMIN — FECHAS ESPECIALES
 ========================================================= */
 
