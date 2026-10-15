@@ -67,7 +67,8 @@ function createMailerTransporter() {
 
         connectionTimeout: 10000,
         greetingTimeout: 10000,
-        socketTimeout: 15000
+        socketTimeout: 15000,
+        requireTLS: !secure && getBooleanEnvironmentValue(process.env.SMTP_REQUIRE_TLS, true)
     });
 }
 

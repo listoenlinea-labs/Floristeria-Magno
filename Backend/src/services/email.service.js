@@ -27,15 +27,9 @@ async function enviarCorreoCodigoRastreo({
     fechaEntrega,
     ventanaEntrega
 }) {
-    console.log('====================================');
-    console.log('INICIANDO ENVÍO DE CORREO');
-    console.log('Destino:', email);
-    console.log('Nombre:', nombreCliente);
-    console.log('Código:', codigoRastreo);
-    console.log('====================================');
+    // No registrar correo del cliente ni código de rastreo en logs.
     const transporter =
         createMailerTransporter();
-    console.log('Transporter SMTP creado correctamente.');
 
     const fromEmail =
         getRequiredEnvironmentVariable(
@@ -83,7 +77,6 @@ async function enviarCorreoCodigoRastreo({
         `
         : '';
 
-    console.log('Enviando correo...');
     const info = await transporter.sendMail({
         from: `"Floristería Magno" <${fromEmail}>`,
         to: email,
@@ -194,13 +187,63 @@ async function enviarCorreoCodigoRastreo({
             </div>
         `
     });
-    console.log('====================================');
-    console.log('CORREO ENVIADO EXITOSAMENTE');
-    console.log('Message ID:', info.messageId);
-    console.log('Respuesta SMTP:', info.response);
-    console.log('====================================');
+    console.info('Confirmación de pedido aceptada por servidor SMTP.');
+    return info;
+}
+
+
+/**
+ * Aviso interno independiente del correo al cliente. No usamos CC para evitar
+ * revelar la dirección administrativa ni depender del éxito del primer envío.
+ */
+async function enviarAvisoAdministrador({
+    emailCliente, nombreCliente, codigoRastreo, total, fechaEntrega, ventanaEntrega
+}) {
+    const destinatario = String(
+        process.env.ORDER_ADMIN_EMAIL || 'soluciones@listoenlinea.com'
+    ).trim();
+    if (!destinatario || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destinatario)) {
+        throw new Error('ORDER_ADMIN_EMAIL debe ser un correo válido');
+    }
+    const frontendUrl = String(process.env.FRONTEND_PUBLIC_URL || '')
+        .trim().replace(/\/+$/, '');
+    const trackingUrl = frontendUrl
+        ? `${frontendUrl}/rastreo.html?codigo=${encodeURIComponent(codigoRastreo)}`
+        : '';
+    const lines = [
+        'Nuevo pedido pagado - Floristería Magno',
+        `Código de rastreo: ${codigoRastreo}`,
+        `Cliente: ${nombreCliente || 'Sin nombre'}`,
+        `Correo del cliente: ${emailCliente || 'No proporcionado'}`,
+        `Total: ${formatMoney(total)}`,
+        `Entrega: ${fechaEntrega || 'Por confirmar'}`,
+        `Horario: ${ventanaEntrega || 'Por confirmar'}`,
+        trackingUrl ? `Seguimiento: ${trackingUrl}` : ''
+    ].filter(Boolean);
+    const transporter = createMailerTransporter();
+    const fromEmail = getRequiredEnvironmentVariable('EMAIL_FROM');
+    const info = await transporter.sendMail({
+        from: `"Floristería Magno" <${fromEmail}>`,
+        to: destinatario,
+        subject: `Nuevo pedido pagado · ${codigoRastreo}`,
+        text: lines.join('\n'),
+        html: '<div style="font-family:Arial,sans-serif;color:#2b2022;line-height:1.7">' +
+            '<h2>Nuevo pedido pagado</h2>' +
+            lines.map(line => `<p>${escapeHtml(line)}</p>`).join('') +
+            '</div>'
+    });
+    console.info('Aviso administrativo aceptado por servidor SMTP.');
+    return info;
+}
+
+async function verificarConexionCorreo() {
+    const transporter = createMailerTransporter();
+    await transporter.verify();
+    return { ok: true, message: 'Conexión y autenticación SMTP verificadas' };
 }
 
 module.exports = {
-    enviarCorreoCodigoRastreo
+    enviarCorreoCodigoRastreo,
+    enviarAvisoAdministrador,
+    verificarConexionCorreo
 };

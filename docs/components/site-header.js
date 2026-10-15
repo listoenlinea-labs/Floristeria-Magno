@@ -407,18 +407,9 @@ class SiteHeader extends HTMLElement {
           </button>
 
           <nav class="nav-menu" id="siteHeaderMenu" aria-label="Navegación principal">
-            <a class="nav-link" href="${pageUrl('index.html', 'inicio')}" data-section="inicio">Inicio</a>
-            <a class="nav-link" href="${pageUrl('index.html', 'momentos')}" data-section="momentos">Momentos</a>
+            <a class="nav-link" href="${pageUrl('index.html', 'inicio')}" data-section="inicio">Quiénes Somos</a>
             <a class="nav-link" href="${pageUrl('catalogo.html')}" data-page="catalogo">Catálogo</a>
             <a class="nav-link" href="${pageUrl('rastreo.html')}" data-page="rastreo">Rastrea tu pedido</a>
-            <a
-              class="nav-link"
-              href="${pageUrl('index.html', 'nosotros')}"
-              data-section="nosotros"
-            >
-              Quiénes somos
-            </a>
-
             <a
               class="mobile-phone-link"
               href="tel:+5213312345678"

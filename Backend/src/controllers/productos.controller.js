@@ -1,3 +1,4 @@
+const { normalizeImagesInRecord } = require('../services/public-image-url.service');
 const { Op } = require('sequelize');
 
 const sequelize = require('../config/database');
@@ -352,7 +353,7 @@ async function listarProductos(
         res.status(200).json({
             ok: true,
             total: productos.length,
-            data: productos
+            data: productos.map(normalizeImagesInRecord)
         });
     } catch (error) {
         next(error);
@@ -404,7 +405,7 @@ async function obtenerProducto(
 
         res.status(200).json({
             ok: true,
-            data: producto
+            data: normalizeImagesInRecord(producto)
         });
     } catch (error) {
         next(error);

@@ -24,7 +24,8 @@ const {
 } = require('../models');
 
 const {
-    enviarCorreoCodigoRastreo
+    enviarCorreoCodigoRastreo,
+    enviarAvisoAdministrador
 } = require('../services/email.service');
 
 const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
@@ -834,90 +835,59 @@ async function createPendingOrderFromCart({
 }
 
 async function enviarCorreoPedidoPagado(pedido) {
-    const correoYaEnviado =
-        await HistorialPedido.findOne({
-            where: {
-                pedidoId:
-                    pedido.id,
-
-                estado:
-                    'CONFIRMACION_EMAIL'
-            }
-        });
-
-    if (correoYaEnviado) {
-        console.log(
-            'Correo de confirmación previamente enviado:',
-            pedido.codigoRastreo
-        );
-
-        return;
-    }
-
-    const cliente =
-        await Cliente.findByPk(
-            pedido.clienteId
-        );
-
-    if (!cliente?.email) {
-        console.warn(
-            'Pedido pagado sin correo de cliente:',
-            pedido.codigoRastreo
-        );
-
-        return;
-    }
-
-    try {
-        console.log('------------------------------------');
-        console.log('Pago aprobado. Intentando enviar correo...');
-        console.log('Cliente:', cliente.nombre);
-        console.log('Correo:', cliente.email);
-        console.log('Código:', pedido.codigoRastreo);
-        console.log('------------------------------------');
-
-        await enviarCorreoCodigoRastreo({
-            email:
-                cliente.email,
-
-            nombreCliente:
-                pedido.nombreDestinatario ||
-                cliente.nombre,
-
-            codigoRastreo:
-                pedido.codigoRastreo,
-
-            total:
-                pedido.total,
-
-            fechaEntrega:
-                pedido.fechaEntrega,
-
-            ventanaEntrega:
-                pedido.ventanaEntrega
-        });
-
-        await HistorialPedido.create({
-            pedidoId:
-                pedido.id,
-
-            estado:
-                'CONFIRMACION_EMAIL',
-
-            descripcion:
-                'Confirmación enviada por correo después de aprobarse el pago'
-        });
-
-        console.log('Correo de pago aprobado enviado correctamente.');
-    } catch (emailError) {
-        console.error('====================================');
-        console.error('ERROR ENVIANDO CORREO DE PAGO APROBADO');
-        console.error('Mensaje:', emailError.message);
-        console.error('Código:', emailError.code);
-        console.error('Comando:', emailError.command);
-        console.error('Respuesta:', emailError.response);
-        console.error('Stack:', emailError.stack);
-        console.error('====================================');
+    const cliente = await Cliente.findByPk(pedido.clienteId);
+    const data = {
+        emailCliente: cliente?.email || '',
+        nombreCliente: pedido.nombreDestinatario || cliente?.nombre || 'Cliente',
+        codigoRastreo: pedido.codigoRastreo,
+        total: pedido.total,
+        fechaEntrega: pedido.fechaEntrega,
+        ventanaEntrega: pedido.ventanaEntrega
+    };
+    const tasks = [
+        {
+            state: 'CONFIRMACION_EMAIL',
+            description: 'Confirmación enviada al cliente después de aprobarse el pago',
+            enabled: Boolean(cliente?.email),
+            send: () => enviarCorreoCodigoRastreo({
+                email: cliente.email,
+                ...data
+            })
+        },
+        {
+            state: 'AVISO_ADMIN_EMAIL',
+            description: 'Aviso enviado al administrador después de aprobarse el pago',
+            enabled: true,
+            send: () => enviarAvisoAdministrador(data)
+        }
+    ];
+    // Reintentos idempotentes por destinatario: nunca marcar como enviado antes
+    // de que el servidor SMTP acepte el correo.
+    for (const task of tasks) {
+        if (!task.enabled) {
+            console.warn('Pedido sin email de cliente; se enviará aviso al administrador.');
+            continue;
+        }
+        try {
+            const alreadySent = await HistorialPedido.findOne({
+                where: { pedidoId: pedido.id, estado: task.state }
+            });
+            if (alreadySent) continue;
+            await task.send();
+            await HistorialPedido.create({
+                pedidoId: pedido.id,
+                estado: task.state,
+                descripcion: task.description
+            });
+        } catch (error) {
+            // El pago queda confirmado; el siguiente webhook verificado
+            // reintenta únicamente la notificación que falta.
+            console.error('Falló notificación de pedido pagado:', {
+                type: task.state,
+                code: error.code || 'SMTP_ERROR',
+                command: error.command || null
+            });
+        }
     }
 }
 
