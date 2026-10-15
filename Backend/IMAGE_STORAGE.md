@@ -86,3 +86,14 @@ Admin una vez aplicada esta protección.
 
 Para protección ante pérdida total de la cuenta/disco del hosting, agrega
 además un respaldo externo (S3/R2/Cloudinary u otro proveedor independiente).
+
+## Revisión después de cada despliegue de Hostinger
+
+1. Mantener `IMAGE_STORAGE_ROOT` en una ruta absoluta y persistente **fuera del proyecto/deploy**.
+2. No configurar `UPLOADS_DIR` ni `UPLOADS_BACKUP_DIR` en la ruta que Hostinger reemplaza al publicar.
+3. Comprobar con credenciales de administrador `GET /api/floristeria-magno/uploads/health`.
+4. Mantener un respaldo **fuera del mismo servidor** (otro disco o proveedor) para protegerse ante una pérdida total de la cuenta.
+5. Realizar una prueba: subir una imagen, anotar su URL, publicar de nuevo, comprobar esa URL desde otro navegador y volver a consultar health.
+
+**Limitación:** dos carpetas del mismo hosting no garantizan recuperación ante borrado
+de la cuenta, pérdida total del disco o reconfiguración que elimine ambas carpetas.
