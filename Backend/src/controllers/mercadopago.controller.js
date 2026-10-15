@@ -10,6 +10,7 @@ const {
     MercadoPagoConfig,
     Preference,
     Payment,
+    Order,
     WebhookSignatureValidator,
     InvalidWebhookSignatureError
 } = require('mercadopago');
@@ -26,6 +27,17 @@ const {
 const {
     enviarCorreoCodigoRastreo
 } = require('../services/email.service');
+
+const {
+    buildCardOrderBody,
+    buildOxxoOrderBody,
+    getOrderChallengeUrl,
+    getOrderPayment,
+    getOrderStatusDetail,
+    getOrderTicketUrl,
+    normalizeOrderAsPayment,
+    normalizeOrderStatus
+} = require('../services/mercadopago-orders.service');
 
 const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
 
@@ -127,6 +139,20 @@ function getClient() {
             timeout: 8000
         }
     });
+}
+
+function getPublicKey() {
+    const publicKey = String(
+        process.env.MP_PUBLIC_KEY || ''
+    ).trim();
+
+    if (!publicKey) {
+        throw configurationError(
+            'Falta configurar MP_PUBLIC_KEY en las variables de entorno'
+        );
+    }
+
+    return publicKey;
 }
 
 function getAbsoluteUrl(variableName) {
@@ -294,7 +320,8 @@ async function crearClientePedidoYDetalles({
     items,
     delivery,
     total,
-    transaction
+    transaction,
+    paymentMethod = 'MERCADO_PAGO'
 }) {
     let cliente = await Cliente.findOne({
         where: {
@@ -361,7 +388,7 @@ async function crearClientePedidoYDetalles({
                 delivery.slot,
 
             metodoPago:
-                'MERCADO_PAGO',
+                paymentMethod,
 
             estadoPago:
                 'PENDIENTE'
@@ -618,6 +645,719 @@ function chooseRedirectUrl(preferenceResponse) {
     return redirectUrl;
 }
 
+function getPaymentMethodForOrder(payment) {
+    const paymentMethodId = normalizeText(
+        payment?.payment_method_id,
+        50
+    ).toLowerCase();
+
+    const paymentTypeId = normalizeText(
+        payment?.payment_type_id,
+        50
+    ).toLowerCase();
+
+    if (
+        paymentMethodId === 'oxxo' ||
+        paymentTypeId === 'ticket'
+    ) {
+        return 'OXXO_MERCADO_PAGO';
+    }
+
+    if (
+        paymentTypeId === 'credit_card' ||
+        paymentTypeId === 'debit_card' ||
+        paymentTypeId === 'prepaid_card'
+    ) {
+        return 'TARJETA_MERCADO_PAGO';
+    }
+
+    return 'MERCADO_PAGO';
+}
+
+function getCheckoutAttemptId(value) {
+    const attemptId = normalizeText(value, 80);
+
+    if (
+        attemptId &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            attemptId
+        )
+    ) {
+        return attemptId;
+    }
+
+    return crypto.randomUUID();
+}
+
+function validateCardPaymentData(paymentData) {
+    const token = normalizeText(
+        paymentData?.token,
+        500
+    );
+
+    const paymentMethodId = normalizeText(
+        paymentData?.payment_method_id ||
+            paymentData?.paymentMethodId,
+        50
+    ).toLowerCase();
+
+    const paymentTypeId = normalizeText(
+        paymentData?.payment_type_id ||
+            paymentData?.paymentTypeId,
+        50
+    ).toLowerCase();
+
+    const installments = Number(
+        paymentData?.installments
+    );
+
+    const identificationType = normalizeText(
+        paymentData?.payer?.identification?.type,
+        20
+    );
+
+    const identificationNumber = normalizeText(
+        paymentData?.payer?.identification?.number,
+        40
+    );
+
+    if (token.length < 10) {
+        throw createHttpError(
+            'Mercado Pago no pudo tokenizar la tarjeta. Revisa los datos e inténtalo nuevamente.'
+        );
+    }
+
+    if (!/^[a-z0-9_-]+$/.test(paymentMethodId)) {
+        throw createHttpError(
+            'El método de la tarjeta no es válido'
+        );
+    }
+
+    if (
+        ![
+            'credit_card',
+            'debit_card',
+            'prepaid_card'
+        ].includes(paymentTypeId)
+    ) {
+        throw createHttpError(
+            'Mercado Pago no identificó el tipo de tarjeta'
+        );
+    }
+
+    if (
+        !Number.isInteger(installments) ||
+        installments < 1 ||
+        installments > 24
+    ) {
+        throw createHttpError(
+            'Selecciona un número de mensualidades válido'
+        );
+    }
+
+    return {
+        token,
+        paymentMethodId,
+        paymentTypeId,
+        installments,
+        identification:
+            identificationType && identificationNumber
+                ? {
+                    type: identificationType,
+                    number: identificationNumber
+                }
+                : null
+    };
+}
+
+async function createPendingOrderFromCart({
+    body,
+    paymentMethod
+}) {
+    await verificarCierreDePedidos();
+
+    const productItems = await buildPreferenceItems(
+        body?.items
+    );
+
+    const delivery = validateDelivery(
+        body?.delivery
+    );
+
+    if (
+        !Number.isFinite(DELIVERY_COST) ||
+        DELIVERY_COST < 0
+    ) {
+        throw configurationError(
+            'DELIVERY_COST no es un número válido'
+        );
+    }
+
+    const subtotal = calcularSubtotalProductos(
+        productItems
+    );
+
+    const total = subtotal + DELIVERY_COST;
+    const transaction = await sequelize.transaction();
+
+    try {
+        const orderData =
+            await crearClientePedidoYDetalles({
+                items: productItems,
+                delivery,
+                total,
+                transaction,
+                paymentMethod
+            });
+
+        await transaction.commit();
+
+        return {
+            ...orderData,
+            productItems,
+            delivery,
+            total
+        };
+    } catch (error) {
+        try {
+            await transaction.rollback();
+        } catch (rollbackError) {
+            console.error(
+                'Error revirtiendo pedido pendiente:',
+                rollbackError
+            );
+        }
+
+        throw error;
+    }
+}
+
+async function enviarCorreoPedidoPagado(pedido) {
+    const correoYaEnviado =
+        await HistorialPedido.findOne({
+            where: {
+                pedidoId:
+                    pedido.id,
+
+                estado:
+                    'CONFIRMACION_EMAIL'
+            }
+        });
+
+    if (correoYaEnviado) {
+        console.log(
+            'Correo de confirmación previamente enviado:',
+            pedido.codigoRastreo
+        );
+
+        return;
+    }
+
+    const cliente =
+        await Cliente.findByPk(
+            pedido.clienteId
+        );
+
+    if (!cliente?.email) {
+        console.warn(
+            'Pedido pagado sin correo de cliente:',
+            pedido.codigoRastreo
+        );
+
+        return;
+    }
+
+    try {
+        console.log('------------------------------------');
+        console.log('Pago aprobado. Intentando enviar correo...');
+        console.log('Cliente:', cliente.nombre);
+        console.log('Correo:', cliente.email);
+        console.log('Código:', pedido.codigoRastreo);
+        console.log('------------------------------------');
+
+        await enviarCorreoCodigoRastreo({
+            email:
+                cliente.email,
+
+            nombreCliente:
+                pedido.nombreDestinatario ||
+                cliente.nombre,
+
+            codigoRastreo:
+                pedido.codigoRastreo,
+
+            total:
+                pedido.total,
+
+            fechaEntrega:
+                pedido.fechaEntrega,
+
+            ventanaEntrega:
+                pedido.ventanaEntrega
+        });
+
+        await HistorialPedido.create({
+            pedidoId:
+                pedido.id,
+
+            estado:
+                'CONFIRMACION_EMAIL',
+
+            descripcion:
+                'Confirmación enviada por correo después de aprobarse el pago'
+        });
+
+        console.log('Correo de pago aprobado enviado correctamente.');
+    } catch (emailError) {
+        console.error('====================================');
+        console.error('ERROR ENVIANDO CORREO DE PAGO APROBADO');
+        console.error('Mensaje:', emailError.message);
+        console.error('Código:', emailError.code);
+        console.error('Comando:', emailError.command);
+        console.error('Respuesta:', emailError.response);
+        console.error('Stack:', emailError.stack);
+        console.error('====================================');
+    }
+}
+
+async function applyMercadoPagoPaymentToOrder(payment) {
+    const codigoRastreo = normalizeText(
+        payment?.external_reference,
+        30
+    );
+
+    if (!codigoRastreo) {
+        console.warn(
+            'Pago Mercado Pago sin external_reference:',
+            payment?.id
+        );
+
+        return null;
+    }
+
+    const pedido = await Pedido.findOne({
+        where: {
+            codigoRastreo
+        }
+    });
+
+    if (!pedido) {
+        console.warn(
+            'No existe pedido para el pago:',
+            {
+                paymentId: payment?.id,
+                codigoRastreo
+            }
+        );
+
+        return null;
+    }
+
+    const paymentStatus = normalizeText(
+        payment?.status,
+        50
+    ).toLowerCase();
+
+    const detectedPaymentMethod = getPaymentMethodForOrder(
+        payment
+    );
+
+    const paymentMethod =
+        detectedPaymentMethod === 'MERCADO_PAGO' &&
+        pedido.metodoPago
+            ? pedido.metodoPago
+            : detectedPaymentMethod;
+
+    const paymentAmount = Number(
+        payment?.transaction_amount
+    );
+
+    const orderAmount = Number(
+        pedido.total
+    );
+
+    const currencyId = normalizeText(
+        payment?.currency_id,
+        10
+    ).toUpperCase();
+
+    if (
+        paymentStatus === 'approved' &&
+        (
+            !Number.isFinite(paymentAmount) ||
+            Math.abs(paymentAmount - orderAmount) > 0.01 ||
+            currencyId !== 'MXN'
+        )
+    ) {
+        console.error(
+            'Pago aprobado con importe o moneda inesperados:',
+            {
+                pedidoId: pedido.id,
+                paymentId: payment?.id,
+                paymentAmount,
+                orderAmount,
+                currencyId
+            }
+        );
+
+        await pedido.update({
+            estadoPago: 'REVISION',
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    if (paymentStatus === 'approved') {
+        const paymentDate =
+            pedido.pagadoEn ||
+            (
+                payment?.date_approved
+                    ? new Date(payment.date_approved)
+                    : new Date()
+            );
+
+        await pedido.update({
+            estadoPago: 'PAGADO',
+            pagadoEn: paymentDate,
+            referenciaPago: String(payment?.id || ''),
+            origen: 'WEB',
+            canalCierre: 'MERCADO_PAGO',
+            metodoPago: paymentMethod,
+            estado:
+                pedido.estado === 'PENDIENTE'
+                    ? 'RECIBIDO'
+                    : pedido.estado,
+            actualizadoEn: new Date()
+        });
+
+        console.log(
+            '✅ Venta Mercado Pago confirmada:',
+            {
+                pedidoId: pedido.id,
+                codigoRastreo: pedido.codigoRastreo,
+                total: pedido.total,
+                paymentId: payment?.id,
+                paymentMethod
+            }
+        );
+
+        await enviarCorreoPedidoPagado(
+            pedido
+        );
+
+        return pedido;
+    }
+
+    if (
+        paymentStatus === 'pending' ||
+        paymentStatus === 'in_process'
+    ) {
+        await pedido.update({
+            estadoPago: 'PENDIENTE',
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    if (
+        [
+            'rejected',
+            'cancelled',
+            'refunded',
+            'charged_back'
+        ].includes(paymentStatus)
+    ) {
+        await pedido.update({
+            estadoPago: paymentStatus.toUpperCase(),
+            referenciaPago: String(payment?.id || ''),
+            metodoPago: paymentMethod,
+            actualizadoEn: new Date()
+        });
+
+        return pedido;
+    }
+
+    return pedido;
+}
+
+async function applyMercadoPagoOrderToPedido(order) {
+    return applyMercadoPagoPaymentToOrder(
+        normalizeOrderAsPayment(order)
+    );
+}
+
+function obtenerConfiguracionPublica(req, res, next) {
+    try {
+        return res.status(200).json({
+            ok: true,
+            publicKey: getPublicKey()
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+async function cotizarCarrito(req, res, next) {
+    try {
+        await verificarCierreDePedidos();
+
+        const productItems = await buildPreferenceItems(
+            req.body?.items
+        );
+
+        validateDelivery(
+            req.body?.delivery
+        );
+
+        if (
+            !Number.isFinite(DELIVERY_COST) ||
+            DELIVERY_COST < 0
+        ) {
+            throw configurationError(
+                'DELIVERY_COST no es un número válido'
+            );
+        }
+
+        const subtotal = calcularSubtotalProductos(
+            productItems
+        );
+
+        return res.status(200).json({
+            ok: true,
+            currencyId: 'MXN',
+            subtotal,
+            deliveryCost: DELIVERY_COST,
+            total: subtotal + DELIVERY_COST
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+async function crearPagoTarjeta(req, res, next) {
+    let pedido;
+    let orderCreated = false;
+
+    try {
+        const cardPayment = validateCardPaymentData(
+            req.body?.payment
+        );
+
+        const orderData = await createPendingOrderFromCart({
+            body: req.body,
+            paymentMethod: 'TARJETA_MERCADO_PAGO'
+        });
+
+        pedido = orderData.pedido;
+
+        const frontendUrl = getAbsoluteUrl(
+            'FRONTEND_PUBLIC_URL'
+        );
+
+        const orderClient = new Order(
+            getClient()
+        );
+
+        const mercadoPagoOrder = await orderClient.create({
+            body: buildCardOrderBody({
+                amount: orderData.total,
+                externalReference:
+                    orderData.codigoRastreo,
+                payerEmail:
+                    orderData.delivery.customerEmail,
+                identification:
+                    cardPayment.identification,
+                paymentMethodId:
+                    cardPayment.paymentMethodId,
+                paymentTypeId:
+                    cardPayment.paymentTypeId,
+                token: cardPayment.token,
+                installments:
+                    cardPayment.installments
+            }),
+            requestOptions: {
+                idempotencyKey:
+                    getCheckoutAttemptId(
+                        req.body?.checkoutAttemptId
+                    )
+            }
+        });
+
+        orderCreated = true;
+
+        await applyMercadoPagoOrderToPedido(
+            mercadoPagoOrder
+        );
+
+        const payment = getOrderPayment(
+            mercadoPagoOrder
+        );
+
+        const status = normalizeOrderStatus(
+            mercadoPagoOrder
+        );
+
+        const statusDetail = getOrderStatusDetail(
+            mercadoPagoOrder
+        );
+
+        const resultUrl =
+            `${frontendUrl}/pago.html?order_id=${encodeURIComponent(
+                mercadoPagoOrder.id
+            )}&resultado=${encodeURIComponent(
+                status
+            )}`;
+
+        const challengeUrl = getOrderChallengeUrl(
+            mercadoPagoOrder
+        );
+
+        const requiresChallenge =
+            statusDetail === 'pending_challenge' &&
+            Boolean(challengeUrl);
+
+        return res.status(201).json({
+            ok: true,
+            orderId: mercadoPagoOrder.id,
+            paymentId: payment?.id || null,
+            status,
+            statusDetail,
+            codigoRastreo: orderData.codigoRastreo,
+            resultUrl,
+            redirectUrl:
+                requiresChallenge
+                    ? null
+                    : resultUrl,
+            challenge:
+                requiresChallenge
+                    ? {
+                        url: challengeUrl
+                    }
+                    : null
+        });
+    } catch (error) {
+        if (pedido && !orderCreated) {
+            try {
+                await pedido.update({
+                    estadoPago: 'ERROR',
+                    actualizadoEn: new Date()
+                });
+            } catch (updateError) {
+                console.error(
+                    'No fue posible marcar el pedido con error de pago:',
+                    updateError
+                );
+            }
+        }
+
+        console.error(
+            'Error procesando tarjeta con Mercado Pago:',
+            {
+                message: error.message,
+                status: error.status,
+                cause: error.cause
+            }
+        );
+
+        return next(error);
+    }
+}
+
+async function crearPagoOxxo(req, res, next) {
+    let pedido;
+    let orderCreated = false;
+
+    try {
+        const orderData = await createPendingOrderFromCart({
+            body: req.body,
+            paymentMethod: 'OXXO_MERCADO_PAGO'
+        });
+
+        pedido = orderData.pedido;
+
+        const orderClient = new Order(
+            getClient()
+        );
+
+        const mercadoPagoOrder = await orderClient.create({
+            body: buildOxxoOrderBody({
+                amount: orderData.total,
+                externalReference:
+                    orderData.codigoRastreo,
+                payerEmail:
+                    orderData.delivery.customerEmail,
+                payerName:
+                    orderData.delivery.receiverName
+            }),
+            requestOptions: {
+                idempotencyKey:
+                    getCheckoutAttemptId(
+                        req.body?.checkoutAttemptId
+                    )
+            }
+        });
+
+        orderCreated = true;
+
+        await applyMercadoPagoOrderToPedido(
+            mercadoPagoOrder
+        );
+
+        const payment = getOrderPayment(
+            mercadoPagoOrder
+        );
+
+        const ticketUrl = getOrderTicketUrl(
+            mercadoPagoOrder
+        );
+
+        return res.status(201).json({
+            ok: true,
+            orderId: mercadoPagoOrder.id,
+            paymentId: payment?.id || null,
+            status: normalizeOrderStatus(
+                mercadoPagoOrder
+            ),
+            statusDetail: getOrderStatusDetail(
+                mercadoPagoOrder
+            ),
+            codigoRastreo: orderData.codigoRastreo,
+            ticketUrl
+        });
+    } catch (error) {
+        if (pedido && !orderCreated) {
+            try {
+                await pedido.update({
+                    estadoPago: 'ERROR',
+                    actualizadoEn: new Date()
+                });
+            } catch (updateError) {
+                console.error(
+                    'No fue posible marcar el pedido OXXO con error:',
+                    updateError
+                );
+            }
+        }
+
+        console.error(
+            'Error creando pago OXXO con Mercado Pago:',
+            {
+                message: error.message,
+                status: error.status,
+                cause: error.cause
+            }
+        );
+
+        return next(error);
+    }
+}
+
 async function crearPreferencia(
     req,
     res,
@@ -676,7 +1416,6 @@ async function crearPreferencia(
             await sequelize.transaction();
 
         const {
-            cliente,
             pedido,
             codigoRastreo
         } =
@@ -797,53 +1536,6 @@ async function crearPreferencia(
         await transaction.commit();
         transaction = null;
 
-        /*
-         * Implementación temporal:
-         * envía el correo antes de confirmar el pago.
-         *
-         * Después moveremos esta llamada al webhook
-         * cuando payment.status sea approved.
-         */
-        let emailSent = true;
-        let emailWarning = null;
-
-        try {
-
-            console.log('------------------------------------');
-            console.log('Intentando enviar correo...');
-            console.log('Cliente:', cliente.nombre);
-            console.log('Correo:', delivery.customerEmail);
-            console.log('Código:', codigoRastreo);
-            console.log('------------------------------------');
-
-            await enviarCorreoCodigoRastreo({
-                email: delivery.customerEmail,
-                nombreCliente: cliente.nombre,
-                codigoRastreo,
-                total,
-                fechaEntrega: delivery.date,
-                ventanaEntrega: delivery.slot
-            });
-
-            console.log('Correo enviado correctamente.');
-
-        } catch (emailError) {
-
-            console.error('====================================');
-            console.error('ERROR ENVIANDO CORREO');
-            console.error('Mensaje:', emailError.message);
-            console.error('Código:', emailError.code);
-            console.error('Comando:', emailError.command);
-            console.error('Respuesta:', emailError.response);
-            console.error('Stack:', emailError.stack);
-            console.error('====================================');
-
-            emailSent = false;
-
-            emailWarning =
-                'El pedido fue creado, pero no se pudo enviar el correo.';
-        }
-
         return res.status(201).json({
             ok: true,
             preferenceId:
@@ -851,8 +1543,6 @@ async function crearPreferencia(
             externalReference,
             codigoRastreo,
             pedidoId: pedido.id,
-            emailSent,
-            emailWarning,
             redirectUrl
         });
     } catch (error) {
@@ -882,17 +1572,62 @@ async function crearPreferencia(
 
 async function obtenerPago(req, res, next) {
     try {
-        const paymentId = normalizeText(req.params.id, 60);
+        const operationId = normalizeText(req.params.id, 80);
 
-        if (!/^\d+$/.test(paymentId)) {
+        if (/^ORD[A-Z0-9_-]+$/i.test(operationId)) {
+            const orderClient = new Order(getClient());
+            const mercadoPagoOrder = await orderClient.get({
+                id: operationId
+            });
+
+            await applyMercadoPagoOrderToPedido(
+                mercadoPagoOrder
+            );
+
+            const payment = getOrderPayment(
+                mercadoPagoOrder
+            );
+
+            const normalizedPayment = normalizeOrderAsPayment(
+                mercadoPagoOrder
+            );
+
+            return res.status(200).json({
+                ok: true,
+                data: {
+                    id: mercadoPagoOrder.id,
+                    paymentId: payment?.id || null,
+                    status: normalizedPayment.status,
+                    statusDetail:
+                        normalizedPayment.status_detail,
+                    externalReference:
+                        normalizedPayment.external_reference,
+                    transactionAmount:
+                        normalizedPayment.transaction_amount,
+                    currencyId:
+                        normalizedPayment.currency_id,
+                    dateApproved:
+                        normalizedPayment.date_approved,
+                    ticketUrl: getOrderTicketUrl(
+                        mercadoPagoOrder
+                    )
+                }
+            });
+        }
+
+        if (!/^\d+$/.test(operationId)) {
             return res.status(400).json({
                 ok: false,
-                message: 'El identificador del pago no es válido'
+                message: 'El identificador de la operación no es válido'
             });
         }
 
         const paymentClient = new Payment(getClient());
-        const payment = await paymentClient.get({ id: paymentId });
+        const payment = await paymentClient.get({ id: operationId });
+
+        await applyMercadoPagoPaymentToOrder(
+            payment
+        );
 
         return res.status(200).json({
             ok: true,
@@ -913,17 +1648,21 @@ async function obtenerPago(req, res, next) {
 
 async function recibirWebhook(req, res, next) {
     try {
-        const type = normalizeText(req.query.type || req.body?.type, 50);
-        const paymentId = normalizeText(
+        const type = normalizeText(
+            req.query.type || req.body?.type,
+            50
+        ).toLowerCase();
+
+        const resourceId = normalizeText(
             req.query['data.id'] || req.body?.data?.id,
-            60
+            80
         );
 
-        if (type && type !== 'payment') {
+        if (type && !['payment', 'order'].includes(type)) {
             return res.sendStatus(200);
         }
 
-        if (!paymentId) {
+        if (!resourceId) {
             return res.sendStatus(200);
         }
 
@@ -933,7 +1672,7 @@ async function recibirWebhook(req, res, next) {
             WebhookSignatureValidator.validate({
                 xSignature: req.headers['x-signature'],
                 xRequestId: req.headers['x-request-id'],
-                dataId: paymentId,
+                dataId: resourceId,
                 secret: webhookSecret
             });
         } else if (process.env.NODE_ENV === 'production') {
@@ -942,219 +1681,56 @@ async function recibirWebhook(req, res, next) {
             );
         }
 
-        const paymentClient =
-            new Payment(
-                getClient()
-            );
+        const isOrderEvent =
+            type === 'order' ||
+            /^ORD[A-Z0-9_-]+$/i.test(resourceId);
 
-        const payment =
-            await paymentClient.get({
-                id: paymentId
+        if (isOrderEvent) {
+            const orderClient = new Order(getClient());
+            const mercadoPagoOrder = await orderClient.get({
+                id: resourceId
             });
-
-        console.log(
-            'Webhook Mercado Pago verificado:',
-            {
-                paymentId:
-                    payment.id,
-
-                status:
-                    payment.status,
-
-                statusDetail:
-                    payment.status_detail,
-
-                externalReference:
-                    payment.external_reference,
-
-                amount:
-                    payment.transaction_amount,
-
-                liveMode:
-                    payment.live_mode
-            }
-        );
-
-
-        /*
-         * ==========================================================
-         * ACTUALIZAR PEDIDO REAL
-         * ==========================================================
-         */
-
-        const codigoRastreo =
-            normalizeText(
-                payment.external_reference,
-                30
-            );
-
-        if (!codigoRastreo) {
-            console.warn(
-                'Pago Mercado Pago sin external_reference:',
-                payment.id
-            );
-
-            return res.sendStatus(200);
-        }
-
-
-        const pedido =
-            await Pedido.findOne({
-                where: {
-                    codigoRastreo
-                }
-            });
-
-
-        if (!pedido) {
-            console.warn(
-                'No existe pedido para el pago:',
-                {
-                    paymentId:
-                        payment.id,
-
-                    codigoRastreo
-                }
-            );
-
-            return res.sendStatus(200);
-        }
-
-
-        const paymentStatus =
-            String(
-                payment.status || ''
-            )
-                .trim()
-                .toLowerCase();
-
-
-        /*
-         * ==========================================================
-         * PAGO APROBADO = VENTA REAL
-         * ==========================================================
-         */
-        if (
-            paymentStatus === 'approved'
-        ) {
-            /*
-             * Evitamos modificar pagadoEn
-             * si el webhook llega repetido.
-             */
-            const paymentDate =
-                pedido.pagadoEn ||
-                (
-                    payment.date_approved
-                        ? new Date(
-                            payment.date_approved
-                        )
-                        : new Date()
-                );
-
-            await pedido.update({
-                estadoPago:
-                    'PAGADO',
-
-                pagadoEn:
-                    paymentDate,
-
-                referenciaPago:
-                    String(
-                        payment.id
-                    ),
-
-                origen:
-                    'WEB',
-
-                canalCierre:
-                    'MERCADO_PAGO',
-
-                metodoPago:
-                    'MERCADO_PAGO',
-
-                /*
-                 * Una venta aprobada ya puede pasar
-                 * al flujo de preparación.
-                 */
-                estado:
-                    pedido.estado === 'PENDIENTE'
-                        ? 'RECIBIDO'
-                        : pedido.estado,
-
-                actualizadoEn:
-                    new Date()
-            });
-
 
             console.log(
-                '✅ Venta Mercado Pago confirmada:',
+                'Webhook de orden Mercado Pago verificado:',
                 {
-                    pedidoId:
-                        pedido.id,
-
-                    codigoRastreo:
-                        pedido.codigoRastreo,
-
-                    total:
-                        pedido.total,
-
-                    paymentId:
-                        payment.id
+                    orderId: mercadoPagoOrder.id,
+                    status: mercadoPagoOrder.status,
+                    statusDetail:
+                        mercadoPagoOrder.status_detail,
+                    externalReference:
+                        mercadoPagoOrder.external_reference,
+                    amount:
+                        mercadoPagoOrder.total_amount
                 }
             );
 
-            return res.sendStatus(200);
-        }
-
-
-        /*
-         * ==========================================================
-         * PAGO PENDIENTE
-         * ==========================================================
-         */
-        if (
-            paymentStatus === 'pending' ||
-            paymentStatus === 'in_process'
-        ) {
-            await pedido.update({
-                estadoPago:
-                    'PENDIENTE',
-
-                actualizadoEn:
-                    new Date()
+            await applyMercadoPagoOrderToPedido(
+                mercadoPagoOrder
+            );
+        } else {
+            const paymentClient = new Payment(getClient());
+            const payment = await paymentClient.get({
+                id: resourceId
             });
 
-            return res.sendStatus(200);
+            console.log(
+                'Webhook de pago Mercado Pago verificado:',
+                {
+                    paymentId: payment.id,
+                    status: payment.status,
+                    statusDetail: payment.status_detail,
+                    externalReference:
+                        payment.external_reference,
+                    amount: payment.transaction_amount,
+                    liveMode: payment.live_mode
+                }
+            );
+
+            await applyMercadoPagoPaymentToOrder(
+                payment
+            );
         }
-
-
-        /*
-         * ==========================================================
-         * PAGO RECHAZADO / CANCELADO
-         * ==========================================================
-         */
-        if (
-            [
-                'rejected',
-                'cancelled',
-                'refunded',
-                'charged_back'
-            ].includes(
-                paymentStatus
-            )
-        ) {
-            await pedido.update({
-                estadoPago:
-                    paymentStatus
-                        .toUpperCase(),
-
-                actualizadoEn:
-                    new Date()
-            });
-
-            return res.sendStatus(200);
-        }
-
 
         return res.sendStatus(200);
     } catch (error) {
@@ -1167,7 +1743,11 @@ async function recibirWebhook(req, res, next) {
 }
 
 module.exports = {
+    obtenerConfiguracionPublica,
+    cotizarCarrito,
     crearPreferencia,
+    crearPagoTarjeta,
+    crearPagoOxxo,
     obtenerPago,
     recibirWebhook
 };
