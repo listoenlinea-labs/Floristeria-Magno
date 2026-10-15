@@ -4,7 +4,7 @@
  */
 function normalizePublicImageUrl(value) {
     if (typeof value !== 'string' || !value.trim()) return value;
-    const base = String(process.env.PUBLIC_API_URL || '').trim().replace(/\\/+$/, '');
+    const base = String(process.env.PUBLIC_API_URL || '').trim().replace(/\/+$/, '');
     if (!base) return value;
     let suffix;
     if (value.startsWith('/uploads/')) suffix = value;
@@ -14,11 +14,11 @@ function normalizePublicImageUrl(value) {
             if (!['http:', 'https:'].includes(url.protocol)) return value;
             if (!url.pathname.startsWith('/uploads/')) return value;
             // La migración afecta únicamente archivos subidos por la tienda.
-            if (!/^\\/uploads\\/(productos|galeria)\\/[^/]+$/.test(url.pathname)) return value;
+            if (!/^\/uploads\/(productos|galeria)\/[^/]+$/.test(url.pathname)) return value;
             suffix = url.pathname + url.search;
         } catch { return value; }
     }
-    if (!/^\\/uploads\\/(productos|galeria)\\/[^/]+$/.test(suffix.split('?')[0])) return value;
+    if (!/^\/uploads\/(productos|galeria)\/[^/]+$/.test(suffix.split('?')[0])) return value;
     return base + suffix;
 }
 

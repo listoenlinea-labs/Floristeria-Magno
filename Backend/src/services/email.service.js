@@ -202,11 +202,11 @@ async function enviarAvisoAdministrador({
     const destinatario = String(
         process.env.ORDER_ADMIN_EMAIL || 'soluciones@listoenlinea.com'
     ).trim();
-    if (!destinatario || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(destinatario)) {
+    if (!destinatario || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destinatario)) {
         throw new Error('ORDER_ADMIN_EMAIL debe ser un correo válido');
     }
     const frontendUrl = String(process.env.FRONTEND_PUBLIC_URL || '')
-        .trim().replace(/\\/+$/, '');
+        .trim().replace(/\/+$/, '');
     const trackingUrl = frontendUrl
         ? `${frontendUrl}/rastreo.html?codigo=${encodeURIComponent(codigoRastreo)}`
         : '';
@@ -226,7 +226,7 @@ async function enviarAvisoAdministrador({
         from: `"Floristería Magno" <${fromEmail}>`,
         to: destinatario,
         subject: `Nuevo pedido pagado · ${codigoRastreo}`,
-        text: lines.join('\\n'),
+        text: lines.join('\n'),
         html: '<div style="font-family:Arial,sans-serif;color:#2b2022;line-height:1.7">' +
             '<h2>Nuevo pedido pagado</h2>' +
             lines.map(line => `<p>${escapeHtml(line)}</p>`).join('') +
