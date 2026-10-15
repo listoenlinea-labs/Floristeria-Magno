@@ -97,3 +97,11 @@ además un respaldo externo (S3/R2/Cloudinary u otro proveedor independiente).
 
 **Limitación:** dos carpetas del mismo hosting no garantizan recuperación ante borrado
 de la cuenta, pérdida total del disco o reconfiguración que elimine ambas carpetas.
+
+## URLs con dominio anterior
+
+El backend normaliza en las respuestas de productos y galería las URLs que
+terminan en `/uploads/productos/archivo` o `/uploads/galeria/archivo`
+para apuntar a `PUBLIC_API_URL`. No altera los registros de MySQL ni URLs
+externas sin la ruta identificable. Se mantienen los nombres de archivo.
+**Si ya no existe el archivo físico**, normalizar una URL no puede recuperarlo.

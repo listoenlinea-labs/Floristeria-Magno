@@ -449,11 +449,19 @@ async function getImageStorageStatus() {
         };
     }
 
+    const problems = [];
+    for (const [folder, totals] of Object.entries(folders)) {
+        if (totals.primary !== totals.backup) {
+            problems.push(`${folder}: primary=${totals.primary}, backup=${totals.backup}`);
+        }
+    }
     return {
-        protected:
-            true,
-        strategy:
-            'persistent-primary-plus-local-backup',
+        protected: problems.length === 0,
+        strategy: 'persistent-primary-plus-local-backup',
+        warning: problems.length
+            ? 'Se detectaron diferencias entre almacenamiento principal y respaldo'
+            : null,
+        discrepancies: problems,
         folders
     };
 }

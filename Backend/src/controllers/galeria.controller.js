@@ -1,3 +1,4 @@
+const { normalizeImagesInRecord } = require('../services/public-image-url.service');
 const { Op } = require('sequelize');
 const { Galeria } = require('../models');
 
@@ -168,7 +169,7 @@ async function listarGaleria(req, res, next) {
         res.status(200).json({
             ok: true,
             total: imagenes.length,
-            data: imagenes
+            data: imagenes.map(normalizeImagesInRecord)
         });
     } catch (error) {
         next(error);
@@ -192,7 +193,7 @@ async function obtenerImagenGaleria(req, res, next) {
 
         res.status(200).json({
             ok: true,
-            data: imagen
+            data: normalizeImagesInRecord(imagen)
         });
     } catch (error) {
         next(error);
