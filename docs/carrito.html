@@ -1218,6 +1218,47 @@
       }
     });
 
+    async function waitForOxxoTicket(orderId, initialTicketUrl) {
+      if (initialTicketUrl) {
+        return initialTicketUrl;
+      }
+
+      if (!orderId) {
+        throw new Error('Mercado Pago no devolvió el identificador de la orden.');
+      }
+
+      for (let attempt = 0; attempt < 12; attempt += 1) {
+        await new Promise(resolve => window.setTimeout(resolve, 1000));
+
+        const response = await fetch(
+          `${BACKEND_BASE_URL}/api/mercadopago/payment/${encodeURIComponent(orderId)}`,
+          {
+            headers: {
+              Accept: 'application/json'
+            }
+          }
+        );
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.data) {
+          continue;
+        }
+
+        if (result.data.ticketUrl) {
+          return result.data.ticketUrl;
+        }
+
+        if (['rejected', 'cancelled'].includes(result.data.status)) {
+          throw new Error('Mercado Pago no pudo generar la ficha de OXXO.');
+        }
+      }
+
+      throw new Error(
+        'Mercado Pago está tardando en generar la ficha de OXXO. Inténtalo nuevamente en unos minutos.'
+      );
+    }
+
     oxxoPaymentOption.addEventListener('click', async () => {
       const items = getCartItems();
       const validationMessage = validateCheckout(items);
@@ -1254,18 +1295,23 @@
 
         const result = await response.json().catch(() => ({}));
 
-        if (!response.ok || !result.ticketUrl) {
+        if (!response.ok || !result.orderId) {
           throw new Error(
             result.message || 'No fue posible generar la ficha de pago en OXXO.'
           );
         }
+
+        const ticketUrl = await waitForOxxoTicket(
+          result.orderId,
+          result.ticketUrl
+        );
 
         paymentOptionsModal.hide();
         setCheckoutMessage(
           'La ficha de OXXO se abrió en una pestaña nueva. El pedido se confirmará cuando Mercado Pago acredite el efectivo.',
           'success'
         );
-        oxxoWindow.location.replace(result.ticketUrl);
+        oxxoWindow.location.replace(ticketUrl);
       } catch (error) {
         console.error('Error creando pago OXXO:', error);
 
@@ -1305,7 +1351,7 @@
       const challengeUrl = result?.challenge?.url;
       const creq = result?.challenge?.creq;
 
-      if (!challengeUrl || !creq || !result?.resultUrl) {
+      if (!challengeUrl || !result?.resultUrl) {
         throw new Error(
           'Mercado Pago solicitó una verificación bancaria, pero no devolvió los datos necesarios.'
         );
@@ -1315,22 +1361,26 @@
       cardPaymentBrickContainer.hidden = true;
       threeDsChallenge.hidden = false;
 
-      const frameDocument = threeDsFrame.contentWindow.document;
-      frameDocument.body.innerHTML = '';
-      frameDocument.body.style.margin = '0';
+      if (creq) {
+        const frameDocument = threeDsFrame.contentWindow.document;
+        frameDocument.body.innerHTML = '';
+        frameDocument.body.style.margin = '0';
 
-      const challengeForm = frameDocument.createElement('form');
-      challengeForm.method = 'post';
-      challengeForm.action = challengeUrl;
+        const challengeForm = frameDocument.createElement('form');
+        challengeForm.method = 'post';
+        challengeForm.action = challengeUrl;
 
-      const creqInput = frameDocument.createElement('input');
-      creqInput.type = 'hidden';
-      creqInput.name = 'creq';
-      creqInput.value = creq;
+        const creqInput = frameDocument.createElement('input');
+        creqInput.type = 'hidden';
+        creqInput.name = 'creq';
+        creqInput.value = creq;
 
-      challengeForm.appendChild(creqInput);
-      frameDocument.body.appendChild(challengeForm);
-      challengeForm.submit();
+        challengeForm.appendChild(creqInput);
+        frameDocument.body.appendChild(challengeForm);
+        challengeForm.submit();
+      } else {
+        threeDsFrame.src = challengeUrl;
+      }
 
       setCardPaymentMessage(
         'Completa la validación de tu banco. No cierres esta ventana.',
@@ -1413,7 +1463,7 @@
               onReady: () => {
                 cardPaymentLoading.hidden = true;
               },
-              onSubmit: async formData => {
+              onSubmit: async (formData, additionalData) => {
                 setCardPaymentMessage(
                   'Procesando el pago de forma segura…',
                   'info'
@@ -1427,7 +1477,12 @@
                     },
                     body: JSON.stringify({
                       ...buildCheckoutRequest(items),
-                      payment: formData,
+                      payment: {
+                        ...formData,
+                        payment_type_id:
+                          additionalData?.paymentTypeId ||
+                          formData.payment_type_id
+                      },
                       checkoutAttemptId: createCheckoutAttemptId()
                     })
                   });

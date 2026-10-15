@@ -10,6 +10,7 @@ const {
     MercadoPagoConfig,
     Preference,
     Payment,
+    Order,
     WebhookSignatureValidator,
     InvalidWebhookSignatureError
 } = require('mercadopago');
@@ -27,6 +28,17 @@ const {
     enviarCorreoCodigoRastreo,
     enviarAvisoAdministrador
 } = require('../services/email.service');
+
+const {
+    buildCardOrderBody,
+    buildOxxoOrderBody,
+    getOrderChallengeUrl,
+    getOrderPayment,
+    getOrderStatusDetail,
+    getOrderTicketUrl,
+    normalizeOrderAsPayment,
+    normalizeOrderStatus
+} = require('../services/mercadopago-orders.service');
 
 const DELIVERY_COST = Number(process.env.DELIVERY_COST || 120);
 
@@ -663,15 +675,6 @@ function getPaymentMethodForOrder(payment) {
     return 'MERCADO_PAGO';
 }
 
-function getPaymentExternalUrl(payment) {
-    return (
-        payment?.three_ds_info?.external_resource_url ||
-        payment?.point_of_interaction?.transaction_data?.ticket_url ||
-        payment?.transaction_details?.external_resource_url ||
-        null
-    );
-}
-
 function getCheckoutAttemptId(value) {
     const attemptId = normalizeText(value, 80);
 
@@ -699,19 +702,15 @@ function validateCardPaymentData(paymentData) {
         50
     ).toLowerCase();
 
+    const paymentTypeId = normalizeText(
+        paymentData?.payment_type_id ||
+            paymentData?.paymentTypeId,
+        50
+    ).toLowerCase();
+
     const installments = Number(
         paymentData?.installments
     );
-
-    const issuerIdRaw = normalizeText(
-        paymentData?.issuer_id ||
-            paymentData?.issuerId,
-        50
-    );
-
-    const issuerId = issuerIdRaw
-        ? Number(issuerIdRaw)
-        : null;
 
     const identificationType = normalizeText(
         paymentData?.payer?.identification?.type,
@@ -736,6 +735,18 @@ function validateCardPaymentData(paymentData) {
     }
 
     if (
+        ![
+            'credit_card',
+            'debit_card',
+            'prepaid_card'
+        ].includes(paymentTypeId)
+    ) {
+        throw createHttpError(
+            'Mercado Pago no identificó el tipo de tarjeta'
+        );
+    }
+
+    if (
         !Number.isInteger(installments) ||
         installments < 1 ||
         installments > 24
@@ -745,23 +756,11 @@ function validateCardPaymentData(paymentData) {
         );
     }
 
-    if (
-        issuerIdRaw &&
-        (
-            !Number.isInteger(issuerId) ||
-            issuerId <= 0
-        )
-    ) {
-        throw createHttpError(
-            'El emisor de la tarjeta no es válido'
-        );
-    }
-
     return {
         token,
         paymentMethodId,
+        paymentTypeId,
         installments,
-        issuerId,
         identification:
             identificationType && identificationNumber
                 ? {
@@ -929,9 +928,15 @@ async function applyMercadoPagoPaymentToOrder(payment) {
         50
     ).toLowerCase();
 
-    const paymentMethod = getPaymentMethodForOrder(
+    const detectedPaymentMethod = getPaymentMethodForOrder(
         payment
     );
+
+    const paymentMethod =
+        detectedPaymentMethod === 'MERCADO_PAGO' &&
+        pedido.metodoPago
+            ? pedido.metodoPago
+            : detectedPaymentMethod;
 
     const paymentAmount = Number(
         payment?.transaction_amount
@@ -1051,6 +1056,12 @@ async function applyMercadoPagoPaymentToOrder(payment) {
     return pedido;
 }
 
+async function applyMercadoPagoOrderToPedido(order) {
+    return applyMercadoPagoPaymentToOrder(
+        normalizeOrderAsPayment(order)
+    );
+}
+
 function obtenerConfiguracionPublica(req, res, next) {
     try {
         return res.status(200).json({
@@ -1101,7 +1112,7 @@ async function cotizarCarrito(req, res, next) {
 
 async function crearPagoTarjeta(req, res, next) {
     let pedido;
-    let paymentCreated = false;
+    let orderCreated = false;
 
     try {
         const cardPayment = validateCardPaymentData(
@@ -1115,60 +1126,31 @@ async function crearPagoTarjeta(req, res, next) {
 
         pedido = orderData.pedido;
 
-        const publicApiUrl = getAbsoluteUrl(
-            'PUBLIC_API_URL'
-        );
-
         const frontendUrl = getAbsoluteUrl(
             'FRONTEND_PUBLIC_URL'
         );
 
-        const payer = {
-            email: orderData.delivery.customerEmail
-        };
-
-        if (cardPayment.identification) {
-            payer.identification = cardPayment.identification;
-        }
-
-        const paymentBody = {
-            transaction_amount: orderData.total,
-            description:
-                `Pedido floral ${orderData.codigoRastreo}`,
-            token: cardPayment.token,
-            installments: cardPayment.installments,
-            payment_method_id:
-                cardPayment.paymentMethodId,
-            payer,
-            external_reference:
-                orderData.codigoRastreo,
-            notification_url:
-                `${publicApiUrl}/api/mercadopago/webhook`,
-            capture: true,
-            binary_mode: false,
-            three_d_secure_mode: 'optional',
-            statement_descriptor:
-                'JUAN H MAGNO',
-            metadata: {
-                pedido_id: pedido.id,
-                codigo_rastreo:
-                    orderData.codigoRastreo,
-                payment_flow:
-                    'embedded_card'
-            }
-        };
-
-        if (cardPayment.issuerId !== null) {
-            paymentBody.issuer_id =
-                cardPayment.issuerId;
-        }
-
-        const paymentClient = new Payment(
+        const orderClient = new Order(
             getClient()
         );
 
-        const payment = await paymentClient.create({
-            body: paymentBody,
+        const mercadoPagoOrder = await orderClient.create({
+            body: buildCardOrderBody({
+                amount: orderData.total,
+                externalReference:
+                    orderData.codigoRastreo,
+                payerEmail:
+                    orderData.delivery.customerEmail,
+                identification:
+                    cardPayment.identification,
+                paymentMethodId:
+                    cardPayment.paymentMethodId,
+                paymentTypeId:
+                    cardPayment.paymentTypeId,
+                token: cardPayment.token,
+                installments:
+                    cardPayment.installments
+            }),
             requestOptions: {
                 idempotencyKey:
                     getCheckoutAttemptId(
@@ -1177,32 +1159,45 @@ async function crearPagoTarjeta(req, res, next) {
             }
         });
 
-        paymentCreated = true;
+        orderCreated = true;
 
-        await applyMercadoPagoPaymentToOrder(
-            payment
+        await applyMercadoPagoOrderToPedido(
+            mercadoPagoOrder
+        );
+
+        const payment = getOrderPayment(
+            mercadoPagoOrder
+        );
+
+        const status = normalizeOrderStatus(
+            mercadoPagoOrder
+        );
+
+        const statusDetail = getOrderStatusDetail(
+            mercadoPagoOrder
         );
 
         const resultUrl =
-            `${frontendUrl}/pago.html?payment_id=${encodeURIComponent(
-                payment.id
+            `${frontendUrl}/pago.html?order_id=${encodeURIComponent(
+                mercadoPagoOrder.id
             )}&resultado=${encodeURIComponent(
-                payment.status || 'pending'
+                status
             )}`;
 
+        const challengeUrl = getOrderChallengeUrl(
+            mercadoPagoOrder
+        );
+
         const requiresChallenge =
-            payment.status === 'pending' &&
-            payment.status_detail === 'pending_challenge' &&
-            Boolean(
-                payment?.three_ds_info?.external_resource_url &&
-                payment?.three_ds_info?.creq
-            );
+            statusDetail === 'pending_challenge' &&
+            Boolean(challengeUrl);
 
         return res.status(201).json({
             ok: true,
-            paymentId: payment.id,
-            status: payment.status,
-            statusDetail: payment.status_detail,
+            orderId: mercadoPagoOrder.id,
+            paymentId: payment?.id || null,
+            status,
+            statusDetail,
             codigoRastreo: orderData.codigoRastreo,
             resultUrl,
             redirectUrl:
@@ -1212,16 +1207,12 @@ async function crearPagoTarjeta(req, res, next) {
             challenge:
                 requiresChallenge
                     ? {
-                        url:
-                            payment.three_ds_info
-                                .external_resource_url,
-                        creq:
-                            payment.three_ds_info.creq
+                        url: challengeUrl
                     }
                     : null
         });
     } catch (error) {
-        if (pedido && !paymentCreated) {
+        if (pedido && !orderCreated) {
             try {
                 await pedido.update({
                     estadoPago: 'ERROR',
@@ -1250,7 +1241,7 @@ async function crearPagoTarjeta(req, res, next) {
 
 async function crearPagoOxxo(req, res, next) {
     let pedido;
-    let paymentCreated = false;
+    let orderCreated = false;
 
     try {
         const orderData = await createPendingOrderFromCart({
@@ -1260,36 +1251,20 @@ async function crearPagoOxxo(req, res, next) {
 
         pedido = orderData.pedido;
 
-        const publicApiUrl = getAbsoluteUrl(
-            'PUBLIC_API_URL'
-        );
-
-        const paymentClient = new Payment(
+        const orderClient = new Order(
             getClient()
         );
 
-        const payment = await paymentClient.create({
-            body: {
-                transaction_amount: orderData.total,
-                description:
-                    `Pedido floral ${orderData.codigoRastreo}`,
-                payment_method_id: 'oxxo',
-                payer: {
-                    email:
-                        orderData.delivery.customerEmail
-                },
-                external_reference:
+        const mercadoPagoOrder = await orderClient.create({
+            body: buildOxxoOrderBody({
+                amount: orderData.total,
+                externalReference:
                     orderData.codigoRastreo,
-                notification_url:
-                    `${publicApiUrl}/api/mercadopago/webhook`,
-                metadata: {
-                    pedido_id: pedido.id,
-                    codigo_rastreo:
-                        orderData.codigoRastreo,
-                    payment_flow:
-                        'oxxo'
-                }
-            },
+                payerEmail:
+                    orderData.delivery.customerEmail,
+                payerName:
+                    orderData.delivery.receiverName
+            }),
             requestOptions: {
                 idempotencyKey:
                     getCheckoutAttemptId(
@@ -1298,31 +1273,35 @@ async function crearPagoOxxo(req, res, next) {
             }
         });
 
-        paymentCreated = true;
+        orderCreated = true;
 
-        await applyMercadoPagoPaymentToOrder(
-            payment
+        await applyMercadoPagoOrderToPedido(
+            mercadoPagoOrder
         );
 
-        const ticketUrl = getPaymentExternalUrl(
-            payment
+        const payment = getOrderPayment(
+            mercadoPagoOrder
         );
 
-        if (!ticketUrl) {
-            throw configurationError(
-                'Mercado Pago creó el pago, pero no devolvió la ficha de OXXO'
-            );
-        }
+        const ticketUrl = getOrderTicketUrl(
+            mercadoPagoOrder
+        );
 
         return res.status(201).json({
             ok: true,
-            paymentId: payment.id,
-            status: payment.status,
+            orderId: mercadoPagoOrder.id,
+            paymentId: payment?.id || null,
+            status: normalizeOrderStatus(
+                mercadoPagoOrder
+            ),
+            statusDetail: getOrderStatusDetail(
+                mercadoPagoOrder
+            ),
             codigoRastreo: orderData.codigoRastreo,
             ticketUrl
         });
     } catch (error) {
-        if (pedido && !paymentCreated) {
+        if (pedido && !orderCreated) {
             try {
                 await pedido.update({
                     estadoPago: 'ERROR',
@@ -1563,17 +1542,62 @@ async function crearPreferencia(
 
 async function obtenerPago(req, res, next) {
     try {
-        const paymentId = normalizeText(req.params.id, 60);
+        const operationId = normalizeText(req.params.id, 80);
 
-        if (!/^\d+$/.test(paymentId)) {
+        if (/^ORD[A-Z0-9_-]+$/i.test(operationId)) {
+            const orderClient = new Order(getClient());
+            const mercadoPagoOrder = await orderClient.get({
+                id: operationId
+            });
+
+            await applyMercadoPagoOrderToPedido(
+                mercadoPagoOrder
+            );
+
+            const payment = getOrderPayment(
+                mercadoPagoOrder
+            );
+
+            const normalizedPayment = normalizeOrderAsPayment(
+                mercadoPagoOrder
+            );
+
+            return res.status(200).json({
+                ok: true,
+                data: {
+                    id: mercadoPagoOrder.id,
+                    paymentId: payment?.id || null,
+                    status: normalizedPayment.status,
+                    statusDetail:
+                        normalizedPayment.status_detail,
+                    externalReference:
+                        normalizedPayment.external_reference,
+                    transactionAmount:
+                        normalizedPayment.transaction_amount,
+                    currencyId:
+                        normalizedPayment.currency_id,
+                    dateApproved:
+                        normalizedPayment.date_approved,
+                    ticketUrl: getOrderTicketUrl(
+                        mercadoPagoOrder
+                    )
+                }
+            });
+        }
+
+        if (!/^\d+$/.test(operationId)) {
             return res.status(400).json({
                 ok: false,
-                message: 'El identificador del pago no es válido'
+                message: 'El identificador de la operación no es válido'
             });
         }
 
         const paymentClient = new Payment(getClient());
-        const payment = await paymentClient.get({ id: paymentId });
+        const payment = await paymentClient.get({ id: operationId });
+
+        await applyMercadoPagoPaymentToOrder(
+            payment
+        );
 
         return res.status(200).json({
             ok: true,
@@ -1594,17 +1618,21 @@ async function obtenerPago(req, res, next) {
 
 async function recibirWebhook(req, res, next) {
     try {
-        const type = normalizeText(req.query.type || req.body?.type, 50);
-        const paymentId = normalizeText(
+        const type = normalizeText(
+            req.query.type || req.body?.type,
+            50
+        ).toLowerCase();
+
+        const resourceId = normalizeText(
             req.query['data.id'] || req.body?.data?.id,
-            60
+            80
         );
 
-        if (type && type !== 'payment') {
+        if (type && !['payment', 'order'].includes(type)) {
             return res.sendStatus(200);
         }
 
-        if (!paymentId) {
+        if (!resourceId) {
             return res.sendStatus(200);
         }
 
@@ -1614,7 +1642,7 @@ async function recibirWebhook(req, res, next) {
             WebhookSignatureValidator.validate({
                 xSignature: req.headers['x-signature'],
                 xRequestId: req.headers['x-request-id'],
-                dataId: paymentId,
+                dataId: resourceId,
                 secret: webhookSecret
             });
         } else if (process.env.NODE_ENV === 'production') {
@@ -1623,43 +1651,56 @@ async function recibirWebhook(req, res, next) {
             );
         }
 
-        const paymentClient =
-            new Payment(
-                getClient()
-            );
+        const isOrderEvent =
+            type === 'order' ||
+            /^ORD[A-Z0-9_-]+$/i.test(resourceId);
 
-        const payment =
-            await paymentClient.get({
-                id: paymentId
+        if (isOrderEvent) {
+            const orderClient = new Order(getClient());
+            const mercadoPagoOrder = await orderClient.get({
+                id: resourceId
             });
 
-        console.log(
-            'Webhook Mercado Pago verificado:',
-            {
-                paymentId:
-                    payment.id,
+            console.log(
+                'Webhook de orden Mercado Pago verificado:',
+                {
+                    orderId: mercadoPagoOrder.id,
+                    status: mercadoPagoOrder.status,
+                    statusDetail:
+                        mercadoPagoOrder.status_detail,
+                    externalReference:
+                        mercadoPagoOrder.external_reference,
+                    amount:
+                        mercadoPagoOrder.total_amount
+                }
+            );
 
-                status:
-                    payment.status,
+            await applyMercadoPagoOrderToPedido(
+                mercadoPagoOrder
+            );
+        } else {
+            const paymentClient = new Payment(getClient());
+            const payment = await paymentClient.get({
+                id: resourceId
+            });
 
-                statusDetail:
-                    payment.status_detail,
+            console.log(
+                'Webhook de pago Mercado Pago verificado:',
+                {
+                    paymentId: payment.id,
+                    status: payment.status,
+                    statusDetail: payment.status_detail,
+                    externalReference:
+                        payment.external_reference,
+                    amount: payment.transaction_amount,
+                    liveMode: payment.live_mode
+                }
+            );
 
-                externalReference:
-                    payment.external_reference,
-
-                amount:
-                    payment.transaction_amount,
-
-                liveMode:
-                    payment.live_mode
-            }
-        );
-
-
-        await applyMercadoPagoPaymentToOrder(
-            payment
-        );
+            await applyMercadoPagoPaymentToOrder(
+                payment
+            );
+        }
 
         return res.sendStatus(200);
     } catch (error) {
