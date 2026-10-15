@@ -126,7 +126,10 @@
   <script>
     const CART_KEY = 'jhmagno_cart';
     const params = new URLSearchParams(window.location.search);
-    const paymentId = params.get('payment_id') || params.get('collection_id');
+    const operationId =
+      params.get('order_id') ||
+      params.get('payment_id') ||
+      params.get('collection_id');
     const returnedResult = params.get('resultado');
 
     const BACKEND_BASE_URL = window.location.hostname === 'localhost' ||
@@ -186,15 +189,15 @@
         'La operación fue rechazada o cancelada. Tu carrito sigue guardado para que puedas intentar nuevamente.';
     }
 
-    async function verifyPayment() {
-      if (!paymentId) {
+    async function verifyPayment(attempt = 0) {
+      if (!operationId) {
         showResult(returnedResult === 'pending' ? 'pending' : 'error');
         return;
       }
 
       try {
         const response = await fetch(
-          `${BACKEND_BASE_URL}/api/mercadopago/payment/${encodeURIComponent(paymentId)}`
+          `${BACKEND_BASE_URL}/api/mercadopago/payment/${encodeURIComponent(operationId)}`
         );
         const result = await response.json().catch(() => ({}));
 
@@ -203,6 +206,16 @@
         }
 
         showResult(result.data.status, result.data);
+
+        if (
+          ['pending', 'in_process'].includes(result.data.status) &&
+          attempt < 7
+        ) {
+          window.setTimeout(
+            () => verifyPayment(attempt + 1),
+            1500
+          );
+        }
       } catch (error) {
         console.error('Error verificando pago:', error);
         showResult(returnedResult === 'pending' ? 'pending' : 'error');
