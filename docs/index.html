@@ -4,10 +4,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Conoce Floristería Magno: ramos de flores, arreglos florales personalizados y flores a domicilio en Guadalajara y Zapopan. Explora nuestras creaciones." />
+    <script>
+        // La portada editorial solo se abre mediante #inicio o ?inicio.
+        // Al entrar sin esos parámetros, llevar directamente al catálogo.
+        (() => {
+            const openEditorialHome =
+                Boolean(window.location.hash) ||
+                new URLSearchParams(window.location.search).has('inicio');
+            if (!openEditorialHome) {
+                window.location.replace('catalogo.html');
+            }
+        })();
+    </script>
+    <meta name="description" content="Conoce Floristería Magno: ramos de flores, arreglos florales personalizados y flores a domicilio en Guadalajara y Zapopan. Explora nuestras creaciones." />
     <title>Floristería Magno | Florería en Guadalajara y Zapopan</title>
     
-    <link rel="canonical" href="https://listoenlinea-labs.github.io/Floristeria-Magno/index.html" />
+    <link rel="canonical" href="https://listoenlinea-labs.github.io/Floristeria-Magno/catalogo.html" />
     <meta property="og:locale" content="es_MX" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Floristería Magno" />
