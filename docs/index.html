@@ -4,36 +4,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-        /*
-         * La URL pública abre primero el catálogo. Los enlaces explícitos
-         * a #inicio siguen permitiendo visitar la portada editorial.
-         */
-        (() => {
-            const openEditorialHome =
-                Boolean(window.location.hash) ||
-                new URLSearchParams(window.location.search).has('inicio');
-
-            if (!openEditorialHome) {
-                window.location.replace('catalogo.html');
-            }
-        })();
-    </script>
-    <meta name="description" content="Compra flores en Guadalajara y Zapopan: arreglos florales, ramos de flores y regalos personalizados en Floristería Magno." />
-    <title>Floristería Magno | Arte Floral</title>
+<meta name="description" content="Conoce Floristería Magno: ramos de flores, arreglos florales personalizados y flores a domicilio en Guadalajara y Zapopan. Explora nuestras creaciones." />
+    <title>Floristería Magno | Florería en Guadalajara y Zapopan</title>
     
-    <link rel="canonical" href="https://listoenlinea-labs.github.io/Floristeria-Magno/catalogo.html" />
+    <link rel="canonical" href="https://listoenlinea-labs.github.io/Floristeria-Magno/index.html" />
     <meta property="og:locale" content="es_MX" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Floristería Magno" />
-    <meta property="og:title" content="Floristería Magno | Arte Floral" />
-    <meta property="og:description" content="Floristería Magno — diseño floral contemporáneo para momentos inolvidables." />
-    <meta property="og:url" content="https://listoenlinea-labs.github.io/Floristeria-Magno/" />
+    <meta property="og:title" content="Floristería Magno | Florería en Guadalajara y Zapopan" />
+    <meta property="og:description" content="Conoce Floristería Magno: ramos de flores, arreglos florales personalizados y flores a domicilio en Guadalajara y Zapopan. Explora nuestras creaciones." />
+    <meta property="og:url" content="https://listoenlinea-labs.github.io/Floristeria-Magno/index.html" />
     <meta property="og:image" content="https://listoenlinea-labs.github.io/Floristeria-Magno/assets/img/icon/logo_lpb.png" />
     <meta property="og:image:alt" content="Logo de Floristería Magno" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Floristería Magno | Arte Floral" />
-    <meta name="twitter:description" content="Floristería Magno — diseño floral contemporáneo para momentos inolvidables." />
+    <meta name="twitter:title" content="Floristería Magno | Florería en Guadalajara y Zapopan" />
+    <meta name="twitter:description" content="Conoce Floristería Magno: ramos de flores, arreglos florales personalizados y flores a domicilio en Guadalajara y Zapopan. Explora nuestras creaciones." />
     <meta name="twitter:image" content="https://listoenlinea-labs.github.io/Floristeria-Magno/assets/img/icon/logo_lpb.png" />
     <meta name="twitter:image:alt" content="Logo de Floristería Magno" />
 <link rel="icon" href="assets/img/icon/fav-mago-2.png">
@@ -50,6 +35,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/mobile-nav.css?v=10">
     <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=1">
+    <meta name="robots" content="index,follow" />
 </head>
 
 <body class="theme-spring page-index">
@@ -113,26 +99,25 @@
                 <div class="col-lg-6">
                     <div class="hero-badge home-badge">
                         <i class="bi bi-flower1"></i>
-                        Arte floral contemporáneo en Guadalajara
+                        Florería en Guadalajara y Zapopan
                     </div>
                     <h1 class="hero-title home-title" id="siteHeroTitle">
                         <span class="desktop-copy">
-                            Elige tu arreglo y agenda tu entrega.
+                            Ramos de flores y arreglos florales con intención.
                         </span>
 
                         <span class="mobile-copy mobile-hero-title">
-                            Elige tu arreglo y agenda tu entrega.
+                            Ramos de flores y arreglos florales con intención.
                         </span>
                     </h1>
 
                     <p class="hero-description home-description" id="siteHeroSubtitle">
                         <span class="desktop-copy">
-                            Agrega productos al carrito, selecciona fecha y horario de entrega,
-                            y confirma tu pedido por WhatsApp con una experiencia boutique.
+                            En Floristería Magno creamos ramos de flores, arreglos florales y detalles personalizados para cumpleaños, aniversarios y ocasiones especiales. Conoce nuestra floristería y compra flores en línea con entrega a domicilio en Guadalajara y Zapopan.
                         </span>
 
                         <span class="mobile-copy mobile-hero-description">
-                            Elige, agenda y confirma por WhatsApp.
+                            Diseño floral personalizado y flores a domicilio en Guadalajara y Zapopan.
                         </span>
                     </p>
                     <div class="hero-actions home-actions">
@@ -259,8 +244,8 @@
                 <div class="row align-items-center g-5">
                     <div class="col-lg-5 reveal">
                         <div class="eyebrow">Colecciones</div>
-                        <h2 class="section-title mb-4">Arreglos florales artísticos en Zapopan.</h2>
-                        <p class="section-text">Tenemos una gran variedad de flores como rosas, tulipanes, girasoles y otras opciones de temporada para crear arreglos únicos.</p>
+                        <h2 class="section-title mb-4">Arreglos florales, ramos de rosas y flores en Zapopan.</h2>
+                        <p class="section-text">Diseñamos ramos de rosas, arreglos con girasoles, tulipanes y flores de temporada. Explora nuestro catálogo para comprar flores en línea y programar tu entrega en el Área Metropolitana de Guadalajara.</p>
                         <a href="catalogo.html" class="btn-main mt-3 d-inline-flex">Ver catálogo completo</a>
                     </div>
                     <div class="col-lg-7 reveal">
@@ -601,27 +586,25 @@
                         <div class="eyebrow mb-2">Quiénes somos</div>
                         <h2 class="section-title mb-4">
                             <span class="desktop-copy">
-                                Arte floral con intención.
+                                Nuestra florería en Guadalajara y Zapopan.
                             </span>
 
                             <span class="mobile-copy">
-                                Quiénes somos.
+                                Conoce Floristería Magno.
                             </span>
                         </h2>
                         <p class="text-muted-custom about-description">
                             <span class="desktop-copy">
-                                En Floristería Magno diseñamos arreglos florales únicos para regalar
-                                emociones, celebrar momentos y acompañar historias especiales.
+                                En Floristería Magno diseñamos ramos de flores y arreglos florales personalizados para regalar emociones. Nuestra florería atiende a clientes en Guadalajara y Zapopan, con propuestas para cumpleaños, aniversarios y celebraciones especiales.
                             </span>
 
                             <span class="mobile-copy">
-                                Diseño floral artesanal, personal y hecho con intención.
+                                Ramos de flores y arreglos personalizados para cada ocasión.
                             </span>
                         </p>
 
                         <p class="text-muted-custom mb-0 desktop-copy">
-                            Nuestro trabajo combina estética, selección floral y atención
-                            personalizada para que cada composición tenga identidad propia.
+                            Nuestro trabajo combina flores frescas, diseño artesanal y atención personalizada. Descubre nuestras creaciones, compra flores en línea en el catálogo y programa envíos de flores a domicilio dentro del Área Metropolitana de Guadalajara.
                         </p>
                     </div>
                     <div class="col-lg-6 reveal">
