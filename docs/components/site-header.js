@@ -387,7 +387,7 @@ class SiteHeader extends HTMLElement {
 
       <header class="site-header" id="siteHeader">
         <div class="header-inner">
-          <a class="brand-logo" href="${pageUrl('index.html', 'inicio')}" aria-label="Ir al inicio">
+          <a class="brand-logo" href="${pageUrl('index.html')}" aria-label="Ir al inicio">
             <span class="logo-mark">
               <img src="${logoUrl}" alt="Logo Floristería Magno">
             </span>
@@ -407,8 +407,8 @@ class SiteHeader extends HTMLElement {
           </button>
 
           <nav class="nav-menu" id="siteHeaderMenu" aria-label="Navegación principal">
-            <a class="nav-link" href="${pageUrl('index.html', 'inicio')}" data-section="inicio">Quiénes Somos</a>
-            <a class="nav-link" href="${pageUrl('catalogo.html')}" data-page="catalogo">Catálogo</a>
+            <a class="nav-link" href="${pageUrl('nosotros.html')}" data-page="nosotros">Quiénes Somos</a>
+            <a class="nav-link" href="${pageUrl('index.html')}" data-page="catalogo">Catálogo</a>
             <a class="nav-link" href="${pageUrl('rastreo.html')}" data-page="rastreo">Rastrea tu pedido</a>
             <a
               class="mobile-phone-link"
