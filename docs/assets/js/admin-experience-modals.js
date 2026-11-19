@@ -8,7 +8,7 @@
     ];
     // Paleta visual táctil: sólo opciones pastel admitidas por el backend.
     const themeFields = [
-        ['fondo','Fondo de toda la tienda'],['botones','Botones y acentos'],
+        ['fondo','Fondo de toda la tienda'],['fondoCatalogo','Fondo del catálogo'],['botones','Botones y acentos'],
         ['petalos','Pétalos de la animación'],['petaloInicial','Pétalos de bienvenida']
     ].map(([key, title]) => {
         const colors = PALETTES.map(([value,label]) => {
@@ -22,12 +22,18 @@
                 (value === 'base' ? 'Original' : label.replace(' pastel','')) +
                 '</span><i class="bi bi-check-circle-fill" aria-hidden="true"></i></button>';
         }).join('');
-        return '<div class="magno-theme-field">' +
+        return '<div class="magno-theme-field' +
+            (key === 'fondoCatalogo' ? ' magno-theme-catalog-only' : '') + '">' +
             '<label id="mgThemeLabel_' + key + '">' + title + '</label>' +
+            (key === 'fondoCatalogo' ?
+                '<p class="magno-theme-field-note">Solo cambia el fondo detrás de los productos, sin modificar las demás secciones. Original utiliza el fondo general.</p>' : '') +
             '<input id="mgTheme_' + key + '" type="hidden" value="base">' +
             '<div class="magno-color-grid" role="group" aria-labelledby="mgThemeLabel_' + key + '">' +
             colors + '</div>' +
-            '<div class="magno-theme-caption" id="mgThemePreview_' + key + '">Original</div></div>';
+            '<div class="magno-theme-caption" id="mgThemePreview_' + key + '">Original</div>' +
+            (key === 'fondoCatalogo' ?
+                '<button class="btn-soft magno-save-catalog-theme" type="button" onclick="magnoSaveCatalogBackground()"><i class="bi bi-save" aria-hidden="true"></i> Guardar solo fondo del catálogo</button>' : '') +
+            '</div>';
     }).join('');
     document.body.insertAdjacentHTML('beforeend', `
         <div class="modal fade magno-modal-shell" id="magnoSeoModal" tabindex="-1" aria-labelledby="mgSeoTitle" aria-hidden="true">
@@ -48,7 +54,7 @@
         <div class="modal fade magno-modal-shell" id="magnoThemeModal" tabindex="-1" aria-labelledby="mgThemeTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable"><div class="modal-content">
                 <div class="modal-header"><h3 class="modal-title fs-4" id="mgThemeTitle">Tema de la página</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
-                <div class="modal-body"><p class="magno-modal-copy">Elige un tono pastel para el fondo de toda la tienda (incluido el catálogo, con degradados suaves entre secciones). Los colores de botones y pétalos se configuran por separado. «Original» conserva el diseño actual.</p>
+                <div class="modal-body"><p class="magno-modal-copy">Elige un tono pastel para toda la tienda o utiliza la tarjeta «Fondo del catálogo» para dar un color diferente únicamente al fondo de los productos. Los botones y pétalos son independientes. «Original» conserva el tema general.</p>
                     <div class="magno-theme-fields">${themeFields}</div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-soft me-auto" onclick="magnoResetTheme()"><i class="bi bi-arrow-counterclockwise"></i> Regresar a configuración base</button><button type="button" class="btn-gold" onclick="magnoSaveTheme()">Guardar tema</button></div>
