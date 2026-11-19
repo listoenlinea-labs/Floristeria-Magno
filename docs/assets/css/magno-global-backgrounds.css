@@ -157,3 +157,22 @@ body.page-rastreo[data-magno-custom-bg="true"] > footer :is(
 }
 
 /* Respeta la reducción de movimiento y no añade animaciones ni imágenes. */
+
+/* EXCEPCIÓN INDEPENDIENTE · Fondo del catálogo.
+   Esta regla se aplica incluso si el tema general está en «Original».
+   Al volver a «Original» en la tarjeta, desaparece el atributo y
+   el catálogo hereda el fondo general, sin cambiar otras secciones. */
+body.page-catalogo[data-magno-custom-catalog-bg="true"] #productos.collection-section {
+  background:
+    radial-gradient(
+      circle at 86% 13%,
+      color-mix(in srgb, var(--magno-selected-catalog-bg) 46%, white 54%),
+      transparent 46%
+    ),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--magno-selected-catalog-light) 76%, white 24%) 0%,
+      color-mix(in srgb, var(--magno-selected-catalog-light) 88%, white 12%) 44%,
+      color-mix(in srgb, var(--magno-selected-catalog-bg) 52%, white 48%) 100%
+    ) !important;
+}
