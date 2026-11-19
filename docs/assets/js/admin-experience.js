@@ -156,7 +156,7 @@ const MAGNO_PALETTE = {
     pistacho: ['#f8fbed','#d8e0b8']
 };
 const MAGNO_THEME_FIELDS = {
-    fondo: 'Fondo de toda la tienda', botones: 'Botones y acentos',
+    fondo: 'Fondo de toda la tienda', fondoCatalogo: 'Fondo del catálogo', botones: 'Botones y acentos',
     petalos: 'Pétalos flotantes', petaloInicial: 'Pétalos de bienvenida'
 };
 function magnoOptions() { return settings.optionsTienda || null; }
@@ -234,6 +234,19 @@ function magnoSaveTheme() {
     Object.keys(MAGNO_THEME_FIELDS).forEach(key => {
         next.tema[key] = document.getElementById('mgTheme_' + key).value;
     });
+    return magnoSaveOptions(next, 'magnoThemeModal');
+}
+/* Guarda únicamente el color del catálogo, sin alterar el tema global,
+   pétalos o botones aunque se hayan modificado en el mismo modal. */
+function magnoSaveCatalogBackground() {
+    const options = magnoOptions();
+    if (!options) return;
+    const input = document.getElementById('mgTheme_fondoCatalogo');
+    if (!input || !(input.value in MAGNO_PALETTE)) return;
+    const next = {
+        ...options,
+        tema: {...(options.tema || {}), fondoCatalogo: input.value}
+    };
     return magnoSaveOptions(next, 'magnoThemeModal');
 }
 function magnoSaveCancellation() {
