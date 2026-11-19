@@ -12,7 +12,8 @@ const {
 const {
     subirImagenProducto,
     subirImagenGaleria,
-    auditarAlmacenamientoImagenes
+    auditarAlmacenamientoImagenes,
+    revisarIntegridadImagenes
 } = require('../controllers/uploads.controller');
 
 const { verificarConexionCorreo } = require('../services/email.service');
@@ -34,6 +35,10 @@ router.get(
     basicAuth,
     auditarAlmacenamientoImagenes
 );
+
+// Las rutas de diagnóstico están protegidas y no exponen fotos ni datos personales.
+router.get('/integridad', basicAuth, revisarIntegridadImagenes);
+router.post('/integridad/reparar', basicAuth, revisarIntegridadImagenes);
 
 router.post(
     '/producto',
