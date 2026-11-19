@@ -511,6 +511,101 @@ async function getImageStorageStatus() {
     };
 }
 
+
+/**
+ * Verifica la integridad de las fotos referenciadas por MySQL, no solamente
+ * que ambas carpetas contengan el mismo número de archivos.
+ * No intenta descargar contenido remoto ni borrar fotos sin un respaldo válido.
+ */
+async function auditProductImageReferences({ repair = false } = {}) {
+    const { Producto, ProductoImagen, Galeria } = require('../models');
+    const [products, images, gallery] = await Promise.all([
+        Producto.findAll({ attributes: ['id', 'imagenUrl'], raw: true }),
+        ProductoImagen.findAll({ attributes: ['id', 'imagenUrl'], raw: true }),
+        Galeria.findAll({ attributes: ['id', 'imagenUrl'], raw: true })
+    ]);
+    const links = [
+        ...products.map(x => ({ url: x.imagenUrl, source: 'producto#' + x.id })),
+        ...images.map(x => ({ url: x.imagenUrl, source: 'producto_imagen#' + x.id })),
+        ...gallery.map(x => ({ url: x.imagenUrl, source: 'galeria#' + x.id }))
+    ].filter(entry => entry.url);
+    const unique = new Map();
+    let external = 0;
+    for (const link of links) {
+        try {
+            const url = new URL(link.url, 'https://floristeria.magno.invalid');
+            const parts = url.pathname.split('/').filter(Boolean);
+            if (parts.length !== 3 || parts[0] !== 'uploads' ||
+                !isAllowedFolder(parts[1]) || !sanitizeFilename(decodeURIComponent(parts[2]))) {
+                external++;
+                continue;
+            }
+            const filename = decodeURIComponent(parts[2]);
+            const key = parts[1] + '/' + filename;
+            if (!unique.has(key)) unique.set(key, { folder: parts[1], filename, source: link.source });
+        } catch (_) { external++; }
+    }
+    const report = {
+        references: links.length,
+        internalUniqueFiles: unique.size,
+        externalReferences: external,
+        verified: 0,
+        missing: 0,
+        unprotected: 0,
+        checksumMismatch: 0,
+        repaired: 0,
+        problems: []
+    };
+    for (const [key, item] of unique) {
+        const primary = path.join(uploadsRoot, item.folder, item.filename);
+        const backup = path.join(uploadsBackupRoot, item.folder, item.filename);
+        const expected = knownImageHashes.get(key);
+        const assess = async filePath => {
+            const stats = await fs.promises.stat(filePath).catch(() => null);
+            if (!stats?.isFile() || stats.size < 1 || (expected && stats.size !== expected.size)) return false;
+            return expected ? await calculateSha256(filePath) === expected.sha256 : true;
+        };
+        let hasPrimary = await assess(primary);
+        let hasBackup = await assess(backup);
+        if (repair && expected && hasPrimary !== hasBackup) {
+            const target = hasPrimary ? backup : primary;
+            const source = hasPrimary ? primary : backup;
+            // Reparar solamente si hay hash conocido y una copia íntegra.
+            await fs.promises.rm(target, { force: true });
+            await copyFileIfMissing(source, target);
+            report.repaired++;
+            hasPrimary = await assess(primary);
+            hasBackup = await assess(backup);
+        } else if (repair && !hasPrimary && hasBackup && !expected) {
+            await fs.promises.rm(primary, { force: true });
+            await copyFileIfMissing(backup, primary);
+            report.repaired++;
+            hasPrimary = await assess(primary);
+        }
+        if (!hasPrimary && !hasBackup) {
+            report.missing++;
+            if (report.problems.length < 30) {
+                report.problems.push({ source: item.source, file: key, issue: 'sin copia utilizable' });
+            }
+        } else if (!hasPrimary || !hasBackup) {
+            report.unprotected++;
+            if (report.problems.length < 30) {
+                report.problems.push({ source: item.source, file: key, issue: 'sólo una copia íntegra' });
+            }
+        } else if (!expected && await calculateSha256(primary) !== await calculateSha256(backup)) {
+            // Archivos anteriores al manifiesto: nunca adivinar cuál es correcto.
+            report.checksumMismatch++;
+            if (report.problems.length < 30) {
+                report.problems.push({ source: item.source, file: key, issue: 'copias distintas sin hash confiable' });
+            }
+        } else {
+            report.verified++;
+        }
+    }
+    report.protected = !report.missing && !report.unprotected && !report.checksumMismatch;
+    return report;
+}
+
 async function initializeImageStorage() {
     await ensureStorageTree();
     await loadImageManifest();
@@ -565,5 +660,6 @@ module.exports = {
     protectUploadedFile,
     recoverUploadMiddleware,
     restoreImageIfNeeded,
-    getImageStorageStatus
+    getImageStorageStatus,
+    auditProductImageReferences
 };
