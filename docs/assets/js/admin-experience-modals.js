@@ -46,9 +46,9 @@
             </div></div>
         </div>
         <div class="modal fade magno-modal-shell" id="magnoThemeModal" tabindex="-1" aria-labelledby="mgThemeTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content">
+            <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable"><div class="modal-content">
                 <div class="modal-header"><h3 class="modal-title fs-4" id="mgThemeTitle">Tema de la página</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
-                <div class="modal-body"><p class="magno-modal-copy">Combina tonos pastel suaves para cada elemento. La opción original conserva exactamente los colores actuales.</p>
+                <div class="modal-body"><p class="magno-modal-copy">Elige tonos pastel con mayor comodidad para fondo, botones y pétalos. Los colores personalizados se aplican a toda la tienda, independientemente de la temporada. «Original» conserva exactamente los colores actuales.</p>
                     <div class="magno-theme-fields">${themeFields}</div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-soft me-auto" onclick="magnoResetTheme()"><i class="bi bi-arrow-counterclockwise"></i> Regresar a configuración base</button><button type="button" class="btn-gold" onclick="magnoSaveTheme()">Guardar tema</button></div>
