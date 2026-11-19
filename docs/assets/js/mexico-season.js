@@ -23,6 +23,12 @@
         document.body.classList.remove(...CLASSES);
         document.body.classList.add('theme-' + season);
         document.body.dataset.mexicoSeason = season;
+        // Equivale a activar el selector correspondiente, aunque ya no sea visible.
+        document.querySelectorAll('.season-btn').forEach(button => {
+            const active = button.dataset.season === season;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', String(active));
+        });
         return season;
     }
     async function applyAdminTheme() {
