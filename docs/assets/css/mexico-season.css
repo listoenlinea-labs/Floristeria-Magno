@@ -35,3 +35,15 @@ body.page-index[data-magno-custom-intro="true"] .catalog-flower-petal,
 body.page-rastreo[data-magno-custom-intro="true"] .catalog-flower-petal {
     background:radial-gradient(circle at 50% 30%,#fff,var(--magno-selected-intro))!important;
 }
+
+/* También conservar la prioridad del tema elegido en pantallas de pago e ideas. */
+body.page-pago[data-magno-custom-bg="true"],
+body.page-ideas[data-magno-custom-bg="true"] {
+  background:var(--magno-selected-gradient)!important;
+}
+body.page-pago[data-magno-custom-buttons="true"] .btn-luxury,
+body.page-ideas[data-magno-custom-buttons="true"] .btn-main {
+  background:var(--magno-selected-button)!important;
+  border-color:var(--magno-selected-button)!important;
+  color:#301823!important;
+}
