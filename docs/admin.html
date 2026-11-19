@@ -4716,9 +4716,7 @@
             }
 
             const trackingUrl =
-                `${window.location.origin}/rastreo.html?pedido=${encodeURIComponent(
-                    code
-                )}`;
+                new URL(`rastreo.html?pedido=${encodeURIComponent(code)}`, window.location.href).href;
 
             navigator.clipboard
                 .writeText(trackingUrl)
