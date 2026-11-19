@@ -5925,12 +5925,8 @@
                     </div>
                 </div>
 
-                <div class="admin-product-actions">
-                    <div class="magno-reorder-tools" aria-label="Mover arreglo">
-                        <button type="button" onclick="magnoMoveProduct('${product.id}',-1)" aria-label="Subir ${escapeHtml(product.name)}"><i class="bi bi-arrow-up"></i> Subir</button>
-                        <button type="button" onclick="magnoMoveProduct('${product.id}',1)" aria-label="Bajar ${escapeHtml(product.name)}"><i class="bi bi-arrow-down"></i> Bajar</button>
-                        <button type="button" onclick="magnoChoosePage('${product.id}')"><i class="bi bi-arrow-left-right"></i> Otra página</button>
-                    </div>
+                <div class="admin-product-actions magno-product-actions-grid">
+                    <div class="magno-basic-product-actions">
                     <button
                         type="button"
                         class="admin-action-btn admin-action-edit"
@@ -5961,7 +5957,14 @@
 
                         ${isActive ? "Ocultar" : "Activar"}
                     </button>
-
+                    </div>
+                    <div class="magno-reorder-tools" aria-label="Cambiar posición en el catálogo">
+                        <div class="magno-reorder-pair">
+                            <button type="button" onclick="magnoMoveProduct('${product.id}',-1)" aria-label="Subir ${escapeHtml(product.name)}"><i class="bi bi-arrow-up"></i> Subir</button>
+                            <button type="button" onclick="magnoMoveProduct('${product.id}',1)" aria-label="Bajar ${escapeHtml(product.name)}"><i class="bi bi-arrow-down"></i> Bajar</button>
+                        </div>
+                        <button type="button" class="magno-move-page-btn" onclick="magnoChoosePage('${product.id}')"><i class="bi bi-arrow-left-right"></i> Otra página</button>
+                    </div>
                 </div>
             </article>
         `;
