@@ -731,7 +731,6 @@
 
                     <div class="magno-settings-actions">
                         <button type="button" onclick="magnoOpenSeoSettings()"><i class="bi bi-layout-text-sidebar-reverse me-2"></i>Sección de presentación <small class="d-block" id="mgSeoSummary">Oculta por defecto</small></button>
-                        <button type="button" onclick="magnoOpenThemeSettings()"><i class="bi bi-palette me-2"></i>Tema de la página <small class="d-block">Fondos, botones y pétalos pastel</small></button>
                         <button type="button" onclick="magnoOpenCancellationSettings()"><i class="bi bi-shield-heart me-2"></i>Cancelaciones y cambios <small class="d-block" id="mgCancellationSummary">Porcentaje pendiente</small></button>
                     </div>
                     <div class="settings-grid">
@@ -7182,6 +7181,24 @@
                 });
         }
 
+
+        // Misma definición estacional que la tienda pública, con fecha local de México.
+        // Una temporada activa NO equivale a tener una fotografía personalizada activa.
+        function getAdminMexicoSeason(date = new Date()) {
+            const parts = Object.fromEntries(
+                new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/Mexico_City',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).formatToParts(date).map(part => [part.type, part.value])
+            );
+            const monthDay = Number(parts.month) * 100 + Number(parts.day);
+            if (monthDay >= 320 && monthDay <= 620) return 'spring';
+            if (monthDay >= 621 && monthDay <= 922) return 'summer';
+            if (monthDay >= 923 && monthDay <= 1220) return 'autumn';
+            return 'winter';
+        }
+
         function renderHeroBackgrounds() {
             const container =
                 document.getElementById(
@@ -7191,6 +7208,8 @@
             if (!container) {
                 return;
             }
+
+            const currentSeason = getAdminMexicoSeason();
 
             container.innerHTML =
                 Object.entries(
@@ -7223,6 +7242,7 @@
 
                             const isCustomActive =
                                 Boolean(activeItem);
+                            const isCurrentSeason = season === currentSeason;
 
                             const statusLabel =
                                 isCustomActive
@@ -7282,6 +7302,12 @@
                                     <span></span>
                                     ${statusLabel}
                                 </span>
+                                ${isCurrentSeason ? `
+                                    <span class="hero-season-current-badge" aria-label="Temporada actual en México">
+                                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                                        Temporada actual
+                                    </span>
+                                ` : ''}
                             </div>
 
                             <div class="hero-season-content">
@@ -7308,16 +7334,27 @@
                                 </p>
 
                                 <div class="hero-season-actions">
-                                    <button
-                                        type="button"
-                                        class="btn-gold hero-season-primary"
-                                        onclick="openSeasonHeroBackground('${season}')"
-                                    >
-                                        <i class="bi bi-image"></i>
-                                        ${savedItem
-                                            ? 'Cambiar fondo'
-                                            : 'Agregar fondo'}
-                                    </button>
+                                    <div class="hero-season-main-actions">
+                                        <button
+                                            type="button"
+                                            class="btn-gold hero-season-primary"
+                                            onclick="openSeasonHeroBackground('${season}')"
+                                        >
+                                            <i class="bi bi-image" aria-hidden="true"></i>
+                                            ${savedItem
+                                                ? 'Cambiar fondo'
+                                                : 'Agregar fondo'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn-soft hero-season-theme-button"
+                                            onclick="magnoOpenThemeSettings()"
+                                            aria-label="Tema personalizado de la página, desde ${escapeHtml(config.label)}"
+                                        >
+                                            <i class="bi bi-palette" aria-hidden="true"></i>
+                                            Tema personalizado
+                                        </button>
+                                    </div>
 
                                     ${savedItem && !isCustomActive
                                         ? `
