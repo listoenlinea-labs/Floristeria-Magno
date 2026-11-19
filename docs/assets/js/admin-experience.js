@@ -175,6 +175,8 @@ function magnoResetTheme() {
         document.getElementById('mgTheme_' + key).value='base';
         magnoThemeSwatch(key);
     });
+    // El botón de restablecer guarda la paleta original inmediatamente.
+    return magnoSaveTheme();
 }
 function magnoOpenCancellationSettings() {
     const value = magnoOptions()?.cancelacionPorcentaje;
