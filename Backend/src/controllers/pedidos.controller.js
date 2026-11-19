@@ -130,7 +130,8 @@ async function listarPedidos(req, res, next) {
             estado,
             clienteId,
             fechaEntrega,
-            busqueda
+            busqueda,
+            incluirPendientes
         } = req.query;
 
         const where = {};
@@ -167,7 +168,18 @@ async function listarPedidos(req, res, next) {
                 });
             }
 
-            where.fechaEntrega = fechaEntrega.trim();
+            if (incluirPendientes === 'true') {
+                // El administrador ve en cualquier fecha todos los pedidos sin
+                // concluir; evita perder pendientes anteriores o programados.
+                where[Op.and] = [{
+                    [Op.or]: [
+                        { fechaEntrega: fechaEntrega.trim() },
+                        { estado: { [Op.notIn]: ['ENTREGADO', 'CANCELADO'] } }
+                    ]
+                }];
+            } else {
+                where.fechaEntrega = fechaEntrega.trim();
+            }
         }
 
         if (busqueda && busqueda.trim()) {

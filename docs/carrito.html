@@ -18,6 +18,8 @@
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css?v=10">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
+  <link rel="stylesheet" href="assets/css/cart-compact.css?v=1">
+  <link rel="stylesheet" href="assets/css/mexico-season.css?v=1">
 </head>
 
 <body class="page-carrito">
@@ -54,10 +56,10 @@
         </div>
       </div>
 
-      <div class="cart-page-header row g-4 align-items-center mb-5">
+      <div class="cart-page-header row g-3 align-items-start mb-3">
 
         <!-- TÍTULO DEL CARRITO -->
-        <div class="col-lg-7">
+        <div class="col-12">
           <div class="eyebrow">
             Pedido floral
           </div>
@@ -73,33 +75,6 @@
         </div>
 
 
-        <!-- AVISO: CADA RAMO ES ÚNICO -->
-        <div class="col-lg-5">
-
-          <div class="cart-unique-note">
-
-            <div class="cart-unique-note-icon">
-              <i class="bi bi-stars"></i>
-            </div>
-
-            <div class="cart-unique-note-content">
-
-              <strong>
-                Cada ramo es único.
-              </strong>
-
-              <p class="mb-0">
-                Trabajamos con flores naturales y seleccionamos cada pieza
-                de manera artesanal. Por ello, tu arreglo conservará el estilo,
-                colores y esencia del diseño elegido, aunque puede presentar
-                pequeñas variaciones respecto a la fotografía.
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
 
       </div>
 
@@ -124,6 +99,72 @@
               <a href="index.html#productos" class="btn btn-outline-light rounded-pill px-4">Ver arreglos</a>
             </div>
           </section>
+          <aside class="glass-card payment-card mb-4">
+            <div class="mp-header">
+              <div class="mp-brand">
+                <div class="mp-logo-mark" aria-hidden="true">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                  <strong>Mercado Pago</strong>
+                  <span>Pago seguro con tarjeta, transferencia o saldo disponible.</span>
+                </div>
+              </div>
+
+              <div class="mp-secure-pill">
+                <i class="bi bi-lock-fill"></i>
+                Tu dinero está protegido hasta confirmar el pago
+              </div>
+            </div>
+
+            <div class="eyebrow">Resumen y pago</div>
+            <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
+
+            <div class="summary-row"><span>Subtotal</span><strong id="summarySubtotal">$0</strong></div>
+            <div class="summary-row"><span>Entrega estimada</span><strong id="summaryDelivery">$0</strong></div>
+            <div class="summary-row"><span>Tarjeta personalizada</span><strong>Incluida</strong></div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <strong id="summaryTotal">$0</strong>
+            </div>
+
+            <div class="mt-4">
+              <label class="form-label">Método de pago</label>
+              <p class="small text-white-50 mb-0">
+                Elige cómo quieres pagar. Los datos de tarjeta se capturan en campos seguros de Mercado Pago y no se
+                almacenan en Floristería Magno.
+              </p>
+            </div>
+
+            <section id="magnoPurchasePolicies" class="magno-purchase-policies" aria-label="Políticas de compra">
+              <div class="magno-policy-icon"><i class="bi bi-heart-pulse"></i></div>
+              <div>
+                <strong>Tu compra, con tranquilidad</strong>
+                <p id="magnoCancellationMessage">Si necesitas cancelar, contáctanos antes de realizar el pago para conocer las condiciones vigentes.</p>
+                <p>Si tu arreglo llega en mal estado o presenta un problema atribuible a la floristería, contáctanos. Revisaremos el caso y te ofreceremos un reemplazo.</p>
+                <small>Esta información también estará en el correo de confirmación de tu pedido.</small>
+              </div>
+            </section>
+
+            <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
+              <i class="bi bi-credit-card-2-front-fill me-2"></i>
+              Elige opción de pago
+            </button>
+
+            <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
+
+            <a class="whatsapp-confirm" id="whatsappConfirm" href="#">
+              O confirmar pedido por WhatsApp
+            </a>
+          </aside>
+          <aside class="magno-unique-note-inline" aria-label="Sobre nuestros arreglos">
+            <i class="bi bi-stars" aria-hidden="true"></i>
+            <div><strong>Cada ramo es único.</strong>
+              <p>Trabajamos con flores naturales y cuidamos el estilo y los colores del diseño elegido.
+                 Puede haber pequeñas variaciones propias de las flores de temporada.</p>
+            </div>
+          </aside>
         </div>
 
         <div class="col-lg-5" id="checkout">
@@ -286,65 +327,7 @@
             <input type="hidden" id="deliverySlot" value="11:00 am – 1:00 pm">
           </section>
 
-          <aside class="glass-card payment-card mb-4">
-            <div class="mp-header">
-              <div class="mp-brand">
-                <div class="mp-logo-mark" aria-hidden="true">
-                  <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                  <strong>Mercado Pago</strong>
-                  <span>Pago seguro con tarjeta, transferencia o saldo disponible.</span>
-                </div>
-              </div>
 
-              <div class="mp-secure-pill">
-                <i class="bi bi-lock-fill"></i>
-                Tu dinero está protegido hasta confirmar el pago
-              </div>
-            </div>
-
-            <div class="eyebrow">Resumen y pago</div>
-            <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
-
-            <div class="summary-row"><span>Subtotal</span><strong id="summarySubtotal">$0</strong></div>
-            <div class="summary-row"><span>Entrega estimada</span><strong id="summaryDelivery">$0</strong></div>
-            <div class="summary-row"><span>Tarjeta personalizada</span><strong>Incluida</strong></div>
-
-            <div class="summary-total">
-              <span>Total</span>
-              <strong id="summaryTotal">$0</strong>
-            </div>
-
-            <div class="mt-4">
-              <label class="form-label">Método de pago</label>
-              <p class="small text-white-50 mb-0">
-                Elige cómo quieres pagar. Los datos de tarjeta se capturan en campos seguros de Mercado Pago y no se
-                almacenan en Floristería Magno.
-              </p>
-            </div>
-
-            <section id="magnoPurchasePolicies" class="magno-purchase-policies" aria-label="Políticas de compra">
-              <div class="magno-policy-icon"><i class="bi bi-heart-pulse"></i></div>
-              <div>
-                <strong>Tu compra, con tranquilidad</strong>
-                <p id="magnoCancellationMessage">Si necesitas cancelar, contáctanos antes de realizar el pago para conocer las condiciones vigentes.</p>
-                <p>Si tu arreglo llega en mal estado o presenta un problema atribuible a la floristería, contáctanos. Revisaremos el caso y te ofreceremos un reemplazo.</p>
-                <small>Esta información también estará en el correo de confirmación de tu pedido.</small>
-              </div>
-            </section>
-
-            <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
-              <i class="bi bi-credit-card-2-front-fill me-2"></i>
-              Elige opción de pago
-            </button>
-
-            <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
-
-            <a class="whatsapp-confirm" id="whatsappConfirm" href="#">
-              O confirmar pedido por WhatsApp
-            </a>
-          </aside>
 
         </div>
       </div>
@@ -459,6 +442,9 @@
     .magno-purchase-policies small{font-size:.76rem;color:#89717d}
     @media(max-width:575px){.magno-purchase-policies{padding:15px;gap:9px;border-radius:15px}}
   </style>
+  <script src="assets/js/site-experience.js?v=1"></script>
+  <script src="assets/js/mexico-season.js?v=1"></script>
+  <script src="assets/js/storefront-state.js?v=1"></script>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
 
   <script>
@@ -550,15 +536,72 @@
     }
 
     function readCart() {
-      try {
-        return JSON.parse(localStorage.getItem(CART_KEY)) || {};
-      } catch (error) {
-        return {};
-      }
+      if (window.MagnoStore) return window.MagnoStore.readCart();
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
+      catch (_) { return {}; }
     }
 
     function saveCart(cart) {
-      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      if (window.MagnoStore) {
+        if (!window.MagnoStore.saveCart(cart)) {
+          setCheckoutMessage('No pudimos guardar el carrito en este navegador.', 'error');
+        }
+        return;
+      }
+      try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+      catch (_) { setCheckoutMessage('No pudimos guardar el carrito en este navegador.', 'error'); }
+    }
+
+    function escapeCartText(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;').replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    const cartImageAlternatives = new Map();
+    const CART_PLACEHOLDER = 'assets/img/icon/logo_lpb.png';
+
+    function safeImageUrl(value) {
+      return window.MagnoStore?.validImage(value) || '';
+    }
+
+    async function refreshCartProductImages() {
+      try {
+        const response = await fetch(
+          BACKEND_BASE_URL + '/api/floristeria-magno/productos', {
+            headers: { Accept: 'application/json' }, cache: 'no-store'
+          });
+        const result = await response.json();
+        if (!response.ok || !result.ok || !Array.isArray(result.data)) return;
+        const productById = new Map(result.data.map(product => [String(product.id), product]));
+        const cart = readCart();
+        let changed = false;
+        Object.keys(cart).forEach(id => {
+          const product = productById.get(id);
+          if (!product) return; // Conservar el arreglo aunque se haya ocultado del catálogo.
+          const urls = [
+            product.imagenUrl,
+            ...(Array.isArray(product.imagenes)
+              ? product.imagenes.map(image => image.imagenUrl) : []),
+            ...(Array.isArray(cart[id].images) ? cart[id].images : []),
+            cart[id].image
+          ].map(safeImageUrl).filter(Boolean);
+          const images = [...new Set(urls)].slice(0, 10);
+          if (images.length &&
+              (cart[id].image !== images[0] || JSON.stringify(cart[id].images) !== JSON.stringify(images))) {
+            cart[id].image = images[0];
+            cart[id].images = images;
+            changed = true;
+          }
+        });
+        if (changed) {
+          saveCart(cart);
+          renderCart();
+        }
+      } catch (error) {
+        console.warn('No se pudieron actualizar las portadas; usando las imágenes guardadas.', error);
+      }
     }
 
     function getCartItems() {
@@ -600,6 +643,7 @@
 
     function renderCart() {
       const items = getCartItems();
+      cartImageAlternatives.clear();
       const { subtotal, delivery, total } = calculateCartTotals(items);
       const count = items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
 
@@ -621,15 +665,20 @@
       cartItemsContainer.innerHTML = items.map(item => {
         const lineTotal = Number(item.price || 0) * Number(item.qty || 0);
         const tags = Array.isArray(item.tags) && item.tags.length
-          ? item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+          ? item.tags.map(tag => `<span class="tag">${escapeCartText(tag)}</span>`).join('')
           : '<span class="tag">Arreglo floral</span>';
+        const images = [...new Set([item.image, ...(item.images || [])]
+          .map(safeImageUrl).filter(Boolean))];
+        cartImageAlternatives.set(String(item.id), images);
 
         return `
-          <article class="cart-item" data-id="${item.id}">
-            <img src="${item.image || 'https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?auto=format&fit=crop&w=500&q=85'}" alt="${item.name}">
+          <article class="cart-item" data-id="${escapeCartText(item.id)}">
+            <img class="cart-item-image" data-cart-image-id="${escapeCartText(item.id)}"
+              data-image-index="0" src="${escapeCartText(images[0] || CART_PLACEHOLDER)}"
+              alt="${escapeCartText(item.name)}" loading="lazy" decoding="async">
             <div class="item-meta">
-              <h3>${item.name}</h3>
-              <p>${item.description || 'Arreglo floral personalizado.'}</p>
+              <h3>${escapeCartText(item.name)}</h3>
+              <p>${escapeCartText(item.description || 'Arreglo floral personalizado.')}</p>
               <div class="item-tags">${tags}</div>
             </div>
             <div class="item-side">
@@ -647,6 +696,23 @@
         `;
       }).join('');
     }
+
+    // Cuando una foto antigua fue reemplazada, probar las siguientes
+    // alternativas del mismo producto antes de usar el logo local.
+    cartItemsContainer.addEventListener('error', (event) => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement) ||
+          !image.classList.contains('cart-item-image')) return;
+      const images = cartImageAlternatives.get(image.dataset.cartImageId) || [];
+      const nextIndex = Number(image.dataset.imageIndex || 0) + 1;
+      if (nextIndex < images.length) {
+        image.dataset.imageIndex = String(nextIndex);
+        image.src = images[nextIndex];
+      } else if (image.src !== new URL(CART_PLACEHOLDER, location.href).href) {
+        image.dataset.imageIndex = String(images.length);
+        image.src = CART_PLACEHOLDER;
+      }
+    }, true);
 
     cartItemsContainer.addEventListener('click', (event) => {
       const plusButton = event.target.closest('.qty-plus');
@@ -1213,6 +1279,8 @@
             result.message || 'No fue posible iniciar el pago con Mercado Pago.'
           );
         }
+        // El pedido existe en MySQL: guardar solo el código en este navegador.
+        window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
         setCheckoutMessage(
           'Mercado Pago se abrió en una pestaña nueva. Conserva esta pestaña para revisar tu carrito.',
@@ -1318,6 +1386,7 @@
             result.message || 'No fue posible generar la ficha de pago en OXXO.'
           );
         }
+        window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
         const ticketUrl = await waitForOxxoTicket(
           result.orderId,
@@ -1515,6 +1584,7 @@
                       result.message || 'No fue posible procesar el pago con tarjeta.'
                     );
                   }
+                  window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
                   if (result.challenge) {
                     startThreeDsChallenge(result);
@@ -1625,6 +1695,8 @@
       await Promise.all([loadSpecialDateStatus(), loadPurchasePolicies()]);
 
       renderCart();
+      // La API es la fuente de verdad: actualiza imágenes si el admin las cambió.
+      refreshCartProductImages();
 
       applySpecialDateRules();
     }
@@ -1632,6 +1704,7 @@
     initializeCartPage();
   </script>
   <script type="module" src="components/site-header.js"></script>
+  
   <script src="assets/js/mobile-nav.js"></script>
 
   <script defer src="assets/js/site-credit.js?v=1"></script>

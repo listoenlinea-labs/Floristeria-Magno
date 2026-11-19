@@ -738,3 +738,33 @@
         -webkit-text-fill-color: #25D366 !important;
     }
 }
+/* Contador visible exclusivamente en el botón Carrito del menú inferior. */
+@media (max-width:767px) {
+  body #mobile-nav-container .mobile-app-nav > a[data-page="carrito"] {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  body #mobile-nav-container .mobile-app-nav > a[data-page="carrito"] > .mobile-cart-count {
+    display: grid !important;
+    place-items: center;
+    position: absolute !important;
+    top: 1px !important;
+    left: calc(50% + 5px) !important;
+    z-index: 3;
+    width: auto !important;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    font-size: .57rem !important;
+    line-height: 1 !important;
+    font-weight: 850;
+    color: #fff !important;
+    background: #9c415f !important;
+    border-radius: 999px;
+    box-shadow: 0 1px 5px rgba(80,25,44,.25);
+    overflow: visible !important;
+  }
+  body #mobile-nav-container .mobile-app-nav > a[data-page="carrito"] > .mobile-cart-count[hidden] {
+    display: none !important;
+  }
+}

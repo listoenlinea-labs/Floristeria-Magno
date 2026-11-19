@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
     <link rel="stylesheet" href="assets/css/admin-hero-backgrounds.css?v=1">
     <link rel="stylesheet" href="assets/css/admin-experience.css?v=1">
+    <link rel="stylesheet" href="assets/css/admin-image-audit.css?v=1">
+    <link rel="stylesheet" href="assets/css/admin-polish.css?v=1">
 </head>
 
 <body class="page-admin">
@@ -149,6 +151,9 @@
                                 Estos productos alimentan el catálogo público.
                             </p>
                         </div>
+                        <button type="button" class="btn-soft" onclick="magnoImageAudit()">
+                            <i class="bi bi-shield-check me-2"></i> Revisar fotografías
+                        </button>
                     </div>
 
                     <div class="toolbar">
@@ -185,7 +190,7 @@
 
                 <div class="orders-kpi-grid">
                     <div class="kpi">
-                        <span>Pedidos del día</span>
+                        <span>Pedidos visibles</span>
                         <strong id="ordersKpiTotal">0</strong>
                     </div>
 
@@ -3978,9 +3983,7 @@
 
             try {
                 const result = await apiFetch(
-                    `/pedidos?fechaEntrega=${encodeURIComponent(
-                        selectedOrdersDate
-                    )}`
+                    `/pedidos?fechaEntrega=${encodeURIComponent(selectedOrdersDate)}&incluirPendientes=true`
                 );
 
                 orders = Array.isArray(result.data)
@@ -3990,9 +3993,7 @@
                 document
                     .getElementById('ordersSelectedDate')
                     .textContent =
-                    `Pedidos para ${formatOrderDate(
-                        selectedOrdersDate
-                    )}`;
+                    `Pedidos para ${formatOrderDate(selectedOrdersDate)} · pendientes de todas las fechas`;
 
                 renderOrders();
             } catch (error) {
@@ -4262,6 +4263,32 @@
             }).join('');
         }
 
+        // Días desde la creación, sin errores por UTC o cambios de horario.
+        function orderAgeDays(value) {
+            if (!value) return 0;
+            const placed = new Date(value);
+            if (Number.isNaN(placed.getTime())) return 0;
+            const day = new Intl.DateTimeFormat('en-US', {
+                timeZone: MEXICO_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(placed);
+            const parts = Object.fromEntries(day.map(piece => [piece.type, piece.value]));
+            const placedDay = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+            const [year, month, date] = getMexicoDateString().split('-').map(Number);
+            const today = Date.UTC(year, month - 1, date);
+            return Math.max(0, Math.floor((today - placedDay) / 86400000));
+        }
+
+        function orderIsOpen(order) {
+            return !['CANCELADO', 'ENTREGADO'].includes(normalizeOrderStatus(order.estado));
+        }
+
+        function orderDateLabel(date) {
+            if (!date) return 'Entrega por confirmar';
+            return new Intl.DateTimeFormat('es-MX', {
+                timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'
+            }).format(new Date(date + 'T12:00:00Z'));
+        }
+
         function renderOrders() {
             const container =
                 document.getElementById('ordersList');
@@ -4292,6 +4319,17 @@
                 );
             });
 
+            // Pendientes de cualquier fecha arriba, fechas comprometidas próximas primero.
+            filtered.sort((a, b) => {
+                const activeA = orderIsOpen(a), activeB = orderIsOpen(b);
+                if (activeA !== activeB) return activeA ? -1 : 1;
+                if (activeA) {
+                    const dateA = a.fechaEntrega || '9999-12-31';
+                    const dateB = b.fechaEntrega || '9999-12-31';
+                    if (dateA !== dateB) return dateA.localeCompare(dateB);
+                }
+                return Number(b.id || 0) - Number(a.id || 0);
+            });
             updateOrderKpis(filtered);
 
             if (!filtered.length) {
@@ -4361,12 +4399,18 @@
                 <summary class="magno-order-summary">
                     <div class="magno-order-buyer"><small>Comprador · ${escapeHtml(order.codigoRastreo || ('Pedido #' + order.id))}</small>
                         <strong>${escapeHtml(customer.nombre || 'Comprador sin nombre')}</strong></div>
-                    <span class="magno-order-state order-status-badge status-${state.toLowerCase()}">
-                        <i class="bi ${info.icon}"></i>
-                        ${escapeHtml(state === 'PENDIENTE' ? 'Pendiente' :
-                          ['RECIBIDO','EN_DISENO','LISTO_ENTREGA'].includes(state) ? 'En proceso' :
-                          state === 'EN_CAMINO' ? 'En camino' : state === 'ENTREGADO' ? 'Entregado' : info.label)}
-                    </span>
+                    <div class="magno-order-tags">
+                        ${orderIsOpen(order) && orderAgeDays(order.creadoEn) > 0
+                           ? `<span class="magno-order-age-badge"><i class="bi bi-clock-history"></i> Pedido hace ${orderAgeDays(order.creadoEn)} ${orderAgeDays(order.creadoEn) === 1 ? 'día' : 'días'}</span>`
+                           : ''}
+                        <span class="magno-order-state order-status-badge status-${state.toLowerCase()}">
+                            <i class="bi ${info.icon}"></i>
+                            ${escapeHtml(state === 'PENDIENTE' ? 'Pendiente' :
+                              ['RECIBIDO','EN_DISENO','LISTO_ENTREGA'].includes(state) ? 'En proceso' :
+                              state === 'EN_CAMINO' ? 'En camino' : state === 'ENTREGADO' ? 'Entregado' : info.label)}
+                        </span>
+                    </div>
+                    <div class="magno-order-delivery"><small>Fecha de entrega</small><strong>${escapeHtml(orderDateLabel(order.fechaEntrega))}</strong><span>${escapeHtml(order.ventanaEntrega || 'Horario por confirmar')}</span></div>
                     <div class="magno-order-qty"><small>Arreglos</small><strong>${(order.detalles || []).reduce((n,item)=>n+Number(item.cantidad||0),0)}</strong></div>
                     <div class="magno-order-amount"><small>Total pagado</small><strong>${formatCurrency(order.total)}</strong></div>
                     <i class="bi bi-chevron-down magno-order-chevron" aria-hidden="true"></i>
@@ -4386,7 +4430,7 @@
                         </h3>
 
                         <p>
-                            Entrega:
+                            Fecha de entrega: ${escapeHtml(orderDateLabel(order.fechaEntrega))} ·
                             ${escapeHtml(
                     order.ventanaEntrega ||
                     'Horario por confirmar'
@@ -4672,9 +4716,7 @@
             }
 
             const trackingUrl =
-                `${window.location.origin}/rastreo.html?pedido=${encodeURIComponent(
-                    code
-                )}`;
+                new URL(`rastreo.html?pedido=${encodeURIComponent(code)}`, window.location.href).href;
 
             navigator.clipboard
                 .writeText(trackingUrl)
@@ -5882,12 +5924,8 @@
                     </div>
                 </div>
 
-                <div class="admin-product-actions">
-                    <div class="magno-reorder-tools" aria-label="Mover arreglo">
-                        <button type="button" onclick="magnoMoveProduct('${product.id}',-1)" aria-label="Subir ${escapeHtml(product.name)}"><i class="bi bi-arrow-up"></i> Subir</button>
-                        <button type="button" onclick="magnoMoveProduct('${product.id}',1)" aria-label="Bajar ${escapeHtml(product.name)}"><i class="bi bi-arrow-down"></i> Bajar</button>
-                        <button type="button" onclick="magnoChoosePage('${product.id}')"><i class="bi bi-arrow-left-right"></i> Otra página</button>
-                    </div>
+                <div class="admin-product-actions magno-product-actions-grid">
+                    <div class="magno-basic-product-actions">
                     <button
                         type="button"
                         class="admin-action-btn admin-action-edit"
@@ -5918,7 +5956,14 @@
 
                         ${isActive ? "Ocultar" : "Activar"}
                     </button>
-
+                    </div>
+                    <div class="magno-reorder-tools" aria-label="Cambiar posición en el catálogo">
+                        <div class="magno-reorder-pair">
+                            <button type="button" onclick="magnoMoveProduct('${product.id}',-1)" aria-label="Subir ${escapeHtml(product.name)}"><i class="bi bi-arrow-up"></i> Subir</button>
+                            <button type="button" onclick="magnoMoveProduct('${product.id}',1)" aria-label="Bajar ${escapeHtml(product.name)}"><i class="bi bi-arrow-down"></i> Bajar</button>
+                        </div>
+                        <button type="button" class="magno-move-page-btn" onclick="magnoChoosePage('${product.id}')"><i class="bi bi-arrow-left-right"></i> Otra página</button>
+                    </div>
                 </div>
             </article>
         `;
@@ -8979,6 +9024,7 @@
     </script>
     <script src="assets/js/admin-experience.js?v=1"></script>
     <script src="assets/js/admin-experience-modals.js?v=1"></script>
+    <script src="assets/js/admin-image-audit.js?v=1"></script>
     <script src="assets/js/mobile-nav.js"></script>
 </body>
 

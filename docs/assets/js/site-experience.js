@@ -3,7 +3,20 @@
     const PALETTES = {
         rosa:['#fff1f5','#e9b3c4'],lavanda:['#f6efff','#c9b7e7'],
         menta:['#ecfaf2','#a8d9c7'],durazno:['#fff1e9','#efc0a8'],
-        cielo:['#eaf7ff','#abd3ea'],vainilla:['#fff9e9','#e8d7a7']
+        cielo:['#eaf7ff','#abd3ea'],vainilla:['#fff9e9','#e8d7a7'],
+        malva:['#fcf3ff','#dfc6eb'],
+        lila:['#f3f0ff','#cbc3ef'],
+        coral:['#fff0f0','#f1c0bb'],
+        salmon:['#fff4ec','#f3c7b6'],
+        amarillo:['#fffce6','#f5e69e'],
+        lima:['#f7ffe9','#d9eab3'],
+        verdeAgua:['#f0fff8','#bde5d7'],
+        turquesa:['#edffff','#b6e1df'],
+        azulPolvo:['#eff4ff','#c1d1ed'],
+        arena:['#fcf7ef','#e5d2bc'],
+        grisPerla:['#f8f7fa','#ddd8e4'],
+        fresa:['#fff1f6','#efbdd0'],
+        pistacho:['#f8fbed','#d8e0b8']
     };
     const looksLikeVideo = value => {
         if (!value) return '';

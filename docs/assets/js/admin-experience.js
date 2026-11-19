@@ -140,7 +140,20 @@ const MAGNO_PALETTE = {
     menta: ['#ecfaf2','#a8d9c7'],
     durazno: ['#fff1e9','#efc0a8'],
     cielo: ['#eaf7ff','#abd3ea'],
-    vainilla: ['#fff9e9','#e8d7a7']
+    vainilla: ['#fff9e9','#e8d7a7'],
+    malva: ['#fcf3ff','#dfc6eb'],
+    lila: ['#f3f0ff','#cbc3ef'],
+    coral: ['#fff0f0','#f1c0bb'],
+    salmon: ['#fff4ec','#f3c7b6'],
+    amarillo: ['#fffce6','#f5e69e'],
+    lima: ['#f7ffe9','#d9eab3'],
+    verdeAgua: ['#f0fff8','#bde5d7'],
+    turquesa: ['#edffff','#b6e1df'],
+    azulPolvo: ['#eff4ff','#c1d1ed'],
+    arena: ['#fcf7ef','#e5d2bc'],
+    grisPerla: ['#f8f7fa','#ddd8e4'],
+    fresa: ['#fff1f6','#efbdd0'],
+    pistacho: ['#f8fbed','#d8e0b8']
 };
 const MAGNO_THEME_FIELDS = {
     fondo: 'Fondo de la página', botones: 'Botones y acentos',
@@ -164,11 +177,26 @@ function magnoOpenThemeSettings() {
     });
     bootstrap.Modal.getOrCreateInstance(document.getElementById('magnoThemeModal')).show();
 }
+function magnoChooseThemeColor(key, value) {
+    if (!(key in MAGNO_THEME_FIELDS) || !(value in MAGNO_PALETTE)) return;
+    document.getElementById('mgTheme_' + key).value = value;
+    magnoThemeSwatch(key);
+}
 function magnoThemeSwatch(key) {
     const value = document.getElementById('mgTheme_' + key)?.value || 'base';
-    const parent = document.getElementById('mgThemePreview_' + key);
-    if (parent) parent.innerHTML = MAGNO_PALETTE[value].map(color =>
-        '<span style="background:' + color + '"></span>').join('');
+    document.querySelectorAll('[data-theme-part="' + key + '"]').forEach(button => {
+        const selected = button.dataset.themeValue === value;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+    });
+    const labels = {
+        base: 'Original · colores actuales', rosa: 'Rosa pastel',
+        lavanda: 'Lavanda pastel', menta: 'Menta pastel',
+        durazno: 'Durazno pastel', cielo: 'Azul cielo pastel', vainilla: 'Vainilla pastel',
+        malva: 'Malva pastel', lila: 'Lila pastel', coral: 'Coral pastel', salmon: 'Salmón pastel', amarillo: 'Amarillo pastel', lima: 'Lima pastel', verdeAgua: 'Verde agua pastel', turquesa: 'Turquesa pastel', azulPolvo: 'Azul polvo pastel', arena: 'Arena pastel', grisPerla: 'Gris perla pastel', fresa: 'Fresa pastel', pistacho: 'Pistacho pastel'
+    };
+    const caption = document.getElementById('mgThemePreview_' + key);
+    if (caption) caption.textContent = labels[value] || labels.base;
 }
 function magnoResetTheme() {
     Object.keys(MAGNO_THEME_FIELDS).forEach(key => {

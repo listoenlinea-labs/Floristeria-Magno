@@ -3,19 +3,32 @@
     const PALETTES = [
         ['base','Original (exactamente como hoy)'], ['rosa','Rosa pastel'],
         ['lavanda','Lavanda pastel'],['menta','Menta pastel'],
-        ['durazno','Durazno pastel'],['cielo','Azul cielo pastel'],['vainilla','Vainilla pastel']
+        ['durazno','Durazno pastel'],['cielo','Azul cielo pastel'],['vainilla','Vainilla pastel'],
+        ['malva','Malva pastel'],['lila','Lila pastel'],['coral','Coral pastel'],['salmon','Salmón pastel'],['amarillo','Amarillo pastel'],['lima','Lima pastel'],['verdeAgua','Verde agua pastel'],['turquesa','Turquesa pastel'],['azulPolvo','Azul polvo pastel'],['arena','Arena pastel'],['grisPerla','Gris perla pastel'],['fresa','Fresa pastel'],['pistacho','Pistacho pastel']
     ];
-    const selectOptions = PALETTES.map(([key,text]) =>
-        '<option value="' + key + '">' + text + '</option>').join('');
+    // Paleta visual táctil: sólo opciones pastel admitidas por el backend.
     const themeFields = [
         ['fondo','Fondo de la página'],['botones','Botones y acentos'],
         ['petalos','Pétalos de la animación'],['petaloInicial','Pétalos de bienvenida']
-    ].map(([key,title]) => '<div class="magno-theme-field">' +
-        '<label for="mgTheme_' + key + '">' + title + '</label>' +
-        '<select class="form-select" id="mgTheme_' + key +
-        '" onchange="magnoThemeSwatch(\'' + key + '\')">' + selectOptions + '</select>' +
-        '<div class="magno-theme-preview" id="mgThemePreview_' + key + '" aria-hidden="true"></div></div>').join('');
-
+    ].map(([key, title]) => {
+        const colors = PALETTES.map(([value,label]) => {
+            const shades = MAGNO_PALETTE[value];
+            return '<button type="button" class="magno-color-option" ' +
+                'data-theme-part="' + key + '" data-theme-value="' + value + '" ' +
+                'aria-label="' + label + '" aria-pressed="false" title="' + label + '" ' +
+                '>' +
+                '<span class="magno-color-disc" style="background:linear-gradient(135deg,' +
+                shades[0] + ',' + shades[1] + ')"></span><span class="magno-color-label">' +
+                (value === 'base' ? 'Original' : label.replace(' pastel','')) +
+                '</span><i class="bi bi-check-circle-fill" aria-hidden="true"></i></button>';
+        }).join('');
+        return '<div class="magno-theme-field">' +
+            '<label id="mgThemeLabel_' + key + '">' + title + '</label>' +
+            '<input id="mgTheme_' + key + '" type="hidden" value="base">' +
+            '<div class="magno-color-grid" role="group" aria-labelledby="mgThemeLabel_' + key + '">' +
+            colors + '</div>' +
+            '<div class="magno-theme-caption" id="mgThemePreview_' + key + '">Original</div></div>';
+    }).join('');
     document.body.insertAdjacentHTML('beforeend', `
         <div class="modal fade magno-modal-shell" id="magnoSeoModal" tabindex="-1" aria-labelledby="mgSeoTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content">
@@ -64,6 +77,12 @@
             </div></div>
         </div>
     `);
+
+    document.body.addEventListener('click', event => {
+        const option = event.target.closest('.magno-color-option');
+        if (!option) return;
+        magnoChooseThemeColor(option.dataset.themePart, option.dataset.themeValue);
+    });
 
     window.magnoChoosePage = function(id) {
         const totalPages=Math.ceil(products.length/MAGNO_PAGE_SIZE);

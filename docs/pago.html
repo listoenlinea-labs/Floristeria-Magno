@@ -81,6 +81,7 @@
       border-bottom: 0;
     }
   </style>
+  <link rel="stylesheet" href="assets/css/mexico-season.css?v=1">
 </head>
 
 <body class="page-carrito">
@@ -123,6 +124,9 @@
     </div>
   </main>
 
+  <script src="assets/js/site-experience.js?v=1"></script>
+  <script src="assets/js/mexico-season.js?v=1"></script>
+  <script src="assets/js/storefront-state.js?v=1"></script>
   <script>
     const CART_KEY = 'jhmagno_cart';
     const params = new URLSearchParams(window.location.search);
@@ -131,6 +135,7 @@
       params.get('payment_id') ||
       params.get('collection_id');
     const returnedResult = params.get('resultado');
+    const orderTrackingCode = params.get('codigo');
 
     const BACKEND_BASE_URL = window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1'
@@ -156,6 +161,12 @@
 
     function showResult(status, data = {}) {
       const normalizedStatus = status || 'error';
+      const code = data.externalReference || orderTrackingCode;
+      if (/^JHM-\d{6}$/i.test(String(code || ''))) {
+        window.MagnoStore?.rememberOrder?.(code);
+        retryPaymentLink.href = 'rastreo.html?codigo=' + encodeURIComponent(code);
+        retryPaymentLink.textContent = 'Consultar mi pedido';
+      }
       resultCard.dataset.status = normalizedStatus;
       paymentDetails.hidden = !data.id;
 
@@ -170,8 +181,13 @@
         resultTitle.textContent = 'Pago aprobado';
         resultMessage.textContent =
           'Tu pago fue confirmado por Mercado Pago. La florería ya puede preparar tu pedido.';
-        retryPaymentLink.textContent = 'Ver carrito';
+        if (!/^JHM-\d{6}$/i.test(String(code || ''))) {
+          retryPaymentLink.href = 'rastreo.html';
+          retryPaymentLink.textContent = 'Ver mis pedidos';
+        }
+        // Solo se vacía el carrito tras confirmación real desde la API.
         localStorage.removeItem(CART_KEY);
+        window.MagnoStore?.updateCartIndicators?.();
         return;
       }
 
@@ -191,7 +207,12 @@
 
     async function verifyPayment(attempt = 0) {
       if (!operationId) {
-        showResult(returnedResult === 'pending' ? 'pending' : 'error');
+        // Checkout Pro devuelve el código, pero no siempre un ID de operación.
+        // No presentar una aprobación sin validación del servidor.
+        showResult(['pending','success'].includes(returnedResult) ? 'pending' : 'error');
+        if (returnedResult === 'success') {
+          resultMessage.textContent = 'Regresaste de Mercado Pago. Conservamos tu pedido; consulta su estado con tu código de rastreo mientras se confirma el pago.';
+        }
         return;
       }
 
@@ -225,6 +246,7 @@
     verifyPayment();
   </script>
   <script type="module" src="components/site-header.js"></script>
+  
   <script src="assets/js/mobile-nav.js"></script>
   <script defer src="assets/js/site-credit.js?v=1"></script>
 </body>

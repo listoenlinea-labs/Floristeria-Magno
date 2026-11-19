@@ -1,0 +1,7 @@
+.magno-audit-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.magno-audit-kpis>div{background:#fff9fb;border:1px solid #eedfe3;border-radius:14px;padding:14px}
+.magno-audit-kpis small{display:block;color:#776771;font-size:.73rem}
+.magno-audit-kpis strong{font-size:1.3rem;color:#32252b}
+.magno-image-audit-headline{font-weight:700;color:#4d3741}
+.magno-image-audit-result ul{max-height:210px;overflow:auto;padding-left:20px;overflow-wrap:anywhere;font-size:.83rem}
+@media(max-width:650px){.magno-audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
