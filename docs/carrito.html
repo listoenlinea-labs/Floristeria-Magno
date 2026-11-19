@@ -1293,6 +1293,8 @@
             result.message || 'No fue posible iniciar el pago con Mercado Pago.'
           );
         }
+        // El pedido existe en MySQL: guardar solo el código en este navegador.
+        window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
         setCheckoutMessage(
           'Mercado Pago se abrió en una pestaña nueva. Conserva esta pestaña para revisar tu carrito.',
@@ -1398,6 +1400,7 @@
             result.message || 'No fue posible generar la ficha de pago en OXXO.'
           );
         }
+        window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
         const ticketUrl = await waitForOxxoTicket(
           result.orderId,
@@ -1595,6 +1598,7 @@
                       result.message || 'No fue posible procesar el pago con tarjeta.'
                     );
                   }
+                  window.MagnoStore?.rememberOrder?.(result.codigoRastreo);
 
                   if (result.challenge) {
                     startThreeDsChallenge(result);
