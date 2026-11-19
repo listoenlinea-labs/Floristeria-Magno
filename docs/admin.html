@@ -3982,9 +3982,7 @@
 
             try {
                 const result = await apiFetch(
-                    `/pedidos?fechaEntrega=${encodeURIComponent(
-                        selectedOrdersDate
-                    )}`
+                    `/pedidos?fechaEntrega=${encodeURIComponent(selectedOrdersDate)}&incluirPendientes=true`
                 );
 
                 orders = Array.isArray(result.data)
@@ -3994,9 +3992,7 @@
                 document
                     .getElementById('ordersSelectedDate')
                     .textContent =
-                    `Pedidos para ${formatOrderDate(
-                        selectedOrdersDate
-                    )}`;
+                    `Pedidos para ${formatOrderDate(selectedOrdersDate)} · pendientes de todas las fechas`;
 
                 renderOrders();
             } catch (error) {
@@ -4266,6 +4262,32 @@
             }).join('');
         }
 
+        // Días desde la creación, sin errores por UTC o cambios de horario.
+        function orderAgeDays(value) {
+            if (!value) return 0;
+            const placed = new Date(value);
+            if (Number.isNaN(placed.getTime())) return 0;
+            const day = new Intl.DateTimeFormat('en-US', {
+                timeZone: MEXICO_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(placed);
+            const parts = Object.fromEntries(day.map(piece => [piece.type, piece.value]));
+            const placedDay = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+            const [year, month, date] = getMexicoDateString().split('-').map(Number);
+            const today = Date.UTC(year, month - 1, date);
+            return Math.max(0, Math.floor((today - placedDay) / 86400000));
+        }
+
+        function orderIsOpen(order) {
+            return !['CANCELADO', 'ENTREGADO'].includes(normalizeOrderStatus(order.estado));
+        }
+
+        function orderDateLabel(date) {
+            if (!date) return 'Entrega por confirmar';
+            return new Intl.DateTimeFormat('es-MX', {
+                timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'
+            }).format(new Date(date + 'T12:00:00Z'));
+        }
+
         function renderOrders() {
             const container =
                 document.getElementById('ordersList');
@@ -4296,6 +4318,17 @@
                 );
             });
 
+            // Pendientes de cualquier fecha arriba, fechas comprometidas próximas primero.
+            filtered.sort((a, b) => {
+                const activeA = orderIsOpen(a), activeB = orderIsOpen(b);
+                if (activeA !== activeB) return activeA ? -1 : 1;
+                if (activeA) {
+                    const dateA = a.fechaEntrega || '9999-12-31';
+                    const dateB = b.fechaEntrega || '9999-12-31';
+                    if (dateA !== dateB) return dateA.localeCompare(dateB);
+                }
+                return Number(b.id || 0) - Number(a.id || 0);
+            });
             updateOrderKpis(filtered);
 
             if (!filtered.length) {
@@ -4365,12 +4398,18 @@
                 <summary class="magno-order-summary">
                     <div class="magno-order-buyer"><small>Comprador · ${escapeHtml(order.codigoRastreo || ('Pedido #' + order.id))}</small>
                         <strong>${escapeHtml(customer.nombre || 'Comprador sin nombre')}</strong></div>
-                    <span class="magno-order-state order-status-badge status-${state.toLowerCase()}">
-                        <i class="bi ${info.icon}"></i>
-                        ${escapeHtml(state === 'PENDIENTE' ? 'Pendiente' :
-                          ['RECIBIDO','EN_DISENO','LISTO_ENTREGA'].includes(state) ? 'En proceso' :
-                          state === 'EN_CAMINO' ? 'En camino' : state === 'ENTREGADO' ? 'Entregado' : info.label)}
-                    </span>
+                    <div class="magno-order-tags">
+                        ${orderIsOpen(order) && orderAgeDays(order.creadoEn) > 0
+                           ? `<span class="magno-order-age-badge"><i class="bi bi-clock-history"></i> Pedido hace ${orderAgeDays(order.creadoEn)} ${orderAgeDays(order.creadoEn) === 1 ? 'día' : 'días'}</span>`
+                           : ''}
+                        <span class="magno-order-state order-status-badge status-${state.toLowerCase()}">
+                            <i class="bi ${info.icon}"></i>
+                            ${escapeHtml(state === 'PENDIENTE' ? 'Pendiente' :
+                              ['RECIBIDO','EN_DISENO','LISTO_ENTREGA'].includes(state) ? 'En proceso' :
+                              state === 'EN_CAMINO' ? 'En camino' : state === 'ENTREGADO' ? 'Entregado' : info.label)}
+                        </span>
+                    </div>
+                    <div class="magno-order-delivery"><small>Fecha de entrega</small><strong>${escapeHtml(orderDateLabel(order.fechaEntrega))}</strong><span>${escapeHtml(order.ventanaEntrega || 'Horario por confirmar')}</span></div>
                     <div class="magno-order-qty"><small>Arreglos</small><strong>${(order.detalles || []).reduce((n,item)=>n+Number(item.cantidad||0),0)}</strong></div>
                     <div class="magno-order-amount"><small>Total pagado</small><strong>${formatCurrency(order.total)}</strong></div>
                     <i class="bi bi-chevron-down magno-order-chevron" aria-hidden="true"></i>
@@ -4390,7 +4429,7 @@
                         </h3>
 
                         <p>
-                            Entrega:
+                            Fecha de entrega: ${escapeHtml(orderDateLabel(order.fechaEntrega))} ·
                             ${escapeHtml(
                     order.ventanaEntrega ||
                     'Horario por confirmar'
