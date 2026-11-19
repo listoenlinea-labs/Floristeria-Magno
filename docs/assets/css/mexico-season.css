@@ -1,0 +1,37 @@
+/* Ocultar únicamente los controles de previsualización de temporadas,
+ * conservando sus animaciones, estilos y detección automática por fecha. */
+.season-preview-panel, .season-switcher, .season-switch, .season-toggle,
+#seasonPreviewPanel, [aria-label="Previsualizar tema de temporada"] {
+    display:none!important;
+}
+/* Un tema personalizado por el administrador gana sobre el fondo estacional. */
+body.page-index[data-magno-custom-bg="true"],
+body.page-rastreo[data-magno-custom-bg="true"],
+body.page-carrito[data-magno-custom-bg="true"] {
+    background:var(--magno-selected-gradient)!important;
+}
+body.page-index[data-magno-custom-bg="true"] .hero,
+body.page-index[data-magno-custom-bg="true"] .section-padding,
+body.page-rastreo[data-magno-custom-bg="true"] .tracking-hero,
+body.page-rastreo[data-magno-custom-bg="true"] .soft-section {
+    background:var(--magno-selected-gradient)!important;
+}
+body.page-index[data-magno-custom-buttons="true"] .btn-main,
+body.page-index[data-magno-custom-buttons="true"] .btn-luxury,
+body.page-index[data-magno-custom-buttons="true"] .btn-gold,
+body.page-rastreo[data-magno-custom-buttons="true"] .btn-main,
+body.page-carrito[data-magno-custom-buttons="true"] .btn-pay,
+body.page-carrito[data-magno-custom-buttons="true"] .qty-control button {
+    background:var(--magno-selected-button)!important;
+    border-color:var(--magno-selected-button)!important;
+    color:#301823!important;
+}
+body.page-index[data-magno-custom-petals="true"] .floating-petal,
+body.page-index[data-magno-custom-petals="true"] .season-particle,
+body.page-rastreo[data-magno-custom-petals="true"] .season-particle {
+    background:var(--magno-selected-petal)!important;
+}
+body.page-index[data-magno-custom-intro="true"] .catalog-flower-petal,
+body.page-rastreo[data-magno-custom-intro="true"] .catalog-flower-petal {
+    background:radial-gradient(circle at 50% 30%,#fff,var(--magno-selected-intro))!important;
+}
