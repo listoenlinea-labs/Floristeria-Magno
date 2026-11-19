@@ -155,6 +155,9 @@ async function startServer() {
 
         await sequelize.authenticate();
 
+        // Únicamente crea la tabla de opciones nuevas; no altera tablas existentes.
+        await require('./models/ConfiguracionTienda').sync();
+
         console.log(
             '✅ Conexión con MySQL establecida correctamente.'
         );
