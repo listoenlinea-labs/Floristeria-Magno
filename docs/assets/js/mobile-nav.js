@@ -461,6 +461,9 @@ document.addEventListener(
 
             setActiveMobileNavItem();
 
+            // El menú se inserta después del HTML: el contador debe actualizarse ahora.
+            window.MagnoStore?.updateCartIndicators?.();
+
         } catch (error) {
 
             console.error(
