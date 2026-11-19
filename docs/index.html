@@ -1826,22 +1826,27 @@
     const CART_KEY = 'jhmagno_cart';
 
     function readCart() {
-      try {
-        return JSON.parse(localStorage.getItem(CART_KEY)) || {};
-      } catch (error) {
-        return {};
-      }
+      if (window.MagnoStore) return window.MagnoStore.readCart();
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
+      catch (_) { return {}; }
     }
 
     function saveCart(cart) {
-      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      if (window.MagnoStore) {
+        const saved = window.MagnoStore.saveCart(cart);
+        if (!saved) alert('Este navegador no permitió guardar el carrito. Verifica el espacio o la navegación privada.');
+        return;
+      }
+      try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+      catch (_) { alert('No fue posible guardar el carrito en el navegador.'); }
       updateCartBadge();
     }
 
     function updateCartBadge() {
-      const cart = readCart();
-      const count = Object.values(cart).reduce((sum, item) => sum + Number(item.qty || 0), 0);
-      document.querySelectorAll('#cartCount, .cart-count').forEach((el) => {
+      if (window.MagnoStore) return window.MagnoStore.updateCartIndicators();
+      const count = Object.values(readCart()).reduce(
+        (sum, item) => sum + Number(item.qty || 0), 0);
+      document.querySelectorAll('#cartCount, .cart-count').forEach(el => {
         el.textContent = count;
       });
     }
@@ -1860,8 +1865,15 @@
       const badge = card.querySelector('.product-badge')?.textContent?.trim();
       const category = card.closest('[data-category]')?.dataset.category;
       const tags = [badge, category].filter(Boolean);
+      let galleryImages = [];
+      try {
+        const parsed = JSON.parse(card.querySelector('.product-gallery-main-image')
+          ?.getAttribute('data-gallery-images') || '[]');
+        if (Array.isArray(parsed)) galleryImages = parsed;
+      } catch (_) { /* La portada todavía es una alternativa válida. */ }
+      const images = [...new Set([image, ...galleryImages].filter(Boolean))];
 
-      return { id, name, price, image, description, tags, qty: 1 };
+      return { id, name, price, image: images[0] || '', images, description, tags, qty: 1 };
     }
 
     document.addEventListener(
@@ -1891,10 +1903,9 @@
         if (!cart[product.id]) {
           cart[product.id] = product;
         } else {
-          cart[product.id].qty =
-            Number(
-              cart[product.id].qty || 0
-            ) + 1;
+          cart[product.id].qty = Number(cart[product.id].qty || 0) + 1;
+          cart[product.id].images = product.images;
+          cart[product.id].image = product.image;
         }
 
         saveCart(cart);
