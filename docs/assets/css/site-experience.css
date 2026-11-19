@@ -1,0 +1,38 @@
+/* Paletas de temporada elegidas desde el panel, solo para el catálogo público. */
+body.page-catalogo[data-magno-custom-bg="true"] {
+  background:var(--magno-selected-bg)!important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .catalog-hero,
+body.page-catalogo[data-magno-custom-bg="true"] .soft-section {
+  background:var(--magno-selected-gradient)!important;
+}
+body.page-catalogo[data-magno-custom-buttons="true"] .btn-luxury,
+body.page-catalogo[data-magno-custom-buttons="true"] .btn-reservar {
+  background:var(--magno-selected-button)!important;
+  border-color:var(--magno-selected-button)!important;
+  color:#27151b!important;
+}
+body.page-catalogo[data-magno-custom-buttons="true"] .btn-luxury:hover {
+  background:color-mix(in srgb,var(--magno-selected-button) 82%,white 18%)!important;
+}
+body.page-catalogo[data-magno-custom-petals="true"] .season-particle.shape-petal,
+body.page-catalogo[data-magno-custom-petals="true"] .season-particle.shape-leaf {
+  background:var(--magno-selected-petal)!important;
+}
+body.page-catalogo[data-magno-custom-petals="true"] .season-particle {
+  color:var(--magno-selected-petal)!important;
+}
+body.page-catalogo[data-magno-custom-intro="true"] .catalog-flower-petal {
+  background:radial-gradient(circle at 45% 28%,#fffefb 0%,var(--magno-selected-intro) 52%,color-mix(in srgb,var(--magno-selected-intro) 80%,#3f2635 20%) 100%)!important;
+}
+body.page-catalogo #magnoSeoSection[hidden] {display:none!important}
+body.page-catalogo .magno-seo-video {
+  aspect-ratio:16/9;width:100%;border-radius:20px;overflow:hidden;
+  box-shadow:0 18px 42px rgba(51,32,39,.12);margin-top:18px;
+}
+body.page-catalogo .magno-seo-video iframe {width:100%;height:100%;border:0;display:block}
+body.page-catalogo .product-gallery-main-image {content-visibility:auto}
+@media(prefers-reduced-motion:reduce) {
+  body.page-catalogo .season-particle {animation:none!important;display:none}
+  body.page-catalogo .catalog-entry-animation {display:none!important}
+}

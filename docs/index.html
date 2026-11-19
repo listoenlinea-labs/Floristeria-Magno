@@ -37,6 +37,8 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
   <link rel="stylesheet" href="assets/css/storefront-refresh.css?v=8">
+  <link rel="stylesheet" href="assets/css/site-experience.css?v=1">
+  <link rel="preconnect" href="https://api.listoenlinea.host" crossorigin>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta name="theme-color" content="#FFE8E8" />
   <script type="application/ld+json">
@@ -114,7 +116,7 @@
 
             <button class="catalog-sort-trigger" id="catalogSortButton" type="button" aria-haspopup="listbox"
               aria-expanded="false" aria-controls="catalogSortMenu">
-              <span id="catalogSortButtonText">Precio</span>
+              <span id="catalogSortButtonText">Orden del catálogo</span>
               <i class="bi bi-chevron-down" aria-hidden="true"></i>
             </button>
 
@@ -123,8 +125,8 @@
               <button type="button" class="catalog-sort-option active" data-sort-value="default" role="option"
                 aria-selected="true">
                 <span>
-                  <strong>Precio</strong>
-                  <small>Orden original</small>
+                  <strong>Orden del catálogo</strong>
+                  <small>El orden elegido en Administración</small>
                 </span>
                 <i class="bi bi-check2" aria-hidden="true"></i>
               </button>
@@ -149,7 +151,7 @@
             </div>
 
             <select id="catalogSortSelect" class="visually-hidden" tabindex="-1" aria-hidden="true">
-              <option value="default">Precio</option>
+              <option value="default">Orden del catálogo</option>
               <option value="price-desc">Mayor a menor</option>
               <option value="price-asc">Menor a mayor</option>
             </select>
@@ -255,13 +257,14 @@
         </div>
       </div>
     </section>
-    <section class="section-padding soft-section" aria-labelledby="entregas-seo-title">
+    <section class="section-padding soft-section" id="magnoSeoSection" aria-labelledby="entregas-seo-title" hidden style="display:none">
       <div class="container">
         <div class="row g-4 align-items-center">
           <div class="col-lg-7">
             <h2 class="section-title" id="entregas-seo-title">Compra flores en línea con entrega a domicilio en Guadalajara y Zapopan</h2>
-            <p class="text-muted-custom">En Floristería Magno encontrarás arreglos florales y ramos de flores para cumpleaños, aniversarios, agradecimientos y otros momentos especiales. Elige entre rosas, girasoles, tulipanes y flores de temporada según la disponibilidad del catálogo.</p>
-            <p class="text-muted-custom mb-0">Selecciona tus arreglos, revisa tu carrito y programa una entrega dentro de nuestra zona de cobertura en el Área Metropolitana de Guadalajara. También puedes <a href="nosotros.html">conocer nuestra florería y nuestra propuesta de diseño floral</a>.</p>
+            <p class="text-muted-custom" id="magnoSeoParagraph1">En Floristería Magno encontrarás arreglos florales y ramos de flores para cumpleaños, aniversarios, agradecimientos y otros momentos especiales. Elige entre rosas, girasoles, tulipanes y flores de temporada según la disponibilidad del catálogo.</p>
+            <p class="text-muted-custom mb-0" id="magnoSeoParagraph2">Selecciona tus arreglos, revisa tu carrito y programa una entrega dentro de nuestra zona de cobertura en el Área Metropolitana de Guadalajara. También puedes conocer nuestra florería y nuestra propuesta de diseño floral.</p>
+            <div id="magnoSeoVideo" class="magno-seo-video" hidden></div>
           </div>
           <div class="col-lg-5">
             <h3 class="h4">Ramos y arreglos florales para regalar</h3>
@@ -346,7 +349,7 @@
               <i class="bi bi-chevron-left"></i>
             </button>
 
-            <img id="productLightboxImage" src="" alt="">
+            <img id="productLightboxImage" src="" alt="" decoding="async" fetchpriority="high">
 
             <button type="button" class="product-lightbox-arrow product-lightbox-next" id="productLightboxNext"
               aria-label="Siguiente imagen">
@@ -456,6 +459,7 @@
 
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/site-experience.js?v=1"></script>
   <script>
 
     const API_BASE_URL =
@@ -495,6 +499,8 @@
 
         const config =
           result.data || {};
+
+        window.magnoApplySiteSettings(config);
 
 
         updateSocialLink(
@@ -766,12 +772,13 @@
 
     <img
     class="product-gallery-main-image product-lightbox-trigger"
+    decoding="async" fetchpriority="${productIndex < 2 ? 'high' : 'low'}"
     src="${escapeHtml(imageUrl)}"
     data-gallery-index="0"
     data-product-name="${escapeHtml(product.nombre)}"
     data-gallery-images='${JSON.stringify(safeImages).replace(/'/g, "&#39;")}'
     alt="${escapeHtml(product.nombre)}"
-    loading="lazy"
+    loading="${productIndex < 2 ? 'eager' : 'lazy'}"
     title="Haz clic para ampliar"
     onerror="
         this.onerror = null;
@@ -846,7 +853,7 @@
                                         src="${escapeHtml(
                       galleryImage
                     )}"
-                                        alt=""
+                                        alt="" loading="lazy" decoding="async"
                                     >
                                 </button>
                             `

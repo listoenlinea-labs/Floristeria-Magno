@@ -2,6 +2,8 @@ const {
     createMailerTransporter,
     getRequiredEnvironmentVariable
 } = require('../config/mailer');
+const { getStoreOptions, cancellationText, REPLACEMENT_TEXT } =
+    require('./tienda-options.service');
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -77,6 +79,11 @@ async function enviarCorreoCodigoRastreo({
         `
         : '';
 
+    // Se consulta la política vigente cuando se confirma el pedido.
+    const storeOptions = await getStoreOptions();
+    const cancellationPolicy = cancellationText(storeOptions.cancelacionPorcentaje);
+    const replacementPolicy = REPLACEMENT_TEXT;
+
     const info = await transporter.sendMail({
         from: `"Floristería Magno" <${fromEmail}>`,
         to: email,
@@ -96,6 +103,9 @@ async function enviarCorreoCodigoRastreo({
             trackingUrl
                 ? `Rastrea tu pedido aquí: ${trackingUrl}`
                 : '',
+            '',
+            'Cancelaciones: ' + cancellationPolicy,
+            'Cambios por problemas con el arreglo: ' + replacementPolicy,
             '',
             'Floristería Magno'
         ]
@@ -180,6 +190,12 @@ async function enviarCorreoCodigoRastreo({
                 </p>
 
                 ${trackingButton}
+
+                <div style="background:#ffffff;border:1px solid #eadcde;border-radius:16px;padding:20px;margin-top:24px;">
+                    <h2 style="font-size:18px;margin:0 0 12px;">Tu compra, con tranquilidad</h2>
+                    <p style="line-height:1.6;"><strong>Cancelaciones:</strong> ${escapeHtml(cancellationPolicy)}</p>
+                    <p style="line-height:1.6;margin-bottom:0;"><strong>Si algo no sale bien:</strong> ${escapeHtml(replacementPolicy)}</p>
+                </div>
 
                 <p style="margin-top:32px;color:#76666a;">
                     Floristería Magno

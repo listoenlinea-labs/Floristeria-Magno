@@ -1,0 +1,80 @@
+/* Floristería Magno · mejoras del administrador · noviembre 2026 */
+body.page-admin .magno-product-pager {
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:9px;
+  margin:24px 0 5px;padding:10px;
+}
+body.page-admin .magno-product-pager button {
+  min-width:40px;min-height:42px;padding:9px 12px;border-radius:13px;
+  border:1px solid #e7d9dd;background:#fff;color:#533841;font-weight:700;
+  transition:background .15s,transform .15s,border-color .15s;
+}
+body.page-admin .magno-product-pager button[aria-current="page"] {
+  background:#41202e;color:#fff;border-color:#41202e;
+}
+body.page-admin .magno-product-pager button.mg-drop-hover {
+  border:2px dashed #bd738b;background:#fff0f5;transform:scale(1.06);
+}
+body.page-admin .magno-product-pager button:disabled {opacity:.35;cursor:not-allowed}
+body.page-admin .magno-page-caption {font-size:.82rem;color:#786a6b;text-align:center;width:100%}
+body.page-admin .admin-product-card[draggable="true"] {cursor:grab}
+body.page-admin .admin-product-card.is-dragging {opacity:.45;cursor:grabbing}
+body.page-admin .admin-product-card.is-drag-over {outline:3px dashed #c17894;outline-offset:2px}
+body.page-admin .magno-order-hint {font-size:.76rem;color:#887982;padding:8px 0}
+body.page-admin .magno-reorder-tools {display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+body.page-admin .magno-reorder-tools button {border:1px solid #e5dce0;border-radius:11px;background:#fff;
+  min-height:36px;padding:6px 10px;font-size:.77rem;font-weight:700;color:#5f3b4c}
+body.page-admin .magno-reorder-tools button:hover {background:#faeef2}
+body.page-admin .magno-order-accordion {overflow:hidden;border-radius:24px}
+body.page-admin .magno-order-summary {
+ display:grid;grid-template-columns:minmax(160px,1fr) auto auto auto 18px;
+ gap:18px;align-items:center;list-style:none;cursor:pointer;padding:20px 26px;
+ background:linear-gradient(120deg,#fff,#fff8fa);
+}
+body.page-admin .magno-order-summary::-webkit-details-marker {display:none}
+body.page-admin .magno-order-summary:focus-visible {outline:3px solid #b87b92;outline-offset:-4px}
+body.page-admin .magno-order-summary strong {font-size:1rem}
+body.page-admin .magno-order-summary small {display:block;font-size:.69rem;color:#7b6e73;text-transform:uppercase;letter-spacing:.06em}
+body.page-admin .magno-order-summary .order-status-badge {white-space:nowrap}
+body.page-admin .magno-order-chevron {transition:transform .2s}
+body.page-admin .magno-order-accordion[open] .magno-order-chevron {transform:rotate(180deg)}
+body.page-admin .magno-order-accordion > .admin-order-header {border-top:1px solid #f1e6e9}
+body.page-admin .magno-settings-actions {display:flex;flex-wrap:wrap;gap:12px;margin:0 0 24px}
+body.page-admin .magno-settings-actions button {background:#fff;border:1px solid #e6d7dc;border-radius:16px;
+ box-shadow:0 10px 28px rgba(62,33,46,.05);padding:15px 19px;font-weight:750;color:#4a2935}
+body.page-admin .magno-settings-actions button:hover {border-color:#d6a5b8;background:#fff8fa}
+body.page-admin .magno-modal-copy {color:#77646d;font-size:.94rem}
+body.page-admin .magno-theme-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body.page-admin .magno-theme-field {padding:18px;background:#fffafa;border:1px solid #eddddd;border-radius:18px}
+body.page-admin .magno-theme-preview {height:22px;border-radius:20px;display:flex;gap:3px;margin:12px 0}
+body.page-admin .magno-theme-preview span {flex:1;border-radius:12px}
+body.page-admin .magno-modal-shell .modal-content {border:0;border-radius:24px;overflow:hidden;padding:8px}
+body.page-admin .magno-modal-shell .modal-header {border-bottom:1px solid #f2e4e9}
+body.page-admin .magno-modal-shell .modal-footer {border-top:1px solid #f2e4e9}
+body.page-admin .magno-modal-shell label {font-weight:650;margin-bottom:6px}
+@media(max-width:720px) {
+ body.page-admin .magno-order-summary {
+  grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;padding:15px;
+ }
+ body.page-admin .magno-order-summary .magno-order-buyer {grid-column:1 / 2}
+ body.page-admin .magno-order-summary .magno-order-chevron {grid-column:2;grid-row:1}
+ body.page-admin .magno-order-summary .magno-order-state {grid-column:1 / -1;grid-row:2}
+ body.page-admin .magno-order-summary .magno-order-qty,
+ body.page-admin .magno-order-summary .magno-order-amount {grid-row:3}
+ body.page-admin .magno-theme-fields {grid-template-columns:1fr}
+ body.page-admin .magno-settings-actions button {width:100%;text-align:left}
+ body.page-admin .admin-product-card {display:grid!important;grid-template-columns:104px minmax(0,1fr)!important}
+ body.page-admin .admin-product-image-wrap {width:104px!important;min-height:150px!important;height:100%!important}
+ body.page-admin .admin-product-image {min-height:150px!important;height:100%!important}
+ body.page-admin .admin-product-main {min-width:0;padding:13px!important}
+ body.page-admin .admin-product-name {font-size:1.05rem!important;overflow-wrap:anywhere}
+ body.page-admin .admin-product-description {display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ body.page-admin .admin-product-info-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.page-admin .admin-product-actions {grid-column:1 / -1;flex-direction:row!important;gap:8px;
+  border-top:1px solid #f0e6e8;border-left:0;padding:10px!important}
+ body.page-admin .admin-action-btn {min-width:0!important;flex:1}
+}
+@media(max-width:390px) {
+ body.page-admin .admin-product-card {grid-template-columns:88px minmax(0,1fr)!important}
+ body.page-admin .admin-product-image-wrap {width:88px!important}
+ body.page-admin .admin-product-info {padding:9px!important}
+}

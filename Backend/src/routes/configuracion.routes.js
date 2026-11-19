@@ -2,7 +2,8 @@ const express = require('express');
 
 const {
     obtenerConfiguracion,
-    actualizarConfiguracion
+    actualizarConfiguracion,
+    actualizarOpcionesTienda
 } = require('../controllers/configuracion.controller');
 
 const basicAuth = require(
@@ -27,5 +28,7 @@ router.put(
     basicAuth,
     actualizarConfiguracion
 );
+
+router.put('/opciones', basicAuth, actualizarOpcionesTienda);
 
 module.exports = router;

@@ -2,6 +2,7 @@ const express = require('express');
 
 const {
     listarProductos,
+    reordenarProductos,
     obtenerProducto,
     crearProducto,
     actualizarProducto,
@@ -34,6 +35,8 @@ router.get(
     allowInactive,
     listarProductos
 );
+
+router.put('/admin/orden', basicAuth, reordenarProductos);
 
 router.get('/:id', obtenerProducto);
 

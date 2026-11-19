@@ -1,4 +1,5 @@
 const { Configuracion } = require('../models');
+const { getStoreOptions, saveStoreOptions } = require('../services/tienda-options.service');
 
 const attributes = [
     'id',
@@ -39,7 +40,7 @@ async function obtenerConfiguracion(req, res, next) {
 
         res.status(200).json({
             ok: true,
-            data: configuracion
+            data: { ...configuracion.toJSON(), opcionesTienda: await getStoreOptions() }
         });
     } catch (error) {
         next(error);
@@ -137,7 +138,20 @@ async function actualizarConfiguracion(req, res, next) {
     }
 }
 
+async function actualizarOpcionesTienda(req, res, next) {
+    try {
+        const opcionesTienda = await saveStoreOptions(req.body);
+        res.json({ ok: true, data: opcionesTienda, message: 'Opciones guardadas correctamente' });
+    } catch (error) {
+        if (error instanceof Error && /(configuración|porcentaje|campo|temas|liga|visibilidad)/i.test(error.message)) {
+            return res.status(400).json({ ok: false, message: error.message });
+        }
+        next(error);
+    }
+}
+
 module.exports = {
     obtenerConfiguracion,
-    actualizarConfiguracion
+    actualizarConfiguracion,
+    actualizarOpcionesTienda
 };
