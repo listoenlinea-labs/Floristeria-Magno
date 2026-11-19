@@ -85,3 +85,27 @@ body.page-carrito .magno-unique-note-inline p {margin:0;font-size:.82rem;line-he
   body.page-carrito .payment-card {padding:16px!important}
   body.page-carrito .magno-unique-note-inline {padding:13px}
 }
+
+/* En móvil el flujo de compra debe ser lógico: arreglos → destinatario →
+   horario → resumen/pago. Se conservan las mismas tarjetas y sus eventos. */
+@media(max-width:991px) {
+  body.page-carrito .cart-page-header + .row.g-4 {
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:14px!important;margin-left:0!important;margin-right:0!important;
+  }
+  body.page-carrito .cart-page-header + .row.g-4 > .col-lg-7,
+  body.page-carrito .cart-page-header + .row.g-4 > .col-lg-5 {
+    display:contents!important;
+  }
+  body.page-carrito .cart-page-header + .row.g-4 .cart-list-card,
+  body.page-carrito .cart-page-header + .row.g-4 .delivery-card,
+  body.page-carrito .cart-page-header + .row.g-4 .payment-card,
+  body.page-carrito .cart-page-header + .row.g-4 .magno-unique-note-inline {
+    width:100%;flex:0 0 auto;max-width:100%;margin:0!important;
+  }
+  body.page-carrito .cart-page-header + .row.g-4 .cart-list-card {order:1}
+  body.page-carrito .cart-page-header + .row.g-4 #checkout > .delivery-card:first-child {order:2}
+  body.page-carrito .cart-page-header + .row.g-4 #checkout > .delivery-card:nth-of-type(2) {order:3}
+  body.page-carrito .cart-page-header + .row.g-4 .payment-card {order:4}
+  body.page-carrito .cart-page-header + .row.g-4 .magno-unique-note-inline {order:5}
+}
