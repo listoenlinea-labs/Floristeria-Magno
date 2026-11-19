@@ -54,10 +54,10 @@
         </div>
       </div>
 
-      <div class="cart-page-header row g-4 align-items-center mb-5">
+      <div class="cart-page-header row g-3 align-items-start mb-3">
 
         <!-- TÍTULO DEL CARRITO -->
-        <div class="col-lg-7">
+        <div class="col-12">
           <div class="eyebrow">
             Pedido floral
           </div>
@@ -73,33 +73,6 @@
         </div>
 
 
-        <!-- AVISO: CADA RAMO ES ÚNICO -->
-        <div class="col-lg-5">
-
-          <div class="cart-unique-note">
-
-            <div class="cart-unique-note-icon">
-              <i class="bi bi-stars"></i>
-            </div>
-
-            <div class="cart-unique-note-content">
-
-              <strong>
-                Cada ramo es único.
-              </strong>
-
-              <p class="mb-0">
-                Trabajamos con flores naturales y seleccionamos cada pieza
-                de manera artesanal. Por ello, tu arreglo conservará el estilo,
-                colores y esencia del diseño elegido, aunque puede presentar
-                pequeñas variaciones respecto a la fotografía.
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
 
       </div>
 
@@ -124,6 +97,72 @@
               <a href="index.html#productos" class="btn btn-outline-light rounded-pill px-4">Ver arreglos</a>
             </div>
           </section>
+          <aside class="glass-card payment-card mb-4">
+            <div class="mp-header">
+              <div class="mp-brand">
+                <div class="mp-logo-mark" aria-hidden="true">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                  <strong>Mercado Pago</strong>
+                  <span>Pago seguro con tarjeta, transferencia o saldo disponible.</span>
+                </div>
+              </div>
+
+              <div class="mp-secure-pill">
+                <i class="bi bi-lock-fill"></i>
+                Tu dinero está protegido hasta confirmar el pago
+              </div>
+            </div>
+
+            <div class="eyebrow">Resumen y pago</div>
+            <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
+
+            <div class="summary-row"><span>Subtotal</span><strong id="summarySubtotal">$0</strong></div>
+            <div class="summary-row"><span>Entrega estimada</span><strong id="summaryDelivery">$0</strong></div>
+            <div class="summary-row"><span>Tarjeta personalizada</span><strong>Incluida</strong></div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <strong id="summaryTotal">$0</strong>
+            </div>
+
+            <div class="mt-4">
+              <label class="form-label">Método de pago</label>
+              <p class="small text-white-50 mb-0">
+                Elige cómo quieres pagar. Los datos de tarjeta se capturan en campos seguros de Mercado Pago y no se
+                almacenan en Floristería Magno.
+              </p>
+            </div>
+
+            <section id="magnoPurchasePolicies" class="magno-purchase-policies" aria-label="Políticas de compra">
+              <div class="magno-policy-icon"><i class="bi bi-heart-pulse"></i></div>
+              <div>
+                <strong>Tu compra, con tranquilidad</strong>
+                <p id="magnoCancellationMessage">Si necesitas cancelar, contáctanos antes de realizar el pago para conocer las condiciones vigentes.</p>
+                <p>Si tu arreglo llega en mal estado o presenta un problema atribuible a la floristería, contáctanos. Revisaremos el caso y te ofreceremos un reemplazo.</p>
+                <small>Esta información también estará en el correo de confirmación de tu pedido.</small>
+              </div>
+            </section>
+
+            <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
+              <i class="bi bi-credit-card-2-front-fill me-2"></i>
+              Elige opción de pago
+            </button>
+
+            <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
+
+            <a class="whatsapp-confirm" id="whatsappConfirm" href="#">
+              O confirmar pedido por WhatsApp
+            </a>
+          </aside>
+          <aside class="magno-unique-note-inline" aria-label="Sobre nuestros arreglos">
+            <i class="bi bi-stars" aria-hidden="true"></i>
+            <div><strong>Cada ramo es único.</strong>
+              <p>Trabajamos con flores naturales y cuidamos el estilo y los colores del diseño elegido.
+                 Puede haber pequeñas variaciones propias de las flores de temporada.</p>
+            </div>
+          </aside>
         </div>
 
         <div class="col-lg-5" id="checkout">
@@ -286,65 +325,7 @@
             <input type="hidden" id="deliverySlot" value="11:00 am – 1:00 pm">
           </section>
 
-          <aside class="glass-card payment-card mb-4">
-            <div class="mp-header">
-              <div class="mp-brand">
-                <div class="mp-logo-mark" aria-hidden="true">
-                  <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                  <strong>Mercado Pago</strong>
-                  <span>Pago seguro con tarjeta, transferencia o saldo disponible.</span>
-                </div>
-              </div>
 
-              <div class="mp-secure-pill">
-                <i class="bi bi-lock-fill"></i>
-                Tu dinero está protegido hasta confirmar el pago
-              </div>
-            </div>
-
-            <div class="eyebrow">Resumen y pago</div>
-            <h2 class="serif mb-3" style="font-size:2.6rem;">Finalizar pedido</h2>
-
-            <div class="summary-row"><span>Subtotal</span><strong id="summarySubtotal">$0</strong></div>
-            <div class="summary-row"><span>Entrega estimada</span><strong id="summaryDelivery">$0</strong></div>
-            <div class="summary-row"><span>Tarjeta personalizada</span><strong>Incluida</strong></div>
-
-            <div class="summary-total">
-              <span>Total</span>
-              <strong id="summaryTotal">$0</strong>
-            </div>
-
-            <div class="mt-4">
-              <label class="form-label">Método de pago</label>
-              <p class="small text-white-50 mb-0">
-                Elige cómo quieres pagar. Los datos de tarjeta se capturan en campos seguros de Mercado Pago y no se
-                almacenan en Floristería Magno.
-              </p>
-            </div>
-
-            <section id="magnoPurchasePolicies" class="magno-purchase-policies" aria-label="Políticas de compra">
-              <div class="magno-policy-icon"><i class="bi bi-heart-pulse"></i></div>
-              <div>
-                <strong>Tu compra, con tranquilidad</strong>
-                <p id="magnoCancellationMessage">Si necesitas cancelar, contáctanos antes de realizar el pago para conocer las condiciones vigentes.</p>
-                <p>Si tu arreglo llega en mal estado o presenta un problema atribuible a la floristería, contáctanos. Revisaremos el caso y te ofreceremos un reemplazo.</p>
-                <small>Esta información también estará en el correo de confirmación de tu pedido.</small>
-              </div>
-            </section>
-
-            <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
-              <i class="bi bi-credit-card-2-front-fill me-2"></i>
-              Elige opción de pago
-            </button>
-
-            <p id="mercadoPagoMessage" class="mp-checkout-message" role="alert" aria-live="polite"></p>
-
-            <a class="whatsapp-confirm" id="whatsappConfirm" href="#">
-              O confirmar pedido por WhatsApp
-            </a>
-          </aside>
 
         </div>
       </div>
