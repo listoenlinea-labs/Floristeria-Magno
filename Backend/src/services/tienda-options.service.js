@@ -10,7 +10,8 @@ const DEFAULT_OPTIONS = Object.freeze({
     cancelacionPorcentaje: null
 });
 
-const PALETTES = ['base', 'rosa', 'lavanda', 'menta', 'durazno', 'cielo', 'vainilla'];
+const PALETTES = ['base', 'rosa', 'lavanda', 'menta', 'durazno', 'cielo', 'vainilla',
+    'malva', 'lila', 'coral', 'salmon', 'amarillo', 'lima', 'verdeAgua', 'turquesa', 'azulPolvo', 'arena', 'grisPerla', 'fresa', 'pistacho'];
 const MAX_LENGTH = { seoTitulo: 220, seoTexto1: 1600, seoTexto2: 1600, seoVideoUrl: 300 };
 
 function parseStoredOptions(row) {
