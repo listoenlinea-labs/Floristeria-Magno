@@ -6,7 +6,7 @@ const DEFAULT_OPTIONS = Object.freeze({
     seoTexto1: 'En Floristería Magno encontrarás arreglos florales y ramos de flores para cumpleaños, aniversarios, agradecimientos y otros momentos especiales. Elige entre rosas, girasoles, tulipanes y flores de temporada según la disponibilidad del catálogo.',
     seoTexto2: 'Selecciona tus arreglos, revisa tu carrito y programa una entrega dentro de nuestra zona de cobertura en el Área Metropolitana de Guadalajara.',
     seoVideoUrl: '',
-    tema: { fondo: 'base', botones: 'base', petalos: 'base', petaloInicial: 'base' },
+    tema: { fondo: 'base', fondoCatalogo: 'base', botones: 'base', petalos: 'base', petaloInicial: 'base' },
     cancelacionPorcentaje: null
 });
 
@@ -59,7 +59,8 @@ function validateStoreOptions(body) {
         throw new Error('La visibilidad debe ser verdadero o falso.');
     }
     if (!body.tema || Object.keys(DEFAULT_OPTIONS.tema).some(
-        key => !PALETTES.includes(body.tema[key])
+        key => (key !== 'fondoCatalogo' || body.tema[key] != null) &&
+            !PALETTES.includes(body.tema[key])
     )) {
         throw new Error('Selecciona únicamente temas pastel disponibles.');
     }

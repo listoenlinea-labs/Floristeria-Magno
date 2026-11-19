@@ -81,6 +81,15 @@
             body.style.setProperty('--magno-selected-gradient',
                 'linear-gradient(135deg, '+bg[0]+' 0%, '+bg[1]+' 53%, '+bg[0]+' 100%)');
         } else body.style.removeProperty('--magno-selected-gradient');
+
+        // Opción independiente: únicamente colorea la cuadrícula de productos.
+        // Cuando vale «Original», el catálogo hereda el fondo global existente.
+        const catalogBg=choose('fondoCatalogo','data-magno-custom-catalog-bg',
+            '--magno-selected-catalog-bg');
+        if(catalogBg) {
+            body.style.setProperty('--magno-selected-catalog-light',catalogBg[0]);
+        } else body.style.removeProperty('--magno-selected-catalog-light');
+
         choose('botones','data-magno-custom-buttons','--magno-selected-button');
         choose('petalos','data-magno-custom-petals','--magno-selected-petal');
         choose('petaloInicial','data-magno-custom-intro','--magno-selected-intro');
