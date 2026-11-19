@@ -25,6 +25,13 @@ test('imagen se respalda con SHA-256 y se restaura tras perderse', async () => {
         await fs.writeFile(primary, 'truncado');
         assert.equal(await service.restoreImageIfNeeded('productos', filename), true);
         assert.deepEqual(await fs.readFile(primary), content);
+        // Incluso una alteración del mismo tamaño debe detectarse por checksum.
+        const corrupted = Buffer.from(content);
+        corrupted[0] = corrupted[0] ^ 1;
+        await fs.writeFile(primary, corrupted);
+        await fs.utimes(primary, new Date(Date.now() - 10000), new Date(Date.now() - 10000));
+        assert.equal(await service.restoreImageIfNeeded('productos', filename), true);
+        assert.deepEqual(await fs.readFile(primary), content);
     } finally {
         await fs.rm(root, { recursive: true, force: true });
         delete process.env.UPLOADS_DIR;
