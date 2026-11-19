@@ -324,6 +324,16 @@
               </p>
             </div>
 
+            <section id="magnoPurchasePolicies" class="magno-purchase-policies" aria-label="Políticas de compra">
+              <div class="magno-policy-icon"><i class="bi bi-heart-pulse"></i></div>
+              <div>
+                <strong>Tu compra, con tranquilidad</strong>
+                <p id="magnoCancellationMessage">Si necesitas cancelar, contáctanos antes de realizar el pago para conocer las condiciones vigentes.</p>
+                <p>Si tu arreglo llega en mal estado o presenta un problema atribuible a la floristería, contáctanos. Revisaremos el caso y te ofreceremos un reemplazo.</p>
+                <small>Esta información también estará en el correo de confirmación de tu pedido.</small>
+              </div>
+            </section>
+
             <button id="choosePaymentBtn" class="btn-pay mt-4" type="button">
               <i class="bi bi-credit-card-2-front-fill me-2"></i>
               Elige opción de pago
@@ -441,6 +451,14 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .magno-purchase-policies{display:flex;gap:14px;margin-top:22px;padding:19px;border-radius:18px;background:#fff6f9;color:#49333c;border:1px solid #eddde2;line-height:1.6}
+    .magno-purchase-policies .magno-policy-icon{flex:0 0 34px;font-size:1.4rem;color:#aa748c}
+    .magno-purchase-policies strong{display:block;margin-bottom:8px;font-size:1rem;color:#39232d}
+    .magno-purchase-policies p{margin:0 0 11px;font-size:.88rem;color:#5c4850}
+    .magno-purchase-policies small{font-size:.76rem;color:#89717d}
+    @media(max-width:575px){.magno-purchase-policies{padding:15px;gap:9px;border-radius:15px}}
+  </style>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
 
   <script>
@@ -1579,9 +1597,32 @@
 
     deliveryDate.min = todayIso;
 
+    async function loadPurchasePolicies() {
+      const message = document.getElementById('magnoCancellationMessage');
+      try {
+        const response = await fetch(BACKEND_BASE_URL +
+          '/api/floristeria-magno/configuracion', {headers:{Accept:'application/json'}});
+        if (!response.ok) throw new Error('No disponible');
+        const result = await response.json();
+        const percent = result.data?.opcionesTienda?.cancelacionPorcentaje;
+        if (Number.isInteger(percent) && percent >= 1 && percent <= 99) {
+          message.textContent = '¿Necesitas cancelar? Escríbenos lo antes posible. ' +
+            'Si se acepta la cancelación, recibirás el ' + percent +
+            '% del total pagado. El ' + (100-percent) +
+            '% restante cubre la reserva y preparación de tus flores.';
+        } else {
+          message.textContent = 'Si necesitas cancelar, contáctanos antes de pagar: ' +
+            'el porcentaje de reembolso todavía está pendiente de definir.';
+        }
+      } catch (error) {
+        message.textContent = 'Si necesitas cancelar, comunícate con nosotros antes de pagar ' +
+          'para confirmar las condiciones de reembolso aplicables.';
+      }
+    }
+
     async function initializeCartPage() {
 
-      await loadSpecialDateStatus();
+      await Promise.all([loadSpecialDateStatus(), loadPurchasePolicies()]);
 
       renderCart();
 
