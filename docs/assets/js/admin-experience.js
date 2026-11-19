@@ -140,7 +140,20 @@ const MAGNO_PALETTE = {
     menta: ['#ecfaf2','#a8d9c7'],
     durazno: ['#fff1e9','#efc0a8'],
     cielo: ['#eaf7ff','#abd3ea'],
-    vainilla: ['#fff9e9','#e8d7a7']
+    vainilla: ['#fff9e9','#e8d7a7'],
+    malva: ['#fcf3ff','#dfc6eb'],
+    lila: ['#f3f0ff','#cbc3ef'],
+    coral: ['#fff0f0','#f1c0bb'],
+    salmon: ['#fff4ec','#f3c7b6'],
+    amarillo: ['#fffce6','#f5e69e'],
+    lima: ['#f7ffe9','#d9eab3'],
+    verdeAgua: ['#f0fff8','#bde5d7'],
+    turquesa: ['#edffff','#b6e1df'],
+    azulPolvo: ['#eff4ff','#c1d1ed'],
+    arena: ['#fcf7ef','#e5d2bc'],
+    grisPerla: ['#f8f7fa','#ddd8e4'],
+    fresa: ['#fff1f6','#efbdd0'],
+    pistacho: ['#f8fbed','#d8e0b8']
 };
 const MAGNO_THEME_FIELDS = {
     fondo: 'Fondo de la página', botones: 'Botones y acentos',
@@ -179,7 +192,8 @@ function magnoThemeSwatch(key) {
     const labels = {
         base: 'Original · colores actuales', rosa: 'Rosa pastel',
         lavanda: 'Lavanda pastel', menta: 'Menta pastel',
-        durazno: 'Durazno pastel', cielo: 'Azul cielo pastel', vainilla: 'Vainilla pastel'
+        durazno: 'Durazno pastel', cielo: 'Azul cielo pastel', vainilla: 'Vainilla pastel',
+        malva: 'Malva pastel', lila: 'Lila pastel', coral: 'Coral pastel', salmon: 'Salmón pastel', amarillo: 'Amarillo pastel', lima: 'Lima pastel', verdeAgua: 'Verde agua pastel', turquesa: 'Turquesa pastel', azulPolvo: 'Azul polvo pastel', arena: 'Arena pastel', grisPerla: 'Gris perla pastel', fresa: 'Fresa pastel', pistacho: 'Pistacho pastel'
     };
     const caption = document.getElementById('mgThemePreview_' + key);
     if (caption) caption.textContent = labels[value] || labels.base;
