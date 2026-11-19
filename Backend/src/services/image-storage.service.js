@@ -22,9 +22,22 @@ const MANIFEST_FILE =
 // Registro de hashes sólo de las fotos protegidas por esta versión.
 // Los archivos heredados se auditan comparando las dos copias disponibles.
 const knownImageHashes = new Map();
+const validatedImageStats = new Map();
+
+async function matchesExpectedHash(key, filePath, stats, expected) {
+    if (!expected) return Boolean(stats?.isFile() && stats.size > 0);
+    if (!stats?.isFile() || stats.size !== expected.size) return false;
+    const signature = String(stats.size) + ':' + String(stats.mtimeMs);
+    if (validatedImageStats.get(key) === signature) return true;
+    const actual = await calculateSha256(filePath);
+    if (actual !== expected.sha256) return false;
+    validatedImageStats.set(key, signature);
+    return true;
+}
 
 async function loadImageManifest() {
     knownImageHashes.clear();
+    validatedImageStats.clear();
     const contents = await fs.promises.readFile(MANIFEST_FILE, 'utf8').catch(error => {
         if (error.code === 'ENOENT') return '';
         throw error;
@@ -334,6 +347,8 @@ async function protectUploadedFile(
         sha256
     });
     knownImageHashes.set(folderName + '/' + filename, { size: stats.size, sha256 });
+    validatedImageStats.set(folderName + '/' + filename,
+        String(stats.size) + ':' + String(stats.mtimeMs));
 
     return {
         filename,
@@ -369,8 +384,9 @@ async function restoreImageIfNeeded(
     // detectar también truncamientos sin calcular SHA de cada vista pública.
     const expected = knownImageHashes.get(folderName + '/' + safeFilename);
     const primaryStats = await fs.promises.stat(primaryPath).catch(() => null);
-    if (primaryStats && primaryStats.isFile() && primaryStats.size > 0 &&
-        (!expected || primaryStats.size === expected.size)) return true;
+    if (await matchesExpectedHash(
+        folderName + '/' + safeFilename, primaryPath, primaryStats, expected
+    )) return true;
     if (primaryStats) {
         console.warn('Imagen primaria dañada o incompleta:', folderName, safeFilename);
         await fs.promises.rm(primaryPath, { force: true });
@@ -402,7 +418,9 @@ async function restoreImageIfNeeded(
             if (!(await exists(primaryPath))) throw error;
         }
         const restored = await fs.promises.stat(primaryPath).catch(() => null);
-        if (restored?.size === sourceStats.size) {
+        if (restored?.size === sourceStats.size &&
+            await matchesExpectedHash(folderName + '/' + safeFilename,
+                primaryPath, restored, expected)) {
             console.warn('♻️ Imagen restaurada:', folderName, safeFilename);
             return true;
         }
