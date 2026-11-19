@@ -164,11 +164,25 @@ function magnoOpenThemeSettings() {
     });
     bootstrap.Modal.getOrCreateInstance(document.getElementById('magnoThemeModal')).show();
 }
+function magnoChooseThemeColor(key, value) {
+    if (!(key in MAGNO_THEME_FIELDS) || !(value in MAGNO_PALETTE)) return;
+    document.getElementById('mgTheme_' + key).value = value;
+    magnoThemeSwatch(key);
+}
 function magnoThemeSwatch(key) {
     const value = document.getElementById('mgTheme_' + key)?.value || 'base';
-    const parent = document.getElementById('mgThemePreview_' + key);
-    if (parent) parent.innerHTML = MAGNO_PALETTE[value].map(color =>
-        '<span style="background:' + color + '"></span>').join('');
+    document.querySelectorAll('[data-theme-part="' + key + '"]').forEach(button => {
+        const selected = button.dataset.themeValue === value;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+    });
+    const labels = {
+        base: 'Original · colores actuales', rosa: 'Rosa pastel',
+        lavanda: 'Lavanda pastel', menta: 'Menta pastel',
+        durazno: 'Durazno pastel', cielo: 'Azul cielo pastel', vainilla: 'Vainilla pastel'
+    };
+    const caption = document.getElementById('mgThemePreview_' + key);
+    if (caption) caption.textContent = labels[value] || labels.base;
 }
 function magnoResetTheme() {
     Object.keys(MAGNO_THEME_FIELDS).forEach(key => {
