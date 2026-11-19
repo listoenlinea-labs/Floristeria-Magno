@@ -3,7 +3,8 @@
     const PALETTES = [
         ['base','Original (exactamente como hoy)'], ['rosa','Rosa pastel'],
         ['lavanda','Lavanda pastel'],['menta','Menta pastel'],
-        ['durazno','Durazno pastel'],['cielo','Azul cielo pastel'],['vainilla','Vainilla pastel']
+        ['durazno','Durazno pastel'],['cielo','Azul cielo pastel'],['vainilla','Vainilla pastel'],
+        ['malva','Malva pastel'],['lila','Lila pastel'],['coral','Coral pastel'],['salmon','Salmón pastel'],['amarillo','Amarillo pastel'],['lima','Lima pastel'],['verdeAgua','Verde agua pastel'],['turquesa','Turquesa pastel'],['azulPolvo','Azul polvo pastel'],['arena','Arena pastel'],['grisPerla','Gris perla pastel'],['fresa','Fresa pastel'],['pistacho','Pistacho pastel']
     ];
     // Paleta visual táctil: sólo opciones pastel admitidas por el backend.
     const themeFields = [
