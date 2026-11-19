@@ -196,7 +196,9 @@ function magnoThemeSwatch(key) {
         malva: 'Malva pastel', lila: 'Lila pastel', coral: 'Coral pastel', salmon: 'Salmón pastel', amarillo: 'Amarillo pastel', lima: 'Lima pastel', verdeAgua: 'Verde agua pastel', turquesa: 'Turquesa pastel', azulPolvo: 'Azul polvo pastel', arena: 'Arena pastel', grisPerla: 'Gris perla pastel', fresa: 'Fresa pastel', pistacho: 'Pistacho pastel'
     };
     const caption = document.getElementById('mgThemePreview_' + key);
-    if (caption) caption.textContent = labels[value] || labels.base;
+    if (caption) caption.textContent = key === 'fondoCatalogo' && value === 'base'
+        ? 'Original · usa el fondo general de la tienda'
+        : (labels[value] || labels.base);
 }
 function magnoResetTheme() {
     Object.keys(MAGNO_THEME_FIELDS).forEach(key => {
