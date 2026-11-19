@@ -156,7 +156,7 @@ const MAGNO_PALETTE = {
     pistacho: ['#f8fbed','#d8e0b8']
 };
 const MAGNO_THEME_FIELDS = {
-    fondo: 'Fondo de la página', botones: 'Botones y acentos',
+    fondo: 'Fondo de toda la tienda', botones: 'Botones y acentos',
     petalos: 'Pétalos flotantes', petaloInicial: 'Pétalos de bienvenida'
 };
 function magnoOptions() { return settings.optionsTienda || null; }
