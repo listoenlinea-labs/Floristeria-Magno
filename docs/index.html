@@ -349,7 +349,7 @@
               <i class="bi bi-chevron-left"></i>
             </button>
 
-            <img id="productLightboxImage" src="" alt="" decoding="async" fetchpriority="high">
+            <img id="productLightboxImage" src="" alt="" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.src='assets/img/icon/logo_lpb.png';">
 
             <button type="button" class="product-lightbox-arrow product-lightbox-next" id="productLightboxNext"
               aria-label="Siguiente imagen">
@@ -578,6 +578,30 @@
         .replace(/^-|-$/g, "");
     }
 
+    // Si una portada heredada ya no existe, probar las demás fotos del mismo
+    // arreglo antes de mostrar el logo local. Nunca usar una URL externa aleatoria.
+    function magnoTryProductImage(image) {
+      let alternatives = [];
+      try {
+        const parsed = JSON.parse(image.getAttribute('data-gallery-images') || '[]');
+        if (Array.isArray(parsed)) alternatives = parsed;
+      } catch (_) { /* Se usará el recurso local. */ }
+      let tried = [];
+      try { tried = JSON.parse(image.dataset.triedUrls || '[]'); }
+      catch (_) { tried = []; }
+      const current = image.getAttribute('src');
+      if (current && !tried.includes(current)) tried.push(current);
+      const candidate = alternatives.find(url => url && !tried.includes(url));
+      if (candidate) {
+        image.dataset.triedUrls = JSON.stringify(tried);
+        image.src = candidate;
+        return;
+      }
+      image.onerror = null;
+      image.src = 'assets/img/icon/logo_lpb.png';
+      image.alt = 'Fotografía no disponible temporalmente: Floristería Magno';
+    }
+
     function normalizeCatalogSearch(value) {
       return String(value || "")
         .trim()
@@ -781,10 +805,7 @@
     alt="${escapeHtml(product.nombre)}"
     loading="${productIndex < 2 ? 'eager' : 'lazy'}"
     title="Haz clic para ampliar"
-    onerror="
-        this.onerror = null;
-        this.src = 'https://placehold.co/900x900?text=Sin+imagen';
-    "
+    onerror="magnoTryProductImage(this)"
     >
 
     ${safeImages.length > 1
@@ -855,6 +876,7 @@
                       galleryImage
                     )}"
                                         alt="" loading="lazy" decoding="async"
+                                        onerror="this.onerror=null;this.src='assets/img/icon/logo_lpb.png';"
                                     >
                                 </button>
                             `
