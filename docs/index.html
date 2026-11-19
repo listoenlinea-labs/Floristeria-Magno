@@ -1858,11 +1858,12 @@
       if (window.MagnoStore) {
         const saved = window.MagnoStore.saveCart(cart);
         if (!saved) alert('Este navegador no permitió guardar el carrito. Verifica el espacio o la navegación privada.');
-        return;
+        return saved;
       }
       try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
-      catch (_) { alert('No fue posible guardar el carrito en el navegador.'); }
+      catch (_) { alert('No fue posible guardar el carrito en el navegador.'); return false; }
       updateCartBadge();
+      return true;
     }
 
     function updateCartBadge() {
@@ -1931,7 +1932,7 @@
           cart[product.id].image = product.image;
         }
 
-        saveCart(cart);
+        if (!saveCart(cart)) return;
 
         const originalText =
           button.textContent;
