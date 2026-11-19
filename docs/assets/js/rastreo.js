@@ -1461,6 +1461,8 @@ async function consultarPedido(
         trackingInput.value = codigoNormalizado;
 
         renderizarPedido(result.data);
+        // Conservar únicamente el código y estado, sin datos personales.
+        window.MagnoStore?.rememberOrder?.(result.data.codigoRastreo, result.data.estado);
 
         if (!automatico) {
             mostrarFeedback(
@@ -1562,7 +1564,7 @@ const urlParams = new URLSearchParams(
 );
 
 const codigoDesdeUrl = normalizarCodigo(
-    urlParams.get('pedido')
+    urlParams.get('pedido') || urlParams.get('codigo')
 );
 
 if (codigoValido(codigoDesdeUrl)) {
