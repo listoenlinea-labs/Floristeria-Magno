@@ -19,6 +19,31 @@ const MANIFEST_FILE =
         'image-manifest.jsonl'
     );
 
+// Registro de hashes sólo de las fotos protegidas por esta versión.
+// Los archivos heredados se auditan comparando las dos copias disponibles.
+const knownImageHashes = new Map();
+
+async function loadImageManifest() {
+    knownImageHashes.clear();
+    const contents = await fs.promises.readFile(MANIFEST_FILE, 'utf8').catch(error => {
+        if (error.code === 'ENOENT') return '';
+        throw error;
+    });
+    for (const line of contents.split('\n')) {
+        if (!line.trim()) continue;
+        try {
+            const entry = JSON.parse(line);
+            if (isAllowedFolder(entry.folder) && sanitizeFilename(entry.filename) &&
+                Number.isSafeInteger(entry.size) && entry.size > 0 &&
+                /^[a-f0-9]{64}$/.test(entry.sha256)) {
+                knownImageHashes.set(entry.folder + '/' + entry.filename, {
+                    size: entry.size, sha256: entry.sha256
+                });
+            }
+        } catch (_) { /* Ignorar solo una línea de manifiesto incompleta. */ }
+    }
+}
+
 function isAllowedFolder(folderName) {
     return IMAGE_FOLDERS.includes(
         String(folderName || '')
@@ -126,13 +151,17 @@ async function copyFileIfMissing(
         }
     );
 
-    await fs.promises.copyFile(
-        sourcePath,
-        destinationPath,
-        fs.constants.COPYFILE_EXCL
-    );
-
-    return true;
+    // Escribir en un temporal y renombrar: un corte a mitad de copia
+    // no deja una fotografía incompleta con su nombre definitivo.
+    const temporary = destinationPath + '.part-' + crypto.randomUUID();
+    try {
+        await fs.promises.copyFile(sourcePath, temporary, fs.constants.COPYFILE_EXCL);
+        if (await exists(destinationPath)) return false;
+        await fs.promises.rename(temporary, destinationPath);
+        return true;
+    } finally {
+        await fs.promises.rm(temporary, { force: true }).catch(() => {});
+    }
 }
 
 async function syncFolder(
@@ -264,10 +293,7 @@ async function protectUploadedFile(
             filename
         );
 
-    await copyFileIfMissing(
-        primaryPath,
-        backupPath
-    );
+    await copyFileIfMissing(primaryPath, backupPath);
 
     /*
      * El respaldo es obligatorio. Si por permisos o espacio
@@ -285,10 +311,17 @@ async function protectUploadedFile(
             primaryPath
         );
 
-    const sha256 =
-        await calculateSha256(
-            primaryPath
-        );
+    if (stats.size < 1) {
+        throw new Error('La fotografía subida está vacía.');
+    }
+    const sha256 = await calculateSha256(primaryPath);
+    // No declaramos éxito por la mera existencia del respaldo: los bytes
+    // deben coincidir antes de entregar la URL al administrador.
+    const backupStats = await fs.promises.stat(backupPath);
+    const backupSha256 = await calculateSha256(backupPath);
+    if (backupStats.size !== stats.size || backupSha256 !== sha256) {
+        throw new Error('La fotografía y el respaldo no coinciden. No se registró la subida.');
+    }
 
     await appendManifestEntry({
         timestamp:
@@ -300,6 +333,7 @@ async function protectUploadedFile(
             stats.size,
         sha256
     });
+    knownImageHashes.set(folderName + '/' + filename, { size: stats.size, sha256 });
 
     return {
         filename,
@@ -331,8 +365,15 @@ async function restoreImageIfNeeded(
             safeFilename
         );
 
-    if (await exists(primaryPath)) {
-        return true;
+    // Evitar devolver un archivo vacío. Si existe un registro en el manifiesto,
+    // detectar también truncamientos sin calcular SHA de cada vista pública.
+    const expected = knownImageHashes.get(folderName + '/' + safeFilename);
+    const primaryStats = await fs.promises.stat(primaryPath).catch(() => null);
+    if (primaryStats && primaryStats.isFile() && primaryStats.size > 0 &&
+        (!expected || primaryStats.size === expected.size)) return true;
+    if (primaryStats) {
+        console.warn('Imagen primaria dañada o incompleta:', folderName, safeFilename);
+        await fs.promises.rm(primaryPath, { force: true });
     }
 
     const candidates = [
@@ -349,16 +390,20 @@ async function restoreImageIfNeeded(
     ];
 
     for (const sourcePath of candidates) {
-        if (
-            await copyFileIfMissing(
-                sourcePath,
-                primaryPath
-            )
-        ) {
-            console.warn(
-                `♻️ Imagen restaurada automáticamente: ${folderName}/${safeFilename}`
-            );
-
+        const sourceStats = await fs.promises.stat(sourcePath).catch(() => null);
+        if (!sourceStats?.isFile() || sourceStats.size < 1 ||
+            (expected && sourceStats.size !== expected.size)) continue;
+        // La recuperación excepcional sí verifica SHA, para no propagar
+        // accidentalmente copias dañadas a la ruta pública.
+        if (expected && await calculateSha256(sourcePath) !== expected.sha256) continue;
+        try {
+            await copyFileIfMissing(sourcePath, primaryPath);
+        } catch (error) {
+            if (!(await exists(primaryPath))) throw error;
+        }
+        const restored = await fs.promises.stat(primaryPath).catch(() => null);
+        if (restored?.size === sourceStats.size) {
+            console.warn('♻️ Imagen restaurada:', folderName, safeFilename);
             return true;
         }
     }
@@ -468,6 +513,7 @@ async function getImageStorageStatus() {
 
 async function initializeImageStorage() {
     await ensureStorageTree();
+    await loadImageManifest();
 
     let migrated = 0;
     let backedUp = 0;
