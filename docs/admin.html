@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/mobile-nav.css?v=4">
     <link rel="stylesheet" href="assets/css/admin-hero-backgrounds.css?v=1">
+    <link rel="stylesheet" href="assets/css/admin-experience.css?v=1">
 </head>
 
 <body class="page-admin">
@@ -152,9 +153,9 @@
 
                     <div class="toolbar">
                         <input id="searchInput" class="form-control"
-                            placeholder="Buscar producto, categoría o descripción..." oninput="renderProducts()">
+                            placeholder="Buscar producto, categoría o descripción..." oninput="resetProductPagination()">
 
-                        <select id="categoryFilter" class="form-select" onchange="renderProducts()">
+                        <select id="categoryFilter" class="form-select" onchange="resetProductPagination()">
                             <option value="">Todas las categorías</option>
                             <option>Románticos</option>
                             <option>Cumpleaños</option>
@@ -167,14 +168,16 @@
                             <option>Buchiramos</option>
                         </select>
 
-                        <select id="statusFilter" class="form-select" onchange="renderProducts()">
+                        <select id="statusFilter" class="form-select" onchange="resetProductPagination()">
                             <option value="">Todos los estados</option>
                             <option value="SI">Activos</option>
                             <option value="NO">Ocultos</option>
                         </select>
                     </div>
 
+                    <div class="magno-order-hint">Arrastra una tarjeta para ordenar los arreglos. Suéltala sobre un número de página para moverla a otra.</div>
                     <div id="productsTable" class="admin-products-list"></div>
+                    <nav id="productsPagination" class="magno-product-pager" aria-label="Páginas de productos"></nav>
                 </div>
             </section>
 
@@ -721,6 +724,11 @@
                         </button>
                     </div>
 
+                    <div class="magno-settings-actions">
+                        <button type="button" onclick="magnoOpenSeoSettings()"><i class="bi bi-layout-text-sidebar-reverse me-2"></i>Sección de presentación <small class="d-block" id="mgSeoSummary">Oculta por defecto</small></button>
+                        <button type="button" onclick="magnoOpenThemeSettings()"><i class="bi bi-palette me-2"></i>Tema de la página <small class="d-block">Fondos, botones y pétalos pastel</small></button>
+                        <button type="button" onclick="magnoOpenCancellationSettings()"><i class="bi bi-shield-heart me-2"></i>Cancelaciones y cambios <small class="d-block" id="mgCancellationSummary">Porcentaje pendiente</small></button>
+                    </div>
                     <div class="settings-grid">
                         <div class="settings-box">
                             <h4>Negocio</h4>
@@ -1429,6 +1437,7 @@
         const MEXICO_LOCALE =
             'es-MX';
         let products = [];
+        let productPage = 1;
         let selectedProductImages = [];
         let sections = [];
         let gallery = [];
@@ -2348,7 +2357,8 @@
                         settingsResult.data.tiktokUrl || '',
 
                     googleMaps:
-                        settingsResult.data.googleMapsUrl || ''
+                        settingsResult.data.googleMapsUrl || '',
+                    optionsTienda: settingsResult.data.opcionesTienda
                 };
 
                 specialDates =
@@ -2379,7 +2389,7 @@
 
             formData.append(
                 'imagen',
-                file
+                await magnoOptimizeImage(file)
             );
 
             const endpoint =
@@ -2404,6 +2414,7 @@
             renderGallery();
             renderHeroBackgrounds();
             renderSettings();
+            magnoUpdateSummary();
             fillProductOptions();
         }
 
@@ -4346,7 +4357,20 @@
                 `;
 
                 return `
-            <article class="admin-order-card">
+            <details class="admin-order-card magno-order-accordion">
+                <summary class="magno-order-summary">
+                    <div class="magno-order-buyer"><small>Comprador · ${escapeHtml(order.codigoRastreo || ('Pedido #' + order.id))}</small>
+                        <strong>${escapeHtml(customer.nombre || 'Comprador sin nombre')}</strong></div>
+                    <span class="magno-order-state order-status-badge status-${state.toLowerCase()}">
+                        <i class="bi ${info.icon}"></i>
+                        ${escapeHtml(state === 'PENDIENTE' ? 'Pendiente' :
+                          ['RECIBIDO','EN_DISENO','LISTO_ENTREGA'].includes(state) ? 'En proceso' :
+                          state === 'EN_CAMINO' ? 'En camino' : state === 'ENTREGADO' ? 'Entregado' : info.label)}
+                    </span>
+                    <div class="magno-order-qty"><small>Arreglos</small><strong>${(order.detalles || []).reduce((n,item)=>n+Number(item.cantidad||0),0)}</strong></div>
+                    <div class="magno-order-amount"><small>Total pagado</small><strong>${formatCurrency(order.total)}</strong></div>
+                    <i class="bi bi-chevron-down magno-order-chevron" aria-hidden="true"></i>
+                </summary>
 
                 <header class="admin-order-header">
                     <div>
@@ -4565,7 +4589,7 @@
                     </div>
                 </details>
 
-            </article>
+            </details>
         `;
             }).join('');
         }
@@ -5711,7 +5735,7 @@
             filtered.sort(
                 (a, b) =>
                     Number(a.sortOrder || 999) -
-                    Number(b.sortOrder || 999)
+                    Number(b.sortOrder || 999) || Number(a.id) - Number(b.id)
             );
 
             if (!filtered.length) {
@@ -5727,11 +5751,14 @@
             </div>
         `;
 
+                renderProductPagination([]);
                 updateKpis();
                 return;
             }
 
-            container.innerHTML = filtered.map(product => {
+            productPage = Math.max(1, Math.min(productPage, Math.ceil(filtered.length / 5)));
+            const visibleProducts = filtered.slice((productPage - 1) * 5, productPage * 5);
+            container.innerHTML = visibleProducts.map(product => {
                 const imageUrl =
                     convertDriveUrl(product.imageUrl) ||
                     "https://via.placeholder.com/240x240?text=Sin+foto";
@@ -5753,7 +5780,7 @@
                     "Este producto todavía no tiene descripción.";
 
                 return `
-            <article class="admin-product-card">
+            <article class="admin-product-card" draggable="true" ondragstart="magnoStartDrag(event,'${product.id}')" ondragover="magnoDragOver(event)" ondragleave="this.classList.remove('is-drag-over')" ondrop="magnoDropOnCard(event,'${product.id}')" ondragend="magnoEndDrag()">
 
                 <div class="admin-product-image-wrap">
                     <img
@@ -5856,7 +5883,11 @@
                 </div>
 
                 <div class="admin-product-actions">
-
+                    <div class="magno-reorder-tools" aria-label="Mover arreglo">
+                        <button type="button" onclick="magnoMoveProduct('${product.id}',-1)" aria-label="Subir ${escapeHtml(product.name)}"><i class="bi bi-arrow-up"></i> Subir</button>
+                        <button type="button" onclick="magnoMoveProduct('${product.id}',1)" aria-label="Bajar ${escapeHtml(product.name)}"><i class="bi bi-arrow-down"></i> Bajar</button>
+                        <button type="button" onclick="magnoChoosePage('${product.id}')"><i class="bi bi-arrow-left-right"></i> Otra página</button>
+                    </div>
                     <button
                         type="button"
                         class="admin-action-btn admin-action-edit"
@@ -5893,6 +5924,7 @@
         `;
             }).join("");
 
+            renderProductPagination(filtered);
             updateKpis();
         }
 
@@ -6859,68 +6891,22 @@
             Subiendo fotografías...
         `;
 
-                const imageUrls = [];
-
-                /*
-                 * Recorremos TODAS las imágenes.
-                 *
-                 * Si ya existe en servidor:
-                 * conservamos URL.
-                 *
-                 * Si es archivo nuevo:
-                 * la subimos al endpoint actual.
-                 */
-                for (
-                    let index = 0;
-                    index <
-                    selectedProductImages.length;
-                    index++
-                ) {
-                    const image =
-                        selectedProductImages[
-                        index
-                        ];
-
-                    button.innerHTML = `
-                <span
-                    class="
-                        spinner-border
-                        spinner-border-sm
-                    "
-                ></span>
-
-                Procesando imagen
-                ${index + 1}
-                de
-                ${selectedProductImages.length}...
-            `;
-
-                    if (image.file) {
-                        const uploadedUrl =
-                            await uploadSelectedImage(
-                                image.file,
-                                'product'
-                            );
-
-                        if (!uploadedUrl) {
-                            throw new Error(
-                                `No fue posible subir la imagen ${index + 1}.`
-                            );
+                const imageUrls = new Array(selectedProductImages.length);
+                let nextImageIndex = 0;
+                await Promise.all(Array.from({
+                    length: Math.min(3, selectedProductImages.length)
+                }, async () => {
+                    while (nextImageIndex < selectedProductImages.length) {
+                        const index = nextImageIndex++;
+                        const image = selectedProductImages[index];
+                        imageUrls[index] = image.file
+                            ? await uploadSelectedImage(image.file, 'product')
+                            : image.url;
+                        if (!imageUrls[index]) {
+                            throw new Error('No fue posible subir la imagen ' + (index + 1));
                         }
-
-                        imageUrls.push(
-                            uploadedUrl
-                        );
-
-                        continue;
                     }
-
-                    if (image.url) {
-                        imageUrls.push(
-                            image.url
-                        );
-                    }
-                }
+                }));
 
                 if (!imageUrls.length) {
                     throw new Error(
@@ -8991,6 +8977,8 @@
             }
         );
     </script>
+    <script src="assets/js/admin-experience.js?v=1"></script>
+    <script src="assets/js/admin-experience-modals.js?v=1"></script>
     <script src="assets/js/mobile-nav.js"></script>
 </body>
 
