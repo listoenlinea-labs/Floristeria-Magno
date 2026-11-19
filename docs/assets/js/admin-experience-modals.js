@@ -15,7 +15,7 @@
             return '<button type="button" class="magno-color-option" ' +
                 'data-theme-part="' + key + '" data-theme-value="' + value + '" ' +
                 'aria-label="' + label + '" aria-pressed="false" title="' + label + '" ' +
-                'onclick="magnoChooseThemeColor(\\'' + key + '\\',\\'' + value + '\\')">' +
+                '>' +
                 '<span class="magno-color-disc" style="background:linear-gradient(135deg,' +
                 shades[0] + ',' + shades[1] + ')"></span><span class="magno-color-label">' +
                 (value === 'base' ? 'Original' : label.replace(' pastel','')) +
@@ -76,6 +76,12 @@
             </div></div>
         </div>
     `);
+
+    document.body.addEventListener('click', event => {
+        const option = event.target.closest('.magno-color-option');
+        if (!option) return;
+        magnoChooseThemeColor(option.dataset.themePart, option.dataset.themeValue);
+    });
 
     window.magnoChoosePage = function(id) {
         const totalPages=Math.ceil(products.length/MAGNO_PAGE_SIZE);
