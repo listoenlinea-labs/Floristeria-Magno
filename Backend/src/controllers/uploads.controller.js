@@ -1,6 +1,7 @@
 const {
     protectUploadedFile,
-    getImageStorageStatus
+    getImageStorageStatus,
+    auditProductImageReferences
 } = require('../services/image-storage.service');
 
 function buildPublicImageUrl(
@@ -113,7 +114,25 @@ async function auditarAlmacenamientoImagenes(
     }
 }
 
+async function revisarIntegridadImagenes(req, res, next) {
+    try {
+        const report = await auditProductImageReferences({
+            repair: req.method === 'POST'
+        });
+        return res.status(200).json({
+            ok: true,
+            message: report.protected
+                ? 'Todas las imágenes locales referenciadas tienen copias íntegras'
+                : 'Se detectaron fotografías faltantes o en riesgo',
+            data: report
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
+    revisarIntegridadImagenes,
     subirImagenProducto,
     subirImagenGaleria,
     auditarAlmacenamientoImagenes
