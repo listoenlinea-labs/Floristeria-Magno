@@ -668,7 +668,48 @@ async function cambiarEstadoProducto(
 }
 
 
+
+/**
+ * El orden se escribe como una secuencia global, incluyendo productos ocultos.
+ * Así el catálogo público respeta exactamente el orden del administrador.
+ */
+async function reordenarProductos(req, res, next) {
+    const transaction = await sequelize.transaction();
+    try {
+        const ids = req.body?.ids;
+        const validIds = Array.isArray(ids) && ids.length > 0 &&
+            ids.every(id => Number.isSafeInteger(id) && id > 0);
+        if (!validIds || new Set(ids).size !== ids.length) {
+            await transaction.rollback();
+            return res.status(400).json({ ok: false, message: 'La lista de productos contiene identificadores inválidos o duplicados.' });
+        }
+        const rows = await Producto.findAll({
+            attributes: ['id'],
+            order: [['id', 'ASC']],
+            transaction,
+            lock: transaction.LOCK.UPDATE
+        });
+        const storedIds = new Set(rows.map(row => row.id));
+        if (rows.length !== ids.length || ids.some(id => !storedIds.has(id))) {
+            await transaction.rollback();
+            return res.status(409).json({ ok: false, message: 'El catálogo cambió. Actualiza el panel y vuelve a ordenar.' });
+        }
+        for (let index = 0; index < ids.length; index++) {
+            await Producto.update(
+                { orden: index + 1, actualizadoEn: new Date() },
+                { where: { id: ids[index] }, transaction }
+            );
+        }
+        await transaction.commit();
+        return res.json({ ok: true, message: 'Orden actualizado', total: ids.length });
+    } catch (error) {
+        await transaction.rollback();
+        next(error);
+    }
+}
+
 module.exports = {
+    reordenarProductos,
     listarProductos,
     obtenerProducto,
     crearProducto,
