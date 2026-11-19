@@ -1,0 +1,159 @@
+/* Floristería Magno — fondo personalizado en todas las superficies públicas.
+   Carga después de style.css y mexico-season.css.
+   El tema «Original» conserva íntegro el aspecto existente: estas reglas
+   únicamente se activan si el backend devuelve tema.fondo != "base". */
+
+/* Una sola paleta compartida, con superficies alternativamente más blancas
+   o más cercanas al pastel seleccionado. Los productos y formularios
+   permanecen blancos para conservar contraste y legibilidad. */
+body[data-magno-custom-bg="true"]:is(
+  .page-index, .page-catalogo, .page-carrito, .page-rastreo, .page-ideas
+) {
+  --magno-bg-whisper: color-mix(in srgb, var(--magno-selected-bg) 12%, white 88%);
+  --magno-bg-light: color-mix(in srgb, var(--magno-selected-bg) 23%, white 77%);
+  --magno-bg-soft: color-mix(in srgb, var(--magno-selected-bg) 38%, white 62%);
+  --magno-bg-rich: color-mix(in srgb, var(--magno-selected-bg) 58%, white 42%);
+  --magno-bg-surface: linear-gradient(
+    145deg, var(--magno-bg-light) 0%, var(--magno-bg-whisper) 52%,
+    var(--magno-bg-soft) 100%
+  );
+  --magno-bg-surface-alt: linear-gradient(
+    135deg, var(--magno-bg-soft) 0%, var(--magno-bg-whisper) 54%,
+    var(--magno-bg-light) 100%
+  );
+  background: var(--magno-bg-surface) !important;
+}
+
+/* CATÁLOGO: antes estaba fijado a #fff con !important. */
+body.page-catalogo[data-magno-custom-bg="true"] #productos.collection-section {
+  background:
+    radial-gradient(circle at 86% 10%, var(--magno-bg-rich), transparent 48%),
+    linear-gradient(180deg, var(--magno-bg-whisper) 0%, var(--magno-bg-light) 54%,
+      var(--magno-bg-soft) 100%) !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] #catalogo.catalog-hero {
+  background: var(--magno-bg-surface-alt) !important;
+}
+/* El Hero tiene una capa ::before que antes retenía un rosa fijo. */
+body.page-catalogo[data-magno-custom-bg="true"] #catalogo.catalog-hero::before {
+  background:
+    radial-gradient(circle at 75% 30%, var(--magno-bg-rich), transparent 40%),
+    radial-gradient(circle at 15% 78%, rgba(255,255,255,.84), transparent 42%),
+    linear-gradient(135deg, var(--magno-bg-soft), var(--magno-bg-whisper) 54%,
+      var(--magno-bg-light)) !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] #magnoSeoSection.soft-section {
+  background: var(--magno-bg-surface) !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer {
+  background: linear-gradient(150deg, var(--magno-bg-rich),
+    var(--magno-bg-soft) 48%, var(--magno-bg-light)) !important;
+  color: #291c26 !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-brand h3 {
+  color: #24151f !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-brand p,
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-brand .eyebrow,
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-social-title,
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-bottom {
+  color: #584850 !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-footer-bottom {
+  border-top-color: rgba(56,31,44,.16) !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-social-links a {
+  background: rgba(255,255,255,.62) !important;
+  color: #291c26 !important;
+  border-color: rgba(56,31,44,.20) !important;
+}
+body.page-catalogo[data-magno-custom-bg="true"] .magno-social-links a:hover {
+  background: #fff !important;
+}
+
+/* QUIÉNES SOMOS: alternar todas las secciones (incluidas las que tenían
+   blanco o rosa fijos), manteniendo legibles sus tarjetas y fotografías. */
+body.page-index[data-magno-custom-bg="true"] .hero {
+  background: var(--magno-bg-surface-alt) !important;
+}
+body.page-index[data-magno-custom-bg="true"] main > section:nth-of-type(odd),
+body.page-index[data-magno-custom-bg="true"] main > section.soft-section:nth-of-type(odd),
+body.page-index[data-magno-custom-bg="true"] #momentos,
+body.page-index[data-magno-custom-bg="true"] #contacto {
+  background: var(--magno-bg-surface) !important;
+  color: #291c26 !important;
+}
+body.page-index[data-magno-custom-bg="true"] main > section:nth-of-type(even),
+body.page-index[data-magno-custom-bg="true"] main > section.soft-section:nth-of-type(even),
+body.page-index[data-magno-custom-bg="true"] #temporadas.dark-section {
+  background: var(--magno-bg-surface-alt) !important;
+  color: #291c26 !important;
+}
+body.page-index[data-magno-custom-bg="true"] .dark-section .section-title,
+body.page-index[data-magno-custom-bg="true"] .dark-section h2,
+body.page-index[data-magno-custom-bg="true"] .dark-section h3,
+body.page-index[data-magno-custom-bg="true"] .dark-section h4 {
+  color: #24151f !important;
+}
+body.page-index[data-magno-custom-bg="true"] .dark-section .section-text,
+body.page-index[data-magno-custom-bg="true"] .dark-section .text-muted-custom {
+  color: #584850 !important;
+}
+
+/* RASTREO: el encabezado y todas sus secciones usan la misma paleta.
+   El mapa, las fotografías y las tarjetas de estado conservan su fondo. */
+body.page-rastreo[data-magno-custom-bg="true"] .tracking-hero {
+  background: var(--magno-bg-surface-alt) !important;
+}
+body.page-rastreo[data-magno-custom-bg="true"] main > section:nth-of-type(odd),
+body.page-rastreo[data-magno-custom-bg="true"] #estado.soft-section,
+body.page-rastreo[data-magno-custom-bg="true"] #ayuda.dark-section {
+  background: var(--magno-bg-surface) !important;
+  color: #291c26 !important;
+}
+body.page-rastreo[data-magno-custom-bg="true"] main > section:nth-of-type(even),
+body.page-rastreo[data-magno-custom-bg="true"] #mapa-tiempo-real.live-map-section {
+  background: var(--magno-bg-surface-alt) !important;
+  color: #291c26 !important;
+}
+body.page-rastreo[data-magno-custom-bg="true"] #ayuda .section-title {
+  color: #24151f !important;
+}
+body.page-rastreo[data-magno-custom-bg="true"] #ayuda .text-muted-custom {
+  color: #584850 !important;
+}
+
+/* CARRITO Y CONFIRMACIÓN DE PAGO: cambian los fondos exteriores,
+   sin teñir las tarjetas de pago ni los campos de datos. */
+body.page-carrito[data-magno-custom-bg="true"] .cart-page,
+body.page-carrito[data-magno-custom-bg="true"] .payment-result-page {
+  background:
+    radial-gradient(circle at 87% 10%, var(--magno-bg-rich), transparent 46%),
+    var(--magno-bg-surface) !important;
+}
+
+/* IDEAS CON IA: fondo del generador, no el interior de sus formularios. */
+body.page-ideas[data-magno-custom-bg="true"] .ideas-page {
+  background:
+    radial-gradient(circle at 10% 15%, var(--magno-bg-rich), transparent 43%),
+    var(--magno-bg-surface-alt) !important;
+}
+
+/* Pies de página de «Quiénes somos» y «Rastrea tu pedido».
+   Cuando el fondo pasa a claro, los textos ya no pueden quedar blancos. */
+body.page-index[data-magno-custom-bg="true"] > footer,
+body.page-rastreo[data-magno-custom-bg="true"] > footer {
+  background: linear-gradient(160deg, var(--magno-bg-soft),
+    var(--magno-bg-light) 62%, var(--magno-bg-whisper)) !important;
+  color: #291c26 !important;
+}
+body.page-index[data-magno-custom-bg="true"] > footer :is(
+  h2,h3,h4,p,small,span,.brand-logo,.text-muted-custom,a:not(.btn-main)
+),
+body.page-rastreo[data-magno-custom-bg="true"] > footer :is(
+  h2,h3,h4,p,small,span,.brand-logo,.text-muted-custom,a:not(.btn-main)
+) {
+  color: #493a42 !important;
+}
+
+/* Respeta la reducción de movimiento y no añade animaciones ni imágenes. */
