@@ -207,7 +207,8 @@ body.page-admin #magnoThemeModal .magno-color-option .magno-color-label {
   }
   body.page-admin #magnoThemeModal .magno-color-option .magno-color-label {font-size:.63rem;}
   body.page-admin .hero-season-current-badge {
-    top:12px;right:12px;font-size:.68rem;padding:7px 9px;
+    /* Los dos distintivos no deben cubrirse en tarjetas estrechas. */
+    top:55px;right:12px;font-size:.68rem;padding:7px 9px;
   }
   body.page-admin .hero-season-main-actions {gap:8px;}
   body.page-admin .hero-season-main-actions > button {min-height:46px;font-size:.76rem;padding:9px 6px;}
